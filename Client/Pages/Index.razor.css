@@ -1,0 +1,14 @@
+﻿.product-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 40px 2px;
+}
+
+.product-tile {
+    min-height: 800px;
+}
+
+.product-img {
+    min-height: 700px;
+    background-color: grey;
+}

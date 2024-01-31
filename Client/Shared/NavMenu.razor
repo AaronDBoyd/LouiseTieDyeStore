@@ -1,0 +1,39 @@
+﻿
+<div class="main-header px-4">
+    <div class="header-left">
+        <a href="">Louise's Shop</a>
+    </div>
+
+    <div class="header-center">
+        <a href="">New</a>
+        |
+        <a href="https://docs.microsoft.com/aspnet/">Women</a>
+        |
+        <a href="https://docs.microsoft.com/aspnet/">Men</a>
+        |
+        <a href="https://docs.microsoft.com/aspnet/">Kids</a>
+    </div>
+
+    <div class="header-right">
+        <a href="https://docs.microsoft.com/aspnet/">Search Bar</a>
+        <a href="https://docs.microsoft.com/aspnet/">
+            @* <i class="oi oi-person"></i> *@
+            <i class="fas fa-user-circle"></i>
+        </a>
+        <a href="https://docs.microsoft.com/aspnet/">
+            @* <i class="oi oi-cart"></i>  *@
+            <i class="fas fa-shopping-bag"></i>
+        </a>
+    </div>
+</div>
+
+@code {
+    private bool collapseNavMenu = true;
+
+    private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+
+    private void ToggleNavMenu()
+    {
+        collapseNavMenu = !collapseNavMenu;
+    }
+}

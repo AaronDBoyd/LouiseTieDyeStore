@@ -1,0 +1,21 @@
+﻿.footer-buffer-bar {
+    min-height: 20px;
+    background-color: lightgray;
+}
+
+.lower-footer {
+    min-height: 200px;
+    background-color: gray;
+    color: white;
+    padding: 20px;
+}
+
+.link-section {
+    display: flex;
+    justify-content: center;
+}
+
+.link-section a {
+    text-decoration: none;
+    color: white;
+}
