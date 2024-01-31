@@ -15,16 +15,46 @@
     </div>
 
     <div class="header-right">
-        <a href="https://docs.microsoft.com/aspnet/">Search Bar</a>
-        <a href="https://docs.microsoft.com/aspnet/">
+        <Search />
+        <a href="https://docs.microsoft.com/aspnet/" class="person-icon">
             @* <i class="oi oi-person"></i> *@
             <i class="fas fa-user-circle"></i>
         </a>
         <a href="https://docs.microsoft.com/aspnet/">
             @* <i class="oi oi-cart"></i>  *@
             <i class="fas fa-shopping-bag"></i>
+            <span class="badge rounded-pill bg-dark">3</span>
+        </a>
+
+        <button class="navbar-toggler" @onclick="ToggleNavMenu">
+            <span><i class="oi oi-justify-right"></i></span>
+        </button>
+    </div>
+</div>
+
+<div class="@NavMenuCssClass nav-dropdown" @onclick="ToggleNavMenu">
+    <hr />
+    <div>
+        <a href="">
+            New
         </a>
     </div>
+    <div>
+        <a>
+            Women
+        </a>
+    </div>
+    <div>
+        <a>
+            Men
+        </a>
+    </div>
+    <div>
+        <a>
+            Kids
+        </a>
+    </div>
+    <hr />
 </div>
 
 @code {

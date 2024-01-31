@@ -1,31 +1,105 @@
 .main-header {
-    display: flex;
-    justify-content: space-between;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    height: 70px;
+    position: sticky;
+    top: 0;
+    background-color: white;
     align-items: center;
-    height: 60px;
 }
 
-.main-header a{
-    text-decoration: none;
-    color: black;
-    margin-left: 10px;
-    margin-right: 10px;
-}
+    .main-header a {
+        text-decoration: none;
+        color: black;
+    }
 
 .header-left {
     font-size: 24px;
     font-weight: 600;
+    align-self: center;
 }
+
+.header-center {
+    justify-self: center;
+    align-self: center;
+}
+
+.header-right {
+    justify-self: right;
+    display: flex;
+    align-items: center;
+}
+
+    .header-center a, .header-right a {
+        margin-left: 10px;
+        margin-right: 10px;
+    }
 
 i {
-    font-size: 20px;
+    font-size: 24px;
 }
 
+.badge {
+    position: relative;
+    top: -12px;
+    left: -12px;
+    color: black;
+    background-color: white !important;
+    border: 2px solid black;
+    font-size: 10px;
+}
 
+.navbar-toggler {
+    display: none;
+}
 
+.nav-dropdown {
+    display: none;
+}
 
+@media (max-width: 874px) {
+    .main-header {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+    }
 
+    .header-center {
+        display: none;
+    }
 
+    .person-icon {
+        display: none;
+    }
+
+    .navbar-toggler {
+        display: block;
+        color: black;
+    }
+
+        .navbar-toggler i {
+            font-size: 24px;
+        }
+
+    .collapse {
+        display: block;
+    }
+
+    .nav-dropdown {
+        text-align: center;
+        font-size: 1.5rem;
+        text-decoration: underline;
+    }
+
+        .nav-dropdown a {
+            color: black;
+            transition: font-size .2s;
+        }
+
+            .nav-dropdown a:hover {
+                cursor: pointer;
+                font-size: 1.7rem;
+            }
+}
 
 
 
@@ -87,7 +161,7 @@ i {
     }
 
     .collapse {*/
-        /* Never collapse the sidebar for wide screens */
-        /*display: block;
+/* Never collapse the sidebar for wide screens */
+/*display: block;
     }
 }*/
