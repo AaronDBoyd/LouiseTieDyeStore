@@ -8,6 +8,10 @@
     background-color: gray;
     color: white;
     padding: 20px;
+    background-image: url('images/BWpattern.jpg');
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-size: cover;
 }
 
 .link-section {

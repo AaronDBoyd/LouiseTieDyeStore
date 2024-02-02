@@ -1,7 +1,11 @@
 ﻿
-<div class="main-header px-4">
+<div class="main-header px-2">
     <div class="header-left">
-        <a href="">Louise's Shop</a>
+        @* <a href="">Louise's Shop</a> *@
+        <a href="">
+            <img src="images/ShoppedeLoui.png" class="logo" alt="logo" />
+            <img src="images/SL.png" class="small-logo" alt="small logo" />
+        </a>
     </div>
 
     <div class="header-center">
@@ -16,23 +20,39 @@
 
     <div class="header-right">
         <Search />
-        <a href="https://docs.microsoft.com/aspnet/" class="person-icon">
+
+        @* Account *@
+        <a class="person-icon" data-bs-toggle="offcanvas" href="#offcanvasRight" role="button" aria-controls="offcanvasRight">
             @* <i class="oi oi-person"></i> *@
             <i class="fas fa-user-circle"></i>
         </a>
-        <a href="https://docs.microsoft.com/aspnet/">
-            @* <i class="oi oi-cart"></i>  *@
-            <i class="fas fa-shopping-bag"></i>
-            <span class="badge rounded-pill bg-dark">3</span>
-        </a>
+        @* Account Pop-out *@
+        <AccountForms />
 
-        <button class="navbar-toggler" @onclick="ToggleNavMenu">
+        @* Cart Button *@
+        <div class="cart-btn">
+            <a href="https://docs.microsoft.com/aspnet/" class="cart-btn">
+                @* <i class="oi oi-cart"></i>  *@
+                <i class="fas fa-shopping-bag"></i>
+                <span class="badge rounded-pill bg-dark">3</span>
+            </a>
+        </div>
+
+        @* Menu Toggle *@
+        <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasMenu" aria-controls="offcanvasMenu">
             <span><i class="oi oi-justify-right"></i></span>
         </button>
+
+        <MenuPopout />
+
+
+        @* <button class="navbar-toggler" @onclick="ToggleNavMenu">
+        <span><i class="oi oi-justify-right"></i></span>
+        </button> *@
     </div>
 </div>
 
-<div class="@NavMenuCssClass nav-dropdown" @onclick="ToggleNavMenu">
+@* <div class="@NavMenuCssClass nav-dropdown" @onclick="ToggleNavMenu">
     <hr />
     <div>
         <a href="">
@@ -55,8 +75,19 @@
         </a>
     </div>
     <hr />
+    <div>
+        <a>
+            Login
+        </a>
+    </div>
+    <div>
+        <a>
+            Sign up
+        </a>
+    </div>
+    <hr />
 </div>
-
+ *@
 @code {
     private bool collapseNavMenu = true;
 

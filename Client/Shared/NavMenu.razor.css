@@ -11,19 +11,28 @@
     .main-header a {
         text-decoration: none;
         color: black;
+        font-size: 1.2rem;
     }
 
+
+/*Left*/
 .header-left {
     font-size: 24px;
     font-weight: 600;
     align-self: center;
 }
 
+.small-logo {
+    display: none;
+}
+
+/*Center*/
 .header-center {
     justify-self: center;
     align-self: center;
 }
 
+/*Right*/
 .header-right {
     justify-self: right;
     display: flex;
@@ -31,13 +40,15 @@
 }
 
     .header-center a, .header-right a {
-        margin-left: 10px;
+        margin-left: 15px;
         margin-right: 10px;
     }
 
 i {
     font-size: 24px;
 }
+
+
 
 .badge {
     position: relative;
@@ -53,11 +64,24 @@ i {
     display: none;
 }
 
-.nav-dropdown {
+/*.nav-dropdown {
     display: none;
-}
+}*/
 
-@media (max-width: 874px) {
+/*Account Pop-out*/
+/*.nav-link {
+    color: black;
+    font-size: 1.2rem;
+    font-weight: 600;
+}*/
+
+/*Menu Pop-out*/
+/*.menu a {
+    font-size: 1.5rem;
+    font-weight: 600;
+}*/
+
+@media (max-width: 1114px) {
     .main-header {
         display: grid;
         grid-template-columns: 1fr 1fr;
@@ -71,10 +95,19 @@ i {
         display: none;
     }
 
+    .cart-btn a {
+        margin-right: -15px;
+    }
+
     .navbar-toggler {
         display: block;
         color: black;
+        margin-top: -5px;
     }
+
+        .navbar-toggler:focus {
+            box-shadow: none !important;
+        }
 
         .navbar-toggler i {
             font-size: 24px;
@@ -101,7 +134,15 @@ i {
             }
 }
 
+@media (max-width: 782px) {
+    .logo {
+        display: none;
+    }
 
+    .small-logo {
+        display: block;
+    }
+}
 
 /*.navbar-toggler {
     background-color: rgba(255, 255, 255, 0.1);

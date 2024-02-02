@@ -34,12 +34,17 @@
 
 @media (max-width: 1024px) {
     .search-bar-wrapper {
-        display: none;
+        /*display: none;*/
+        margin-left: -150px;
     }
 
-    .collapsed-search-btn {
+    .search-input:focus {
+        width: 150px;
+    }
+
+    /*.collapsed-search-btn {
         display: block;
         border-style: none;
         background-color: white;
-    }
+    }*/
 }
