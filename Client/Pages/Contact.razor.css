@@ -1,0 +1,56 @@
+﻿.contactFormCard {
+    background-color: #f0f0f0;
+    padding: 40px 150px;
+}
+
+.contactFormCard h3, .contactFormCard p {
+    text-align: center;
+} 
+
+.contactFormWrapper {
+    margin-top: 40px;
+}
+
+.contact-form {
+   display: grid;
+   grid-template-columns: 1fr 1fr;
+   gap: 40px;
+}
+
+form {
+    margin-top: 20px;
+}
+
+    form label {
+        margin-left: 20px;
+    }
+
+    form input {
+        border-radius: 255px;
+    }
+
+    form textarea {
+        border-radius: 15px;
+        min-height: 220px;
+    }
+
+    form button {
+        width: 100%;
+        background-color: black;
+        color: white;
+        border-radius: 255px;
+    }
+
+.reqAst {
+    color: red;
+}
+
+@media (max-width: 992px) {
+    .contactFormCard {
+        padding: 40px;
+    }
+
+    .contact-form {
+        grid-template-columns: 1fr;
+    }
+}

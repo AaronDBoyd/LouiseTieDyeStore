@@ -1,7 +1,24 @@
 ﻿.footer-buffer-bar {
-    min-height: 20px;
+    min-height: 60px;
     background-color: lightgray;
+    display: flex;
+    margin-top: 40px;
 }
+
+.contact-msg {
+    margin: auto;
+    font-size: 1.2rem;
+}
+
+.contact-msg a {
+    color: black;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+    .contact-msg a:hover {
+        text-decoration: underline;
+    }
 
 .lower-footer {
     min-height: 200px;

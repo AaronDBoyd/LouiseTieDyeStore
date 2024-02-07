@@ -78,11 +78,15 @@
     }
 
     .product-img-wrapper {
+        position: relative;
     }
 
-    .product-img:hover, .product-img:active {
-        transform: scale(1.75);
-        margin-left: 50%;
+    .product-img:hover/*, .product-img:active*/ {
+        transform: scale(1.5);
+        position: absolute;
+        left: 10px;
+        z-index: 100;
+        /*margin-left: 30%;*/
     }
 
 }

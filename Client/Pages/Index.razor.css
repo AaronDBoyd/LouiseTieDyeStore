@@ -7,6 +7,10 @@
     max-width: 40%;
 }
 
+.category-text .original-item-disclaimer {
+    color: lightslategray;
+}
+
 .filter-dropdowns {
     display: flex;
     justify-content: end;
