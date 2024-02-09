@@ -15,4 +15,8 @@
     <ProjectReference Include="..\Shared\LouiseTieDyeStore.Shared.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Pages\Admin\" />
+  </ItemGroup>
+
 </Project>

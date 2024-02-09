@@ -1,0 +1,26 @@
+﻿.about-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+
+    background-color: black;
+    color: white;
+}
+
+.about-image {
+    padding: 40px;
+    /*background-image: url(https://imgur.com/x6M9o10.jpg);*/
+}
+
+.about-text {
+    padding: 100px 40px;
+}
+
+.about-text h1 {
+    /*margin-left: 50px;*/
+    font-size: 3rem;
+    font-weight: 600;
+}
+
+.about-text p {
+    /*text-indent: 50px;*/
+}
