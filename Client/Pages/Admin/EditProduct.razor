@@ -1,0 +1,46 @@
+﻿@page "/admin/product"
+
+<div class="container">
+
+    <h3>Add/Edit Product</h3>
+
+    <form>
+        <div class="mb-3">
+            <label for="title">Title</label>
+            <input id="title" class="form-control" />
+        </div>
+        <div class="mb-3">
+            @* ?? How can I add multiple Urls ?? *@
+            <label for="imageUrl">Image Url</label>
+            <input id="imageUrl" class="form-control" />
+        </div>
+        <div class="mb-3">
+            <label for="description">Description</label>
+            <textarea id="description" class="form-control"></textarea>
+        </div>
+        <div class="mb-3">
+            <label for="originalPrice">Original Price</label>
+            <input type="number" class="form-control" />
+        </div>
+        <div class="mb-3">
+            <label for="price">Price</label>
+            <input type="number" class="form-control" />
+        </div>
+
+        <div class="form-check">
+            <input type="checkbox" id="visible" class="form-check-input" />
+            <label for="visible" class="form-check-label">Visible</label>
+        </div>
+
+        <hr />
+        <div class="d-flex justify-content-end">
+            <button type="submit" class="btn btn-outline-primary">Create Product</button>
+
+        </div>
+    </form>
+
+</div>
+
+@code {
+
+}

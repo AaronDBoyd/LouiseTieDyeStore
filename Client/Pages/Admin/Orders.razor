@@ -1,0 +1,128 @@
+﻿@page "/admin/orders"
+
+<div class="container">
+
+    <h3>All Orders</h3>
+
+    <div class="filter-dropdowns">
+
+        <div class="input-group mb-3 search-order-num">
+            <input type="text" class="form-control" placeholder="Search by Order #" aria-label="Search by Order #" aria-describedby="button-addon2">
+            <button class="btn btn-outline-secondary" type="button" id="button-addon2">Search</button>
+        </div>
+
+        <div class="dropdown">
+            <button type="button" class="btn dropdown-toggle" data-bs-toggle="dropdown">
+                Filter Status
+            </button>
+            <ul class="dropdown-menu">
+                <li><a class="dropdown-item placed" href="#">Placed</a></li>
+                <li><a class="dropdown-item packed" href="#">Packed</a></li>
+                <li><a class="dropdown-item shipped" href="#">Shipped</a></li>
+                <li><a class="dropdown-item delivered" href="#">Delivered</a></li>
+            </ul>
+        </div>
+
+        <div class="dropdown">
+            <button type="button" class="btn dropdown-toggle" data-bs-toggle="dropdown">
+                Sort By
+            </button>
+            <ul class="dropdown-menu">
+                <li><h5 class="dropdown-header">Date</h5></li>
+                <li><a class="dropdown-item" href="#">Newest to Oldest</a></li>
+                <li><a class="dropdown-item" href="#">Oldest to Newest</a></li>
+            </ul>
+        </div>
+    </div>
+    <hr />
+
+    @* Dropdown for filters by Order Status and Sort by Date *@
+
+    @* #1 *@
+    <div class="order-wrapper placed">
+        <div class="img-wrapper">
+            <img src="images/td1.png" />
+        </div>
+        <div class="details">
+            <h5>Date: 2/8/2024 8:17 PM</h5>
+            <h5>Order Number: #dlshf03u4898392</h5>
+            <h5>Cool Tie-dye Shirt and 2 more...</h5>
+            @* <br /> *@
+            @* <a>Show Details...</a> *@
+            <h5>Status: Order <strong>Placed</strong></h5>
+        </div>
+        <div class="order-price">
+            <p>$70.00</p>
+            <a href="/orders/1" class="order-link btn btn-dark">
+                Details
+            </a>
+        </div>
+    </div>
+
+    @* #2 *@
+    <div class="order-wrapper packed">
+        <div class="img-wrapper">
+            <img src="images/td1.png" />
+        </div>
+        <div class="details">
+            <h5>Date: 2/8/2024 8:17 PM</h5>
+            <h5>Order Number: #dlshf03u4898392</h5>
+            <h5>Cool Tie-dye Shirt and 2 more...</h5>
+            @* <br /> *@
+            @* <a>Show Details...</a> *@
+            <h5>Status: Order <strong>Packed</strong></h5>
+        </div>
+        <div class="order-price">
+            <p>$70.00</p>
+            <a href="" class="order-link btn btn-dark">
+                Details
+            </a>
+        </div>
+    </div>
+
+    @* #3 *@
+    <div class="order-wrapper shipped">
+        <div class="img-wrapper">
+            <img src="images/td1.png" />
+        </div>
+        <div class="details">
+            <h5>Date: 2/8/2024 8:17 PM</h5>
+            <h5>Order Number: #dlshf03u4898392</h5>
+            <h5>Cool Tie-dye Shirt and 2 more...</h5>
+            @* <br /> *@
+            @* <a>Show Details...</a> *@
+            <h5>Status: Order <strong>Shipped</strong></h5>
+        </div>
+        <div class="order-price">
+            <p>$70.00</p>
+            <a href="" class="order-link btn btn-dark">
+                Details
+            </a>
+        </div>
+    </div>
+
+    @* #4 *@
+    <div class="order-wrapper delivered">
+        <div class="img-wrapper">
+            <img src="images/td1.png" />
+        </div>
+        <div class="details">
+            <h5>Date: 2/8/2024 8:17 PM</h5>
+            <h5>Order Number: #dlshf03u4898392</h5>
+            <h5>Cool Tie-dye Shirt and 2 more...</h5>
+            @* <br /> *@
+            @* <a>Show Details...</a> *@
+            <h5>Status: Order <strong>Delivered</strong></h5>
+        </div>
+        <div class="order-price">
+            <p>$70.00</p>
+            <a href="" class="order-link btn btn-dark">
+                Details
+            </a>
+        </div>
+    </div>
+</div>
+
+@code {
+
+}

@@ -1,10 +1,11 @@
-﻿.nav-link {
+﻿
+
+/***** Logged-Out ******/
+.nav-link {
     color: black;
     font-size: 1.2rem;
     font-weight: 600;
 }
-
-
 
 form {
     margin-top: 20px;
@@ -24,3 +25,25 @@ form {
         color: white;
         border-radius: 255px;
     }
+
+
+/***** Logged-In *****/
+.header h3 {
+    color: gray;
+}
+
+.logged-in a {
+    text-decoration: none;
+    color: black;
+    font-size: 1.5rem;
+    font-weight: 600;
+    transition: font-size .2s;
+}
+
+    .logged-in a:hover {
+        font-size: 1.7rem;
+    }
+
+h5 {
+    color: gray;
+}
