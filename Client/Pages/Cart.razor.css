@@ -19,6 +19,11 @@
     border-radius: 255px;
 }
 
+    .checkout-btn:hover {
+        background-color: gray;
+        color: white;
+    }
+
 .items-summary-grid {
     display: grid;
     grid-template-columns: 2fr 1fr;

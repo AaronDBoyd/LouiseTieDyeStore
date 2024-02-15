@@ -1,0 +1,54 @@
+﻿header {
+    text-align: center;
+    margin: 60px 0;
+}
+
+    header h2 {
+        font-weight: 700;
+    }
+
+.login-guest-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    margin: 100px auto 150px;
+    max-width: 880px;
+}
+
+p {
+    color: gray;
+}
+
+.login {
+    padding-right: 30px;
+}
+
+.guest {
+    position: relative;
+    border-left: 1px solid #e0e0e0;
+    padding-left: 30px;
+}
+
+form label {
+    margin-left: 20px;
+}
+
+form input {
+    border-radius: 255px;
+}
+
+form button {
+    width: 100%;
+    background-color: black;
+    color: white;
+    border-radius: 255px;
+}
+
+    form button:hover {
+        background-color: gray;
+        color: white;
+    }
+
+.guest-btn {
+    position: absolute;
+    bottom: 0;
+}

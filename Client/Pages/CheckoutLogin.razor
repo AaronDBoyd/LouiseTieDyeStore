@@ -1,0 +1,48 @@
+﻿@page "/checkout-login"
+
+<div class="container">
+
+    <header>    
+        <h2>Checkout</h2>
+    </header>
+    <div class="login-guest-grid">
+        <div class="login">
+            <h4>Login</h4>
+            <p>To track order history</p>
+            <form>
+                <div class="mb-3">
+                    <label for="email">Email</label>
+                    <input id="email" class="form-control" />
+                </div>
+                <div class="mb-3">
+                    <label for="password">Password</label>
+                    <input id="password" class="form-control" type="password" />
+                </div>
+                <br />
+                <button type="submit" class="btn">Login and Checkout</button>
+            </form>
+        </div>
+        <div class="guest">
+            <h4>Continue as Guest</h4>
+            <p>You can create an account after checking out.</p>
+            <form>
+                <div class="mb-3">
+                    <label for="email">Email</label>
+                    <input id="email" class="form-control" />
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked" checked>
+                    <label class="form-check-label" for="flexCheckChecked">
+                        Subscribe to promotional emails
+                    </label>
+                </div>
+                <br />
+                <button type="submit" class="btn guest-btn">Checkout as Guest</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+@code {
+
+}

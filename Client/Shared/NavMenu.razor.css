@@ -1,7 +1,7 @@
 .main-header {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
-    height: 70px;
+    height: 100px;
     position: sticky;
     top: 0;
     background-color: white;
@@ -15,6 +15,7 @@
         font-size: 1.2rem;
     }
 
+    
 
 /*Left*/
 .header-left {
@@ -84,6 +85,22 @@ i {
     font-size: 1.5rem;
     font-weight: 600;
 }*/
+
+.disclaimer {
+    background-color: black;
+    color: white;
+    font-weight: 600;
+    font-size: 1rem!important;
+    text-align: center;
+    position: sticky;
+    top: 100px;
+    z-index: 60;
+    padding: 10px;
+}
+
+    .disclaimer i {
+        font-size: 1rem !important;
+    }
 
 @media (max-width: 1114px) {
     .main-header {

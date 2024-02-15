@@ -22,25 +22,30 @@
         <Search />
 
         @* Account *@
-        <Tooltip Text="Sign-in">
+
+        @* BUG: Tooltip causes full size screen to have space on the right *@
+        @* TODO: Change to using Bootstrap version *@
+        @* <Tooltip Text="Sign-in"> *@
             <a class="person-icon" data-bs-toggle="offcanvas" href="#offcanvasRight" role="button" aria-controls="offcanvasRight">
                 @* <i class="oi oi-person"></i> *@
                 <i class="fas fa-user-circle"></i>
             </a>
-        </Tooltip>
+        @* </Tooltip> *@
 
         @* Account Pop-out *@
         <AccountForms />
 
         @* Cart Button *@
         <div class="cart-btn">
-            <Tooltip Text="View Cart">
+            @* BUG: Tooltip causes full size screen to have space on the right *@
+            @* TODO: Change to using Bootstrap version *@
+            @* <Tooltip Text="View Cart"> *@
                 <a href="/cart" class="cart-btn">
                     @* <i class="oi oi-cart"></i>  *@
                     <i class="fas fa-shopping-bag"></i>
                     <span class="badge rounded-pill bg-dark">3</span>
                 </a>
-            </Tooltip>
+            @* </Tooltip> *@
         </div>
 
         @* Menu Toggle *@
@@ -55,6 +60,9 @@
         <span><i class="oi oi-justify-right"></i></span>
         </button> *@
     </div>
+</div>
+<div class="disclaimer">
+    <i>All items are original repurposed clothing designs and will be unavailable once sold.</i>
 </div>
 
 @* <div class="@NavMenuCssClass nav-dropdown" @onclick="ToggleNavMenu">

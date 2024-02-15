@@ -23,9 +23,9 @@
             </tbody>
         </table>
         <hr />
-        <button class="checkout-btn btn">
+        <a href="/checkout-login" class="checkout-btn btn">
             Continue to Checkout
-        </button>
+        </a>
     </div>
 
     <div class="items-summary-grid my-3">
@@ -50,6 +50,7 @@
                     </div>
                 </div>
                 <div class="item-remove">
+                    @* TODO: enlarge area to click "x" *@
                     <i class="oi oi-x" data-bs-toggle="modal" data-bs-target="#removeModal"></i>
                 </div>
                 @* <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#myModal">
@@ -128,19 +129,19 @@
                 <tbody>
                     <tr>
                         <th class="subtotal-key">
-                            subtotal
+                            Subtotal
                         </th>
                         <td class="subtotal-value">$70.00</td>
                     </tr>
                     <tr>
                         <th class="shipping-key">
-                            shipping
+                            Shipping
                         </th>
                         <td class="shipping-value">Calculated in Checkout</td>
                     </tr>
                     <tr>
                         <th class="taxes-key">
-                            taxes
+                            Taxes
                         </th>
                         <td class="taxes-value">Calculated in Checkout</td>
                     </tr>
@@ -160,7 +161,7 @@
             </table>
 
             <hr />
-            <a href="/shipping" class="checkout-btn btn">
+            <a href="/checkout-login" class="checkout-btn btn">
                 Continue to Checkout
             </a>
 

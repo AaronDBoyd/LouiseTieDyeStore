@@ -26,6 +26,11 @@ form {
         border-radius: 255px;
     }
 
+        form button:hover {
+            background-color: gray;
+            color: white;
+        }
+
 
 /***** Logged-In *****/
 .header h3 {
