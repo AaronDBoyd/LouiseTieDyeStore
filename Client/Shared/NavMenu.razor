@@ -11,11 +11,11 @@
     <div class="header-center">
         <a href="">New</a>
         |
-        <a href="">Women</a>
+        <a href="/women">Women</a>
         |
-        <a href="">Men</a>
+        <a href="/men">Men</a>
         |
-        <a href="">Kids</a>
+        <a href="/kids">Kids</a>
     </div>
 
     <div class="header-right">
@@ -55,59 +55,10 @@
 
         <MenuPopout />
 
-
-        @* <button class="navbar-toggler" @onclick="ToggleNavMenu">
-        <span><i class="oi oi-justify-right"></i></span>
-        </button> *@
     </div>
 </div>
 <div class="disclaimer">
     <i>All items are original repurposed clothing designs and will be unavailable once sold.</i>
 </div>
 
-@* <div class="@NavMenuCssClass nav-dropdown" @onclick="ToggleNavMenu">
-    <hr />
-    <div>
-        <a href="">
-            New
-        </a>
-    </div>
-    <div>
-        <a>
-            Women
-        </a>
-    </div>
-    <div>
-        <a>
-            Men
-        </a>
-    </div>
-    <div>
-        <a>
-            Kids
-        </a>
-    </div>
-    <hr />
-    <div>
-        <a>
-            Login
-        </a>
-    </div>
-    <div>
-        <a>
-            Sign up
-        </a>
-    </div>
-    <hr />
-</div>
- *@
-@code {
-    private bool collapseNavMenu = true;
 
-    private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
-
-    private void ToggleNavMenu()
-    {
-        collapseNavMenu = !collapseNavMenu;
-    }
-}

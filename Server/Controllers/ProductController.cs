@@ -20,5 +20,19 @@ namespace LouiseTieDyeStore.Server.Controllers
             var result = await _productService.GetProducts();
             return Ok(result);
         }
+
+        [HttpGet("category/{categoryUrl}")]
+        public async Task<ActionResult<ServiceResponse<List<Product>>>> GetProductsByCategory(string categoryUrl)
+        {
+            var result = await _productService.GetProductsByCategory(categoryUrl);
+            return Ok(result);
+        }
+
+        [HttpGet("newest")]
+        public async Task<ActionResult<ServiceResponse<List<Product>>>> GetNewestProducts()
+        {
+            var result = await _productService.GetNewestProducts();
+            return Ok(result);
+        }
     }
 }

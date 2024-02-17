@@ -1,0 +1,112 @@
+﻿@inject IProductService ProductService
+@implements IDisposable
+
+@if (ProductService.Products == null || ProductService.Products.Count == 0)
+{
+    <span>@ProductService.Message</span>
+}
+else
+{
+    @if (Category == null)
+    {
+        <h1 class="category-title">New</h1>
+    }
+    else
+    {
+        <h1 class="category-title">@CapitalizeFirstLetter(Category)</h1>
+    }
+
+    // TODO: add 'Description' to Categories class
+    <div class="category-text">
+        <p>These are the newest designs added to my shop.</p>
+        <br />
+    </div>
+
+    <div class="filter-dropdowns">
+
+        <div class="dropdown">
+            <button type="button" class="btn dropdown-toggle" data-bs-toggle="dropdown">
+                Size
+            </button>
+            <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="#">XXS</a></li>
+                <li><a class="dropdown-item" href="#">XS</a></li>
+                <li><a class="dropdown-item" href="#">S</a></li>
+                <li><a class="dropdown-item" href="#">M</a></li>
+                <li><a class="dropdown-item" href="#">L</a></li>
+                <li><a class="dropdown-item" href="#">XXL</a></li>
+            </ul>
+        </div>
+
+        <div class="dropdown">
+            <button type="button" class="btn dropdown-toggle" data-bs-toggle="dropdown">
+                Type
+            </button>
+            <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="#">Shirts</a></li>
+                <li><a class="dropdown-item" href="#">Bags</a></li>
+                <li><a class="dropdown-item" href="#">Sweaters</a></li>
+                <li><a class="dropdown-item" href="#">Pants</a></li>
+                <li><a class="dropdown-item" href="#">Shoes</a></li>
+            </ul>
+        </div>
+
+        <div class="dropdown">
+            <button type="button" class="btn dropdown-toggle" data-bs-toggle="dropdown">
+                Sort By
+            </button>
+            <ul class="dropdown-menu">
+                <li><h5 class="dropdown-header">Price</h5></li>
+                <li><a class="dropdown-item" href="#">Low to High</a></li>
+                <li><a class="dropdown-item" href="#">High to Low</a></li>
+                <li><h5 class="dropdown-header">Size</h5></li>
+                <li><a class="dropdown-item" href="#">Smallest to Largest</a></li>
+                <li><a class="dropdown-item" href="#">Largest to Smallest</a></li>
+            </ul>
+        </div>
+    </div>
+
+
+    <div class="product-grid">
+        @foreach (var product in ProductService.Products)
+        {
+            <div class="product-tile">
+                <a href="product">
+                    <div class="product-img-wrapper">
+                        <img class="product-img" src="@product.Images[0].Url" />
+                    </div>
+                </a>
+                <div class="product-name p-2">
+                    @product.Title
+                </div>
+                <div class="product-price p-2">
+                    @product.Price
+                </div>
+            </div>
+        }
+    </div>
+}
+
+@code {
+    [Parameter]
+    public string? Category { get; set; }
+
+    protected override void OnInitialized()
+    {
+        ProductService.ProductsChanged += StateHasChanged;
+    }
+
+    public void Dispose()
+    {
+        ProductService.ProductsChanged -= StateHasChanged;
+    }
+
+    public string CapitalizeFirstLetter(string input)
+    {
+        if (string.IsNullOrEmpty(input))
+            return input;
+
+        char firstChar = char.ToUpper(input[0]);
+        return firstChar + input.Substring(1);
+    }
+}
