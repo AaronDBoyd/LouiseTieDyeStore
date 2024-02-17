@@ -1,4 +1,8 @@
 ﻿@page "/"
+@page "/{categoryUrl}"
+
+@inject IProductService ProductService
+
 
 <PageTitle>New</PageTitle>
 
@@ -55,96 +59,30 @@
 
 
 <div class="product-grid">
-
-    @* #1 *@
-    <div class="product-tile">
-        <a href="product">
-            <div class="product-img-wrapper">
-                <img class="product-img" src="https://imgur.com/x6M9o10.jpg" />
-            </div>
-        </a>
-        <div class="product-name p-2">
-            Cool Shirt
-        </div>
-        <div class="product-price p-2">
-            $20.00
-        </div>
-    </div>
-
-    @* #2 *@
-    <div class="product-tile">
-        <a href="product">
-            <div class="product-img-wrapper">
-                <img class="product-img" src="images/td2.png" />
-            </div>
-        </a>
-        <div class="product-name p-2">
-            Cool Shirt
-        </div>
-        <div class="product-price p-2">
-            $20.00
-        </div>
-    </div>
-
-    @* #3 *@
-    <div class="product-tile">
-        <a href="product">
-            <div class="product-img-wrapper">
-                <img class="product-img" src="images/td4.png" />
-            </div>
-        </a>
-        <div class="product-name p-2">
-            Cool Shirt
-        </div>
-        <div class="product-price p-2">
-            $20.00
-        </div>
-    </div>
-
-    @* #4 *@
-    <div class="product-tile">
-        <a href="product">
-            <div class="product-img-wrapper">
-                <img class="product-img" src="images/td5.png" />
-            </div>
-        </a>
-        <div class="product-name p-2">
-            Cool Shirt
-        </div>
-        <div class="product-price p-2">
-            $20.00
-        </div>
-    </div>
-
-    @* #5 *@
-    <div class="product-tile">
-        <div>
+    @foreach (var product in ProductService.Products)
+    {
+        <div class="product-tile">
             <a href="product">
                 <div class="product-img-wrapper">
-                    <img class="product-img" src="images/td1.png" />
+                    <img class="product-img" src="@product.Images[0].Url" />
                 </div>
             </a>
-        </div>
-        <div class="product-name p-2">
-            Cool Shirt
-        </div>
-        <div class="product-price p-2">
-            $20.00
-        </div>
-    </div>
-
-    @* #6 *@
-    <div class="product-tile">
-        <a href="product">
-            <div class="product-img-wrapper">
-                <img class="product-img" src="images/td2.png" />
+            <div class="product-name p-2">
+                @product.Title
             </div>
-        </a>
-        <div class="product-name p-2">
-            Cool Shirt
+            <div class="product-price p-2">
+                @product.Price
+            </div>
         </div>
-        <div class="product-price p-2">
-            $20.00
-        </div>
-    </div>
+    }    
 </div>
+
+@code {
+    [Parameter]
+    public string? CategoryUrl { get; set; } = null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await ProductService.GetProducts();
+    }
+}

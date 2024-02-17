@@ -10,8 +10,12 @@
 .login-guest-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    margin: 100px auto 150px;
+    margin: 60px auto 150px;
     max-width: 880px;
+}
+
+h5 {
+    font-weight: 600;
 }
 
 p {
@@ -36,6 +40,11 @@ form input {
     border-radius: 255px;
 }
 
+form .form-check-input:checked {
+    background-color: black;
+    border-color: black;
+}
+
 form button {
     width: 100%;
     background-color: black;
@@ -51,4 +60,33 @@ form button {
 .guest-btn {
     position: absolute;
     bottom: 0;
+}
+
+
+@media (max-width: 767px) {
+    header {
+        margin:20px auto;
+    }
+
+    .login-guest-grid {
+        display: flex;
+        flex-direction: column-reverse;
+        margin-top: 0;
+    }
+
+    .guest {
+        border-left: none;
+        border-bottom: 1px solid #e0e0e0;
+        padding-left: 0;
+        padding-bottom: 30px;
+    }
+
+    .guest .guest-btn {
+        position: static;
+    }
+
+    .login {
+        padding-right: 0;
+        padding-top: 30px;
+    }
 }

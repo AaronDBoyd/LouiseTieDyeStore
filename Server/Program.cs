@@ -1,3 +1,7 @@
+global using LouiseTieDyeStore.Shared;
+global using Microsoft.EntityFrameworkCore;
+global using LouiseTieDyeStore.Server.Data;
+global using LouiseTieDyeStore.Server.Services.ProductService;
 using Microsoft.AspNetCore.ResponseCompression;
 
 namespace LouiseTieDyeStore
@@ -10,10 +14,22 @@ namespace LouiseTieDyeStore
 
             // Add services to the container.
 
+            builder.Services.AddDbContext<DataContext>(options =>
+            {
+                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+            });
+
             builder.Services.AddControllersWithViews();
             builder.Services.AddRazorPages();
 
+            builder.Services.AddEndpointsApiExplorer();
+            builder.Services.AddSwaggerGen();
+
+            builder.Services.AddScoped<IProductService, ProductService>();
+
             var app = builder.Build();
+
+            app.UseSwaggerUI();
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
@@ -27,6 +43,7 @@ namespace LouiseTieDyeStore
                 app.UseHsts();
             }
 
+            app.UseSwagger();
             app.UseHttpsRedirection();
 
             app.UseBlazorFrameworkFiles();

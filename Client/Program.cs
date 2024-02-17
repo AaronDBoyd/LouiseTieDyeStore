@@ -1,3 +1,7 @@
+global using LouiseTieDyeStore.Shared;
+global using System.Net.Http.Json;
+global using LouiseTieDyeStore.Client.Services.ProductService;
+using Blazored.LocalStorage;
 using LouiseTieDyeStore.Client;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
@@ -12,7 +16,9 @@ namespace LouiseTieDyeStore.Client
             builder.RootComponents.Add<App>("#app");
             builder.RootComponents.Add<HeadOutlet>("head::after");
 
+            builder.Services.AddBlazoredLocalStorage(); 
             builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
+            builder.Services.AddScoped<IProductService, ProductService>();
 
             await builder.Build().RunAsync();
         }
