@@ -1,46 +1,188 @@
 ﻿@page "/admin/product"
+@page "/admin/product/{id:int}"
+@inject IProductService ProductService
+@inject IProductTypeService ProductTypeService
+@inject ICategoryService CategoryService
+@inject NavigationManager NavigationManager
+@inject IJSRuntime JSRuntime
 
 <div class="container">
+    @if (loading)
+    {
+        <span>@msg</span>
+    }
+    else
+    {
+        @if (product.Editing)
+        {
+            <h3>Edit "@product.Title"</h3>
+        }
+        else if (product.IsNew)
+        {
+            <h3>Create a new Product</h3>
+        }
 
-    <h3>Add/Edit Product</h3>
+        <EditForm Model="product" OnValidSubmit="AddOrUpdateProduct">
+            <DataAnnotationsValidator />
+            <div class="mb-3">
+                <label for="title">Title</label>
+                <InputText id="title" @bind-Value="product.Title" class="form-control" />
+            </div>
+            <div class="mb-3">
+                <label for="imageUrl">Image Url</label>
+                <input id="imageUrl" @bind="imgUrl" class="form-control" />
+                <button type="button" class="btn btn-primary" @onclick="AddImage">
+                    <i class="oi oi-plus"></i> Add Image
+                </button>
+            </div>
+            <div class="mb-0" style="display: flex; flex-wrap: wrap; flex-direction: row; justify-content: center;">
+                @foreach (var image in product.Images)
+                {
+                    <img src="@image.Url" />
+                    <button type="button" @onclick="(() => RemoveImage(image.Id))">Remove</button>
+                }
+            </div>
+            <div class="mb-3">
+                <label for="description">Description</label>
+                <InputTextArea id="description" @bind-Value="product.Description" class="form-control"></InputTextArea>
+            </div>
+            <div class="mb-3">
+                <label for="size">Size</label>
+                <InputSelect required id="size" @bind-Value="product.Size" class="form-select">
+                    <option value="XXS">XXS</option>
+                    <option value="XS">XS</option>
+                    <option value="S">S</option>
+                    <option value="M">M</option>
+                    <option value="L">L</option>
+                    <option value="XL">XL</option>
+                    <option value="XXL">XXL</option>
+                </InputSelect>
+            </div>
+            <div class="mb-3">
+                <label for="originalPrice">Original Price</label>
+                <InputNumber @bind-Value="product.OriginalPrice" class="form-control"></InputNumber>
+            </div>
+            <div class="mb-3">
+                <label for="price">Price</label>
+                <InputNumber @bind-Value="product.Price" class="form-control"></InputNumber>
+            </div>
+            <div class="mb-3">
+                <label for="category">Category</label>
+                <InputSelect required id="category" @bind-Value="product.CategoryId" class="form-select">
+                    @foreach (var category in CategoryService.Categories)
+                    {
+                        <option value="@category.Id">@category.Name</option>
+                    }
+                </InputSelect>
+            </div>
+            <div class="mb-3">
+                <label for="productType">Product Type</label>
+                <InputSelect required @bind-Value="product.ProductTypeId" class="form-select">
+                    @foreach (var productType in ProductTypeService.ProductTypes)
+                    {
+                        <option value="@productType.Id">@productType.Name</option>
+                    }
+                </InputSelect>
+            </div>
+            <div class="form-check">
+                <InputCheckbox checked id="visible" @bind-Value="product.Visible" class="form-check-input"></InputCheckbox>
+                <label for="visible" class="form-check-label">Visible</label>
+            </div>
 
-    <form>
-        <div class="mb-3">
-            <label for="title">Title</label>
-            <input id="title" class="form-control" />
-        </div>
-        <div class="mb-3">
-            @* ?? How can I add multiple Urls ?? *@
-            <label for="imageUrl">Image Url</label>
-            <input id="imageUrl" class="form-control" />
-        </div>
-        <div class="mb-3">
-            <label for="description">Description</label>
-            <textarea id="description" class="form-control"></textarea>
-        </div>
-        <div class="mb-3">
-            <label for="originalPrice">Original Price</label>
-            <input type="number" class="form-control" />
-        </div>
-        <div class="mb-3">
-            <label for="price">Price</label>
-            <input type="number" class="form-control" />
-        </div>
+            <hr />
+            <div class="d-flex justify-content-end">
+                <button type="submit" class="btn btn-outline-primary">@btnText</button>
+            </div>
+            <ValidationSummary />
+        </EditForm>
 
-        <div class="form-check">
-            <input type="checkbox" id="visible" class="form-check-input" />
-            <label for="visible" class="form-check-label">Visible</label>
-        </div>
-
-        <hr />
-        <div class="d-flex justify-content-end">
-            <button type="submit" class="btn btn-outline-primary">Create Product</button>
-
-        </div>
-    </form>
-
+        @if (!product.IsNew)
+        {
+            <button type="button" class="btn btn-danger float-start" @onclick="DeleteProduct">
+                Delete Product
+            </button>
+        }
+    }
 </div>
 
 @code {
+    [Parameter]
+    public int Id { get; set; }
 
+    Product product = new Product();
+    bool loading = true;
+    string btnText = "";
+    string msg = "Loading...";
+
+    string imgUrl = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        await ProductTypeService.GetProductTypes();
+        await CategoryService.GetCategories(); // TODO: *if certain categories become Deleted or Visible, Change to CategoryService.GetAdminCategories()
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (Id == 0)
+        {
+            product = new Product { IsNew = true };
+            btnText = "Create Product";
+        }
+        else
+        {
+            Product dbProduct = (await ProductService.GetProduct(Id)).Data;
+            if (dbProduct == null)
+            {
+                msg = $"Product with Id '{Id}' does not exist!";
+                return;
+            }
+            product = dbProduct;
+            product.Editing = true;
+            btnText = "Update Product";
+        }
+
+        loading = false;
+    }
+
+    async void AddOrUpdateProduct()
+    {
+        if (product.IsNew)
+        {
+            var result = await ProductService.CreateProduct(product);
+            NavigationManager.NavigateTo($"admin/product/{result.Id}");
+        }
+        else
+        {
+            product.IsNew = false;
+            product = await ProductService.UpdateProduct(product);
+            NavigationManager.NavigateTo($"admin/product/{product.Id}", true);
+        }
+    }
+
+    async void DeleteProduct()
+    {
+        bool confirmed = await JSRuntime.InvokeAsync<bool>("confirm",
+            $"Do you really want to delete '{product.Title}'?");
+        if (confirmed)
+        {
+            await ProductService.DeleteProduct(product);
+            NavigationManager.NavigateTo("admin/products");
+        }
+    }
+
+    void AddImage()
+    {
+        product.Images.Add(new Image { Url = imgUrl });
+        imgUrl = "";
+    }
+
+    void RemoveImage(int id)
+    {
+        var image = product.Images.FirstOrDefault(i => i.Id == id);
+        if (image != null)
+        {
+            product.Images.Remove(image);
+        }
+    }
 }

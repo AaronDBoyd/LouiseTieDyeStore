@@ -13,7 +13,7 @@ namespace LouiseTieDyeStore.Client.Services.ProductService
         }
 
         public List<Product> Products { get; set; } = new List<Product>();
-        public List<Product> AdminProducts { get; set; }
+        public List<Product> AdminProducts { get; set; } = new List<Product>();
         public string Message { get; set; } = "Loading Products...";
         public int CurrentPage { get; set; } = 1;
         public int PageCount { get; set; } = 0;
@@ -21,24 +21,36 @@ namespace LouiseTieDyeStore.Client.Services.ProductService
 
         public event Action ProductsChanged;
 
-        public Task<Product> CreateProduct(Product product)
+        public async Task<Product> CreateProduct(Product product)
         {
-            throw new NotImplementedException();
+            var result = await _http.PostAsJsonAsync("api/product", product);
+            var newProduct = (await result.Content
+                .ReadFromJsonAsync<ServiceResponse<Product>>()).Data;
+            return newProduct;
         }
 
-        public Task DeleteProduct(Product product)
+        public async Task DeleteProduct(Product product)
         {
-            throw new NotImplementedException();
+            var result = await _http.DeleteAsync($"api/product/{product.Id}");
         }
 
-        public Task GetAdminProducts()
+        public async Task GetAdminProducts()
         {
-            throw new NotImplementedException();
+            var result = await _http
+              .GetFromJsonAsync<ServiceResponse<List<Product>>>("api/product/admin");
+            AdminProducts = result.Data;
+            CurrentPage = 1;
+            PageCount = 0;
+            if (AdminProducts == null || AdminProducts.Count == 0)
+            {
+                Message = "No Products found.";
+            }
         }
 
-        public Task<ServiceResponse<Product>> GetProduct(int productId)
+        public async Task<ServiceResponse<Product>> GetProduct(int productId)
         {
-            throw new NotImplementedException();
+            var result = await _http.GetFromJsonAsync<ServiceResponse<Product>>($"api/product/{productId}");
+            return result;
         }
 
         public async Task GetProducts(string? categoryUrl = null)
@@ -72,9 +84,11 @@ namespace LouiseTieDyeStore.Client.Services.ProductService
             throw new NotImplementedException();
         }
 
-        public Task<Product> UpdateProduct(Product product)
+        public async Task<Product> UpdateProduct(Product product)
         {
-            throw new NotImplementedException();
+            var result = await _http.PutAsJsonAsync($"api/product", product);
+            var content = await result.Content.ReadFromJsonAsync<ServiceResponse<Product>>();
+            return content.Data;
         }
     }
 }

@@ -2,3 +2,8 @@
     background-color: #f0f0f0;
     padding: 50px 20px;
 }
+
+img {
+    max-height: 200px;
+    max-width: 200px;
+}

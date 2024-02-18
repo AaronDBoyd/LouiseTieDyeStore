@@ -2,6 +2,8 @@ global using LouiseTieDyeStore.Shared;
 global using Microsoft.EntityFrameworkCore;
 global using LouiseTieDyeStore.Server.Data;
 global using LouiseTieDyeStore.Server.Services.ProductService;
+global using LouiseTieDyeStore.Server.Services.ProductTypeService;
+global using LouiseTieDyeStore.Server.Services.CategoryService;
 using Microsoft.AspNetCore.ResponseCompression;
 
 namespace LouiseTieDyeStore
@@ -26,6 +28,8 @@ namespace LouiseTieDyeStore
             builder.Services.AddSwaggerGen();
 
             builder.Services.AddScoped<IProductService, ProductService>();
+            builder.Services.AddScoped<IProductTypeService, ProductTypeService>();
+            builder.Services.AddScoped<ICategoryService, CategoryService>();
 
             var app = builder.Build();
 

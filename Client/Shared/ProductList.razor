@@ -16,7 +16,7 @@ else
         <h1 class="category-title">@CapitalizeFirstLetter(Category)</h1>
     }
 
-    // TODO: add 'Description' to Categories class
+                // TODO: add 'Description' property to Categories class
     <div class="category-text">
         <p>These are the newest designs added to my shop.</p>
         <br />
@@ -34,6 +34,7 @@ else
                 <li><a class="dropdown-item" href="#">S</a></li>
                 <li><a class="dropdown-item" href="#">M</a></li>
                 <li><a class="dropdown-item" href="#">L</a></li>
+                <li><a class="dropdown-item" href="#">XL</a></li>
                 <li><a class="dropdown-item" href="#">XXL</a></li>
             </ul>
         </div>
@@ -71,17 +72,24 @@ else
         @foreach (var product in ProductService.Products)
         {
             <div class="product-tile">
-                <a href="product">
+                <a href="product/@product.Id">
                     <div class="product-img-wrapper">
                         <img class="product-img" src="@product.Images[0].Url" />
                     </div>
+
+                    <div class="product-name p-2">
+                        @product.Title
+                    </div>
+                    @if (product.OriginalPrice > product.Price)
+                    {
+                        <div class="text-muted original-price">
+                            $@product.OriginalPrice
+                        </div>
+                    }
+                    <div class="product-price p-2">
+                        $@product.Price
+                    </div>
                 </a>
-                <div class="product-name p-2">
-                    @product.Title
-                </div>
-                <div class="product-price p-2">
-                    @product.Price
-                </div>
             </div>
         }
     </div>

@@ -1,32 +1,194 @@
-﻿@page "/product"
+﻿@page "/product/{id:int}"
+@inject IProductService ProductService
 
+@if (product == null)
+{
+    <h3>@message</h3>
+}
+else
+{
+    <div class="imgs-detail-grid">
 
-<div class="imgs-detail-grid">
-    <div class="images">
-        <div class="product-img-wrapper">
-            <img class="product-img" src="images/small_test.png" />
-        </div>
-        <div class="product-img-wrapper">
-            <img class="product-img" src="images/td1.png" />
-        </div>
-        <div class="product-img-wrapper">
-            <img class="product-img" src="images/td4.png" />
+        <section>
+            <div class="container">
+                <div class="carousel">
+                    @foreach (var image in product.Images)
+                    {
+                        if (image == product.Images[0])
+                        {
+                            <input type="radio" name="slides" checked="checked" id="@image.Url">
+                        }
+                        else
+                        {
+                            <input type="radio" name="slides" id="@image.Url">
+                        }
+                    }
+                    @* <input type="radio" name="slides" checked="checked" id="slide-1">
+                    <input type="radio" name="slides" id="slide-2">
+                    <input type="radio" name="slides" id="slide-3">
+                    <input type="radio" name="slides" id="slide-4">
+                    <input type="radio" name="slides" id="slide-5">
+                    <input type="radio" name="slides" id="slide-6"> *@
+                    <ul class="carousel__slides">
+                        @foreach (var image in product.Images)
+                        {
+                            <li class="carousel__slide">
+                                <figure>
+                                    <div>
+                                        <img src="@image.Url" alt="">
+                                    </div>
+                                </figure>
+                            </li>
+                        }
+
+                        @* <li class="carousel__slide">
+                            <figure>
+                                <div>
+                                    <img src="https://picsum.photos/id/1041/800/450" alt="">
+                                </div>
+                                <figcaption>
+                                    Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                                    <span class="credit">Photo: Tim Marshall</span>
+                                </figcaption>
+                            </figure>
+                        </li>
+                        <li class="carousel__slide">
+                            <figure>
+                                <div>
+                                    <img src="https://picsum.photos/id/1043/800/450" alt="">
+                                </div>
+                                <figcaption>
+                                    Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                                    <span class="credit">Photo: Christian Joudrey</span>
+                                </figcaption>
+                            </figure>
+                        </li>
+                        <li class="carousel__slide">
+                            <figure>
+                                <div>
+                                    <img src="https://picsum.photos/id/1044/800/450" alt="">
+                                </div>
+                                <figcaption>
+                                    Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                                    <span class="credit">Photo: Steve Carter</span>
+                                </figcaption>
+                            </figure>
+                        </li>
+                        <li class="carousel__slide">
+                            <figure>
+                                <div>
+                                    <img src="https://picsum.photos/id/1045/800/450" alt="">
+                                </div>
+                                <figcaption>
+                                    Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                                    <span class="credit">Photo: Aleksandra Boguslawska</span>
+                                </figcaption>
+                            </figure>
+                        </li>
+                        <li class="carousel__slide">
+                            <figure>
+                                <div>
+                                    <img src="https://picsum.photos/id/1049/800/450" alt="">
+                                </div>
+                                <figcaption>
+                                    Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                                    <span class="credit">Photo: Rosan Harmens</span>
+                                </figcaption>
+                            </figure>
+                        </li>
+                        <li class="carousel__slide">
+                            <figure>
+                                <div>
+                                    <img src="https://picsum.photos/id/1052/800/450" alt="">
+                                </div>
+                                <figcaption>
+                                    Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                                    <span class="credit">Photo: Annie Spratt</span>
+                                </figcaption>
+                            </figure>
+                        </li> *@
+                    </ul>
+                    <ul class="carousel__thumbnails">
+                        @foreach (var image in product.Images)
+                        {
+                            <li>
+                                <label for="@image.Url"><img src="@image.Url" alt=""></label>
+                            </li>
+                        }
+                       @*  <li>
+                            <label for="slide-1"><img src="https://picsum.photos/id/1041/150/150" alt=""></label>
+                        </li>
+                        <li>
+                            <label for="slide-2"><img src="https://picsum.photos/id/1043/150/150" alt=""></label>
+                        </li>
+                        <li>
+                            <label for="slide-3"><img src="https://picsum.photos/id/1044/150/150" alt=""></label>
+                        </li>
+                        <li>
+                            <label for="slide-4"><img src="https://picsum.photos/id/1045/150/150" alt=""></label>
+                        </li>
+                        <li>
+                            <label for="slide-5"><img src="https://picsum.photos/id/1049/150/150" alt=""></label>
+                        </li>
+                        <li>
+                            <label for="slide-6"><img src="https://picsum.photos/id/1052/150/150" alt=""></label>
+                        </li> *@
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        @* ***** OLD VERSION **** *@
+        @* <div class="images">
+            @foreach (var image in product.Images)
+            {
+                <div class="product-img-wrapper">
+                    <img class="product-img" src="@image.Url" />
+                </div>
+            }
+        </div> *@
+
+        <div class="details">
+            <div class="title">
+                <h1>@product.Title</h1>
+            </div>
+            <div class="description">
+                <p>@product.Description</p>
+            </div>
+            @if (product.OriginalPrice > product.Price)
+            {
+                <h6 class="text-muted original-price">$@product.OriginalPrice</h6>
+            }
+            <div class="price">$@product.Price</div>
+            <br />
+            <div class="product-size">Size: @product.Size</div>
+            <br />
+            <br />
+            <button class="btn add-btn">Add to Cart</button>
+
         </div>
     </div>
-    <div class="details">
-        <div class="title">
-            <h1> Cool Tie-Dye Shirt</h1>
-        </div>
-        <div class="description">
-            <p> Spiral, Blue/Yellow/Green on a Scooby Doo v-neck shirt</p>
-        </div>
-        <div class="price">$20.00</div>
-        <br />
-        <div class="product-size">Size: X-Small</div>
-        <br />
-        <br />
-        <button class="btn add-btn">Add to Cart</button>
+}
 
-    </div>
-</div>
+@code {
+    private Product? product = null;
+    private string message = string.Empty;
 
+    [Parameter]
+    public int Id { get; set; }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        message = "Loading product...";
+
+        var result = await ProductService.GetProduct(Id);
+        if (!result.Success)
+        {
+            message = result.Message;
+        }
+        else
+        {
+            product = result.Data;
+        }
+    }
+}

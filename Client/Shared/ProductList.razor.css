@@ -26,6 +26,11 @@
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
 }
 
+    .product-tile a {
+        text-decoration: none;
+        color: black;
+    }
+
 /* How do I get the images to shrink in height? */
 .product-img-wrapper {
     max-height: 600px;
@@ -43,9 +48,22 @@
     transition: transform .2s;
 }
 
-    .product-img:hover {
+    .product-tile:hover .product-img {
         transform: scale(1.1);
     }
+
+.product-name {
+    font-weight: 600;
+}
+
+.original-price {
+    text-decoration: line-through;
+    margin-left: 10px;
+}
+
+.product-price {
+    font-weight: 600;
+}
 
 @media (max-width: 1092px) {
     .product-grid {
