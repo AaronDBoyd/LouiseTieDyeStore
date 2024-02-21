@@ -7,20 +7,23 @@
 }
 else
 {
-    @if (Category == null)
+    @if (SearchText != null)
     {
-        <h1 class="category-title">New</h1>
+        <h1 class="category-title">@ProductService.LastSearchText</h1>
     }
-    else
+    else if (Category != null)
     {
         <h1 class="category-title">@CapitalizeFirstLetter(Category)</h1>
     }
-
-                // TODO: add 'Description' property to Categories class
-    <div class="category-text">
-        <p>These are the newest designs added to my shop.</p>
-        <br />
-    </div>
+    else
+    {
+        <h1 class="category-title">New</h1>
+        // TODO: add 'Description' property to Categories class
+        <div class="category-text">
+            <p>These are the newest designs added to my shop.</p>
+            <br />
+        </div>
+    }             
 
     <div class="filter-dropdowns">
 
@@ -93,11 +96,27 @@ else
             </div>
         }
     </div>
+
+    <div class="page-buttons">
+        @if (ProductService.PageCount > 1)
+        {
+            @for (int i = 1; i <= ProductService.PageCount; i++)
+            {
+                <a class="btn
+                  @(i == ProductService.CurrentPage ? "btn-dark" : "btn-outline-dark")
+                  page-selection"
+                   href=@(Category != null ? $"/{Category}/{i}": $"/search/{ProductService.LastSearchText}/{i}")>@i</a>
+            }
+        }
+    </div>
 }
 
 @code {
     [Parameter]
     public string? Category { get; set; }
+
+    [Parameter]
+    public string? SearchText { get; set; }
 
     protected override void OnInitialized()
     {

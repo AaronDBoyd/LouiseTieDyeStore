@@ -53,18 +53,30 @@ namespace LouiseTieDyeStore.Client.Services.ProductService
             return result;
         }
 
-        public async Task GetProducts(string? categoryUrl = null)
+        public async Task GetProducts(int page, string? categoryUrl = null)
         {
-            var result = categoryUrl == null ?
-                await _http.GetFromJsonAsync<ServiceResponse<List<Product>>>("api/Product/newest") :
-                await _http.GetFromJsonAsync<ServiceResponse<List<Product>>>($"api/Product/category/{categoryUrl}");
-            if (result != null && result.Data != null)
+            if (categoryUrl == null)
             {
-                Products = result.Data;
-            }
+                var result = await _http.GetFromJsonAsync<ServiceResponse<List<Product>>>("api/Product/newest");
 
-            CurrentPage = 1;
-            PageCount = 0;
+                if (result != null && result.Data != null)
+                {
+                    Products = result.Data;
+                }
+
+                CurrentPage = 1;
+                PageCount = 0;
+            }
+            else
+            {
+                var result = await _http.GetFromJsonAsync<ServiceResponse<ProductPageResults>>($"api/Product/category/{categoryUrl}/{page}");
+                if (result != null && result.Data != null)
+                {
+                    Products = result.Data.Products;
+                    CurrentPage = result.Data.CurrentPage;
+                    PageCount = result.Data.Pages;
+                }
+            }
 
             if (Products.Count == 0)
             {
@@ -74,14 +86,29 @@ namespace LouiseTieDyeStore.Client.Services.ProductService
             ProductsChanged.Invoke();
         }
 
-        public Task<List<string>> GetProductSearchSuggestions(string searchText)
+        public async Task<List<string>> GetProductSearchSuggestions(string searchText)
         {
-            throw new NotImplementedException();
+            var result = await _http
+                .GetFromJsonAsync<ServiceResponse<List<string>>>($"api/product/searchsuggestions/{searchText}");
+            return result.Data;
         }
 
-        public Task SearchProducts(string searchText, int page)
+        public async Task SearchProducts(string searchText, int page)
         {
-            throw new NotImplementedException();
+            LastSearchText = searchText;
+            var result = await _http
+                .GetFromJsonAsync<ServiceResponse<ProductPageResults>>($"api/product/search/{searchText}/{page}");
+            if (result != null && result.Data != null)
+            {
+                Products = result.Data.Products;
+                CurrentPage = result.Data.CurrentPage;
+                PageCount = result.Data.Pages;
+            }
+            if (Products.Count == 0)
+            {
+                Message = "No products found.";
+            }
+            ProductsChanged?.Invoke();
         }
 
         public async Task<Product> UpdateProduct(Product product)

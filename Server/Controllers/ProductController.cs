@@ -57,10 +57,10 @@ namespace LouiseTieDyeStore.Server.Controllers
             return Ok(result);
         }
 
-        [HttpGet("category/{categoryUrl}")]
-        public async Task<ActionResult<ServiceResponse<List<Product>>>> GetProductsByCategory(string categoryUrl)
+        [HttpGet("category/{categoryUrl}/{page}")]
+        public async Task<ActionResult<ServiceResponse<ProductPageResults>>> GetProductsByCategory(string categoryUrl, int page)
         {
-            var result = await _productService.GetProductsByCategory(categoryUrl);
+            var result = await _productService.GetProductsByCategory(categoryUrl, page);
             return Ok(result);
         }
 
@@ -68,6 +68,20 @@ namespace LouiseTieDyeStore.Server.Controllers
         public async Task<ActionResult<ServiceResponse<List<Product>>>> GetNewestProducts()
         {
             var result = await _productService.GetNewestProducts();
+            return Ok(result);
+        }
+
+        [HttpGet("searchsuggestions/{searchText}")]
+        public async Task<ActionResult<ServiceResponse<List<Product>>>> GetProductSearchSuggestions(string searchText)
+        {
+            var result = await _productService.GetProductSearchSuggestions(searchText);
+            return Ok(result);
+        }
+
+        [HttpGet("search/{searchText}/{page}")]
+        public async Task<ActionResult<ServiceResponse<ProductPageResults>>> SearchProducts(string searchText, int page = 1)
+        {
+            var result = await _productService.SearchProducts(searchText, page);
             return Ok(result);
         }
     }

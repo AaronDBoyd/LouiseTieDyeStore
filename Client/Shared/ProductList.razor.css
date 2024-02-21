@@ -65,6 +65,17 @@
     font-weight: 600;
 }
 
+.page-buttons {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.page-selection {
+    margin-right: 15px;
+    margin-bottom: 30px;
+}
+
 @media (max-width: 1092px) {
     .product-grid {
         grid-template-columns: 1fr 1fr;
