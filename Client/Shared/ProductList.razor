@@ -1,77 +1,103 @@
 ﻿@inject IProductService ProductService
+@inject IProductTypeService ProductTypeService
 @implements IDisposable
 
-@if (ProductService.Products == null || ProductService.Products.Count == 0)
+@if (SearchText != null)
 {
-    <span>@ProductService.Message</span>
+    <h1 class="category-title">@ProductService.LastSearchText</h1>
+}
+else if (Category != null)
+{
+    <h1 class="category-title">@CapitalizeFirstLetter(Category)</h1>
 }
 else
 {
-    @if (SearchText != null)
-    {
-        <h1 class="category-title">@ProductService.LastSearchText</h1>
-    }
-    else if (Category != null)
-    {
-        <h1 class="category-title">@CapitalizeFirstLetter(Category)</h1>
-    }
-    else
-    {
-        <h1 class="category-title">New</h1>
-        // TODO: add 'Description' property to Categories class
-        <div class="category-text">
-            <p>These are the newest designs added to my shop.</p>
-            <br />
+    <h1 class="category-title">New</h1>
+    // TODO: add 'Description' property to Categories class
+    <div class="category-text">
+        <p>These are the newest designs added to my shop.</p>
+        <br />
+    </div>
+}
+
+@if (Category != null)
+{
+    <div class="filters">
+
+        <div class="filter-dropdowns">
+            <div class="dropdown">
+                <button type="button" class="btn dropdown-toggle" data-bs-toggle="dropdown">
+                    Size
+                </button>
+                <ul class="dropdown-menu">
+                    @foreach (var size in ProductService.Sizes)
+                    {
+                        <li>
+                            <button class="dropdown-item" type="button"
+                                    @onclick="@(() => FilterSize(size))"
+                                    disabled="@(ProductService.SizeFilter == size)">
+                                @size
+                            </button>
+                        </li>
+                    }
+                </ul>
+            </div>
+
+            <div class="dropdown">
+                <button type="button" class="btn dropdown-toggle" data-bs-toggle="dropdown">
+                    Type
+                </button>
+                <ul class="dropdown-menu">
+                    @foreach (var type in ProductTypeService.ProductTypes)
+                    {
+                        <li><button class="dropdown-item" type="button" @onclick="(() => FilterType(type.Id))">@type.Name</button></li>
+                    }
+                </ul>
+            </div>
+
+            <div class="dropdown">
+                <button type="button" class="btn dropdown-toggle" data-bs-toggle="dropdown">
+                    Sort By
+                </button>
+                <ul class="dropdown-menu">
+                    <li><h5 class="dropdown-header">Price</h5></li>
+                    <li><a class="dropdown-item" href="#">Low to High</a></li>
+                    <li><a class="dropdown-item" href="#">High to Low</a></li>
+                    <li><h5 class="dropdown-header">Size</h5></li>
+                    <li><a class="dropdown-item" href="#">Smallest to Largest</a></li>
+                    <li><a class="dropdown-item" href="#">Largest to Smallest</a></li>
+                </ul>
+            </div>
         </div>
-    }             
 
-    <div class="filter-dropdowns">
+        <div>
+            <ul class="applied-filters">
+                @if (ProductService.SizeFilter != null)
+                {
+                    <li>@ProductService.SizeFilter<span class="fas fa-times" @onclick="RemoveSizeFilter"></span></li>
+                }
 
-        <div class="dropdown">
-            <button type="button" class="btn dropdown-toggle" data-bs-toggle="dropdown">
-                Size
-            </button>
-            <ul class="dropdown-menu">
-                <li><a class="dropdown-item" href="#">XXS</a></li>
-                <li><a class="dropdown-item" href="#">XS</a></li>
-                <li><a class="dropdown-item" href="#">S</a></li>
-                <li><a class="dropdown-item" href="#">M</a></li>
-                <li><a class="dropdown-item" href="#">L</a></li>
-                <li><a class="dropdown-item" href="#">XL</a></li>
-                <li><a class="dropdown-item" href="#">XXL</a></li>
-            </ul>
-        </div>
-
-        <div class="dropdown">
-            <button type="button" class="btn dropdown-toggle" data-bs-toggle="dropdown">
-                Type
-            </button>
-            <ul class="dropdown-menu">
-                <li><a class="dropdown-item" href="#">Shirts</a></li>
-                <li><a class="dropdown-item" href="#">Bags</a></li>
-                <li><a class="dropdown-item" href="#">Sweaters</a></li>
-                <li><a class="dropdown-item" href="#">Pants</a></li>
-                <li><a class="dropdown-item" href="#">Shoes</a></li>
-            </ul>
-        </div>
-
-        <div class="dropdown">
-            <button type="button" class="btn dropdown-toggle" data-bs-toggle="dropdown">
-                Sort By
-            </button>
-            <ul class="dropdown-menu">
-                <li><h5 class="dropdown-header">Price</h5></li>
-                <li><a class="dropdown-item" href="#">Low to High</a></li>
-                <li><a class="dropdown-item" href="#">High to Low</a></li>
-                <li><h5 class="dropdown-header">Size</h5></li>
-                <li><a class="dropdown-item" href="#">Smallest to Largest</a></li>
-                <li><a class="dropdown-item" href="#">Largest to Smallest</a></li>
+                @if (ProductService.TypeFilter != null)
+                {
+                    <li>@ProductService.TypeFilter<span class="fas fa-times" @onclick="RemoveTypeFilter"></span></li>
+                }
+                
+                @if (ProductService.SizeFilter != null || ProductService.TypeFilter != null)
+                {
+                    <button class="clear-filters" @onclick="RemoveAllFilters">Clear All</button>
+                }
             </ul>
         </div>
     </div>
+}
 
-
-    <div class="product-grid">
+<div class="product-grid">
+    @if (ProductService.Products == null || ProductService.Products.Count == 0)
+    {
+        <span>@ProductService.Message</span>
+    }
+    else
+    {
         @foreach (var product in ProductService.Products)
         {
             <div class="product-tile">
@@ -95,21 +121,21 @@ else
                 </a>
             </div>
         }
-    </div>
+    }
+</div>
 
-    <div class="page-buttons">
-        @if (ProductService.PageCount > 1)
+<div class="page-buttons">
+    @if (ProductService.PageCount > 1)
+    {
+        @for (int i = 1; i <= ProductService.PageCount; i++)
         {
-            @for (int i = 1; i <= ProductService.PageCount; i++)
-            {
-                <a class="btn
+            <a class="btn
                   @(i == ProductService.CurrentPage ? "btn-dark" : "btn-outline-dark")
                   page-selection"
-                   href=@(Category != null ? $"/{Category}/{i}": $"/search/{ProductService.LastSearchText}/{i}")>@i</a>
-            }
+               href=@(Category != null ? $"/{Category}/{i}": $"/search/{ProductService.LastSearchText}/{i}")>@i</a>
         }
-    </div>
-}
+    }
+</div>
 
 @code {
     [Parameter]
@@ -121,11 +147,44 @@ else
     protected override void OnInitialized()
     {
         ProductService.ProductsChanged += StateHasChanged;
+        ProductTypeService.GetProductTypes();
     }
 
     public void Dispose()
     {
         ProductService.ProductsChanged -= StateHasChanged;
+    }
+
+    public void FilterSize(string size)
+    {
+        ProductService.FilterSize(Category, size);
+    }
+
+    public void FilterType(int typeId)
+    {
+        var type = ProductTypeService.ProductTypes.FirstOrDefault(t => t.Id == typeId);
+
+        ProductService.TypeFilter = type.Name;
+        ProductService.FilterType(Category, type.Name);
+    }
+
+    public void RemoveSizeFilter()
+    {
+        ProductService.SizeFilter = null;
+        ProductService.GetProducts(1, Category);
+    }
+
+    public void RemoveTypeFilter()
+    {
+        ProductService.TypeFilter = null;
+        ProductService.GetProducts(1, Category);
+    }
+
+    public void RemoveAllFilters()
+    {
+        ProductService.SizeFilter = null;
+        ProductService.TypeFilter = null;
+        ProductService.GetProducts(1, Category);
     }
 
     public string CapitalizeFirstLetter(string input)

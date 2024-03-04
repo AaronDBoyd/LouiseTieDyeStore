@@ -58,9 +58,13 @@ namespace LouiseTieDyeStore.Server.Controllers
         }
 
         [HttpGet("category/{categoryUrl}/{page}")]
-        public async Task<ActionResult<ServiceResponse<ProductPageResults>>> GetProductsByCategory(string categoryUrl, int page)
+        public async Task<ActionResult<ServiceResponse<ProductPageResults>>> GetProductsByCategory(
+            string categoryUrl, 
+            int page,
+            [FromQuery] string? sizeFilter = null,
+            [FromQuery] string? typeFilter = null)
         {
-            var result = await _productService.GetProductsByCategory(categoryUrl, page);
+            var result = await _productService.GetProductsByCategory(categoryUrl, page, sizeFilter, typeFilter);
             return Ok(result);
         }
 

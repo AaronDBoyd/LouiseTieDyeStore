@@ -106,23 +106,95 @@ namespace LouiseTieDyeStore.Server.Services.ProductService
         }
 
 
-        public async Task<ServiceResponse<ProductPageResults>> GetProductsByCategory(string categoryUrl, int page)
+        public async Task<ServiceResponse<ProductPageResults>> GetProductsByCategory(string categoryUrl, int page, string? sizeFilter = null, string? typeFilter = null)
         {
             var pageResults = 3f;
-            var count = await _context.Products
+
+            // Get count of filtered products
+            int count = new();
+
+            if (sizeFilter == null && typeFilter == null)
+            {
+                count = await _context.Products
                 .Where(p => p.Category.Url.ToLower().Equals(categoryUrl.ToLower()) &&
                     p.Visible && !p.Deleted)
                 .CountAsync();
+            }
+            else if (sizeFilter == null && typeFilter != null)
+            {
+                count = await _context.Products
+                .Where(p => p.Category.Url.ToLower().Equals(categoryUrl.ToLower()) &&
+                    p.Visible && !p.Deleted
+                    && p.ProductType.Name == typeFilter)
+                .CountAsync();
+            }
+            else if (sizeFilter != null && typeFilter == null)
+            {
+                count = await _context.Products
+                .Where(p => p.Category.Url.ToLower().Equals(categoryUrl.ToLower()) &&
+                    p.Visible && !p.Deleted
+                    && p.Size == sizeFilter)
+                .CountAsync();
+            }
+            else
+            {
+                count = await _context.Products
+                .Where(p => p.Category.Url.ToLower().Equals(categoryUrl.ToLower()) &&
+                    p.Visible && !p.Deleted 
+                    && p.Size == sizeFilter
+                    && p.ProductType.Name == typeFilter)
+                .CountAsync();
+            }
 
             var pageCount = Math.Ceiling(count / pageResults);
 
-            var products = await _context.Products
+            // Get page results of filtered products
+            List<Product> products = new();
+
+            if (sizeFilter == null && typeFilter == null)
+            {
+                products = await _context.Products
                 .Where(p => p.Category.Url.ToLower().Equals(categoryUrl.ToLower()) &&
                     p.Visible && !p.Deleted)
                 .Include(p => p.Images)
                 .Skip((page - 1) * (int)pageResults)
                 .Take((int)pageResults)
                 .ToListAsync();
+            }
+            else if (sizeFilter == null && typeFilter != null)
+            {
+                products = await _context.Products
+                .Where(p => p.Category.Url.ToLower().Equals(categoryUrl.ToLower()) &&
+                    p.Visible && !p.Deleted
+                    && p.ProductType.Name == typeFilter)
+                .Include(p => p.Images)
+                .Skip((page - 1) * (int)pageResults)
+                .Take((int)pageResults)
+                .ToListAsync();
+            }
+            else if (sizeFilter != null && typeFilter == null)
+            {
+                products = await _context.Products
+                .Where(p => p.Category.Url.ToLower().Equals(categoryUrl.ToLower()) &&
+                    p.Visible && !p.Deleted
+                    && p.Size == sizeFilter)
+                .Include(p => p.Images)
+                .Skip((page - 1) * (int)pageResults)
+                .Take((int)pageResults)
+                .ToListAsync();
+            }
+            else
+            {
+                products = await _context.Products
+                .Where(p => p.Category.Url.ToLower().Equals(categoryUrl.ToLower()) &&
+                    p.Visible && !p.Deleted 
+                    && p.Size == sizeFilter
+                    && p.ProductType.Name == typeFilter)
+                .Include(p => p.Images)
+                .Skip((page - 1) * (int)pageResults)
+                .Take((int)pageResults)
+                .ToListAsync();
+            }
 
             var response = new ServiceResponse<ProductPageResults>
             {

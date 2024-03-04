@@ -14,6 +14,12 @@ namespace LouiseTieDyeStore.Client.Services.ProductService
 
         public List<Product> Products { get; set; } = new List<Product>();
         public List<Product> AdminProducts { get; set; } = new List<Product>();
+        public List<string> Sizes { get; set; } = new List<string>
+        {
+            "XXS", "XS", "S", "M", "L", "XL", "XXL"
+        };
+        public string? SizeFilter { get; set; } = null;
+        public string? TypeFilter { get; set; } = null;
         public string Message { get; set; } = "Loading Products...";
         public int CurrentPage { get; set; } = 1;
         public int PageCount { get; set; } = 0;
@@ -69,7 +75,7 @@ namespace LouiseTieDyeStore.Client.Services.ProductService
             }
             else
             {
-                var result = await _http.GetFromJsonAsync<ServiceResponse<ProductPageResults>>($"api/Product/category/{categoryUrl}/{page}");
+                var result = await _http.GetFromJsonAsync<ServiceResponse<ProductPageResults>>($"api/Product/category/{categoryUrl}/{page}?sizeFilter={SizeFilter}&typeFilter={TypeFilter}");
                 if (result != null && result.Data != null)
                 {
                     Products = result.Data.Products;
@@ -108,6 +114,7 @@ namespace LouiseTieDyeStore.Client.Services.ProductService
             {
                 Message = "No products found.";
             }
+
             ProductsChanged?.Invoke();
         }
 
@@ -116,6 +123,20 @@ namespace LouiseTieDyeStore.Client.Services.ProductService
             var result = await _http.PutAsJsonAsync($"api/product", product);
             var content = await result.Content.ReadFromJsonAsync<ServiceResponse<Product>>();
             return content.Data;
+        }
+
+        public async Task FilterSize(string category, string size)
+        {
+            SizeFilter = size;
+
+            await GetProducts(1, category);
+        }
+
+        public async Task FilterType(string category, string type)
+        {
+            TypeFilter = type;
+
+            await GetProducts(1, category);
         }
     }
 }
