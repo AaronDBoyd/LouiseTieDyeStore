@@ -22,6 +22,7 @@ else
 
 @if (Category != null)
 {
+    @* TODO: Create "Filters" component *@
     <div class="filters">
 
         <div class="filter-dropdowns">
@@ -50,12 +51,15 @@ else
                 <ul class="dropdown-menu">
                     @foreach (var type in ProductTypeService.ProductTypes)
                     {
-                        <li><button class="dropdown-item" type="button" @onclick="(() => FilterType(type.Id))">@type.Name</button></li>
+                        <li><button class="dropdown-item" type="button" 
+                            @onclick="(() => FilterType(type.Id))"
+                            disabled="@(ProductService.TypeFilter == type.Name)">@type.Name</button></li>
                     }
                 </ul>
             </div>
 
-            <div class="dropdown">
+            @* TODO: Implement Sorting *@
+            @* <div class="dropdown">
                 <button type="button" class="btn dropdown-toggle" data-bs-toggle="dropdown">
                     Sort By
                 </button>
@@ -67,7 +71,7 @@ else
                     <li><a class="dropdown-item" href="#">Smallest to Largest</a></li>
                     <li><a class="dropdown-item" href="#">Largest to Smallest</a></li>
                 </ul>
-            </div>
+            </div> *@
         </div>
 
         <div>

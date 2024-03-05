@@ -1,0 +1,21 @@
+﻿h3 {
+    text-align: center;
+    text-decoration: underline;
+}
+
+.row {
+    padding: 6px;
+    border-bottom: 1px solid lightgray;
+}
+
+.col {
+    text-align: center;
+}
+
+.type-name {
+    font-weight: 600;
+}
+
+.new-type-btn {
+    text-align: center;
+}

@@ -1,0 +1,121 @@
+﻿@page "/admin/product-types"
+@inject IProductTypeService ProductTypeService
+@implements IDisposable
+
+<div class="container">
+
+    <h3>ProductTypes</h3>
+
+    @foreach (var type in ProductTypeService.ProductTypes)
+    {
+        <div class="row">
+            <div class="col type-name">
+                @type.Name
+            </div>
+            <div class="col">
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="@($"#typeId{type.Id}EditModal")">
+                    <i class=" oi oi-pencil"></i> Edit
+                </button>
+            </div>
+        </div>
+
+        <!-- The Modal -->
+        <div class="modal" id="@($"typeId{type.Id}EditModal")">
+            <div class="modal-dialog">
+                <div class="modal-content">
+
+                    <!-- Modal Header -->
+                    <div class="modal-header">
+                        <h4 class="modal-title">@($"Edit {type.Name}")</h4>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+
+                    <!-- Modal body -->
+                    <div class="modal-body">
+                        <EditForm Model="@type" OnValidSubmit="() => UpdateProductType(type)">
+                            <DataAnnotationsValidator />
+                            <div class="row">
+                                <div class="col-10">
+                                    <InputText @bind-Value="type.Name" class="form-control" />
+                                    <ValidationMessage For="@(() => type.Name)" />
+                                </div>
+                                <div class="col-2">
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="oi oi-cloud-upload"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </EditForm>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+    <br />
+
+    <div class="new-type-btn">
+        <button class=" btn btn-primary" data-bs-toggle="modal" data-bs-target="#newTypeModal">
+            <i class="oi oi-plus"></i> Add New Product Type
+        </button>
+    </div>
+
+    <!-- The Modal -->
+    <div class="modal" id="newTypeModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+
+                <!-- Modal Header -->
+                <div class="modal-header">
+                    <h4 class="modal-title">New Product Type</h4>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <!-- Modal body -->
+                <div class="modal-body">
+                    <EditForm Model="newProductType" OnValidSubmit="AddProductType">
+                        <DataAnnotationsValidator />
+                        <div class="row">
+                            <div class="col-10">
+                                <InputText @bind-Value="newProductType.Name" class="form-control" />
+                                <ValidationMessage For="@(() => newProductType.Name)" />
+                            </div>
+                            <div class="col-2">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="oi oi-cloud-upload"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </EditForm>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    ProductType newProductType = new ProductType();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await ProductTypeService.GetProductTypes();
+        ProductTypeService.OnChange += StateHasChanged;
+    }
+
+    public void Dispose()
+    {
+        ProductTypeService.OnChange -= StateHasChanged;
+    }
+
+    private async Task UpdateProductType(ProductType type)
+    {
+        await ProductTypeService.UpdateProductType(type);
+    }
+
+    private async Task AddProductType()
+    {
+        await ProductTypeService.AddProductType(newProductType);
+
+        newProductType = new ProductType();
+    }
+}
