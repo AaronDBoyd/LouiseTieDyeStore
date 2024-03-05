@@ -11,6 +11,7 @@ namespace LouiseTieDyeStore.Client.Services.ProductTypeService
         }
 
         public List<ProductType> ProductTypes { get; set; } = new List<ProductType>();
+        public string DeleteMessage { get; set; } = string.Empty;
 
         public event Action OnChange;
 
@@ -19,6 +20,20 @@ namespace LouiseTieDyeStore.Client.Services.ProductTypeService
             var response = await _http.PostAsJsonAsync("api/producttype", productType);
             ProductTypes = (await response.Content
                 .ReadFromJsonAsync<ServiceResponse<List<ProductType>>>()).Data;
+            OnChange.Invoke();
+        }
+
+        public async Task DeleteProductType(int typeId)
+        {
+            var result = await _http.DeleteAsync($"api/producttype/{typeId}");
+            var response = (await result.Content.ReadFromJsonAsync<ServiceResponse<List<ProductType>>>());
+
+            if (response.Success)
+            {
+                ProductTypes = response.Data;
+            }
+
+            DeleteMessage = response.Message;
             OnChange.Invoke();
         }
 

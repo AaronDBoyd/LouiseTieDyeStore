@@ -20,7 +20,7 @@ a, .btn-link {
 
 .content {
     padding-top: 1.1rem;
-    min-height: 300px;
+    min-height: 470px;
 }
 
 .valid.modified:not([type=checkbox]) {

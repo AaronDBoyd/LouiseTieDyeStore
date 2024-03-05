@@ -1,10 +1,12 @@
 ﻿h3 {
     text-align: center;
     text-decoration: underline;
+    margin: 30px auto;
 }
 
 .row {
     padding: 6px;
+    margin-bottom: 10px;
     border-bottom: 1px solid lightgray;
 }
 
@@ -17,5 +19,9 @@
 }
 
 .new-type-btn {
+    text-align: center;
+}
+
+.delete-msg {
     text-align: center;
 }

@@ -35,5 +35,12 @@ namespace LouiseTieDyeStore.Server.Controllers
             var response = await _productTypeService.UpdateProductType(productType);
             return Ok(response);
         }
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult<ServiceResponse<List<Product>>>> DeleteProductType(int id)
+        {
+            var result = await _productTypeService.DeleteProductType(id);
+            return Ok(result);
+        }
     }
 }
