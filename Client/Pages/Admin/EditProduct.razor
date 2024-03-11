@@ -5,6 +5,7 @@
 @inject ICategoryService CategoryService
 @inject NavigationManager NavigationManager
 @inject IJSRuntime JSRuntime
+@attribute [Authorize(Roles = "Admin")]
 
 <div class="container">
     @* TODO: Add "back to List" button *@

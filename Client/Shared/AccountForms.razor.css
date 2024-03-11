@@ -37,7 +37,7 @@ form {
     color: gray;
 }
 
-.logged-in a {
+a {
     text-decoration: none;
     color: black;
     font-size: 1.5rem;
@@ -45,7 +45,7 @@ form {
     transition: font-size .2s;
 }
 
-    .logged-in a:hover {
+    a:hover {
         font-size: 1.7rem;
     }
 

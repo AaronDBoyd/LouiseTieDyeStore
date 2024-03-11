@@ -1,6 +1,7 @@
 ﻿@page "/admin/products"
 @inject IProductService ProductService
 @inject NavigationManager NavigationManager
+@attribute [Authorize(Roles = "Admin")]
 
 <div class="container">
 
@@ -44,7 +45,7 @@
                             </button>
                         </td>
                     </tr>
-                </Virtualize>               
+                </Virtualize>
             </tbody>
         </table>
     </div>

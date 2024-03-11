@@ -1,12 +1,10 @@
 ﻿@page "/"
 @page "/{categoryUrl}/{page:int}"
 @page "/search/{searchText}/{page:int}"
-
 @inject IProductService ProductService
-
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 
 <ProductList Category="@CategoryUrl" SearchText="@SearchText" />
-
 
 @code {
     [Parameter]
