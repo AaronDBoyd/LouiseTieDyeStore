@@ -1,120 +1,130 @@
-﻿
+﻿@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+
+@inject NavigationManager Navigation
+@inject SignOutSessionStateManager SignOutManager
+
 <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
     <div class="offcanvas-header">
         @* <h5 id="offcanvasRightLabel">Account</h5> *@
         <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
     </div>
     <div class="offcanvas-body">
+        <AuthorizeView>
 
-        @****** Logged-Out ******@
-        @* <ul class="nav nav-tabs nav-justified" id="myTab" role="tablist">
-            <li class="nav-item" role="presentation">
+            @****** Logged-Out ******@
+            <NotAuthorized>
+                <div data-bs-dismiss="offcanvas">
+                    <a href="authentication/login">
+                        Log In / Sign Up
+                    </a>
+                </div>
+                @* <div data-bs-dismiss="offcanvas">
+                    <a href="authentication/signup">
+                        Sign Up
+                    </a>
+                </div> *@
+                @* <ul class="nav nav-tabs nav-justified" id="myTab" role="tablist">
+                <li class="nav-item" role="presentation">
                 <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home" type="button" role="tab" aria-controls="home" aria-selected="true">Login</button>
-            </li>
-            <li class="nav-item" role="presentation">
+                </li>
+                <li class="nav-item" role="presentation">
                 <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="false">Create Account</button>
-            </li>
-        </ul> *@
+                </li>
+                </ul>
 
-        @* <div class="tab-content" id="myTabContent">
-            <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+                <div class="tab-content" id="myTabContent">
+                <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
                 <form>
-                   
-                    <div class="mb-3">
-                        <label for="email">Email</label>
-                        <input id="email" class="form-control" />
-                    
-                    </div>
-                    <div class="mb-3">
-                        <label for="password">Password</label>
-                        <input id="password" class="form-control" type="password" />
-                     
-                    </div>
-                    <br />
-                    <button type="submit" class="btn btn-primary">Login</button>
+
+                <div class="mb-3">
+                <label for="email">Email</label>
+                <input id="email" class="form-control" />
+
+                </div>
+                <div class="mb-3">
+                <label for="password">Password</label>
+                <input id="password" class="form-control" type="password" />
+
+                </div>
+                <br />
+                <button type="submit" class="btn btn-primary">Login</button>
                 </form>
-            </div>
-            <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+                </div>
+                <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
                 <form>
-                  
-                    <div class="mb-3">
-                        <label for="firstName">First Name</label>
-                        <input id="fistName" class="form-control" />
-                    
-                    </div>
-                    <div class="mb-3">
-                        <label for="lastName">Last Name</label>
-                        <input id="lastName" class="form-control" />
-                 
-                    </div>
-                    <div class="mb-3">
-                        <label for="phoneNumber">Phone Number</label>
-                        <input id="phoneNumber" class="form-control" />
-              
-                    </div>
-                    <div class="mb-3">
-                        <label for="email">Email</label>
-                        <input id="email" class="form-control" />
-   
-                    </div>
-                    <div class="mb-3">
-                        <label for="password">Password</label>
-                        <input id="password" class="form-control" type="password" />
 
-                    </div>
-                    <div class="mb-3">
-                        <label for="confirmPassword">Confirm Password</label>
-                        <input id="confirmPassword" class="form-control" type="password" />
+                <div class="mb-3">
+                <label for="firstName">First Name</label>
+                <input id="fistName" class="form-control" />
 
-                    </div>
-                    <br />
-                    <button type="submit" class="btn btn-primary">Login</button>
+                </div>
+                <div class="mb-3">
+                <label for="lastName">Last Name</label>
+                <input id="lastName" class="form-control" />
+
+                </div>
+                <div class="mb-3">
+                <label for="phoneNumber">Phone Number</label>
+                <input id="phoneNumber" class="form-control" />
+
+                </div>
+                <div class="mb-3">
+                <label for="email">Email</label>
+                <input id="email" class="form-control" />
+
+                </div>
+                <div class="mb-3">
+                <label for="password">Password</label>
+                <input id="password" class="form-control" type="password" />
+
+                </div>
+                <div class="mb-3">
+                <label for="confirmPassword">Confirm Password</label>
+                <input id="confirmPassword" class="form-control" type="password" />
+
+                </div>
+                <br />
+                <button type="submit" class="btn btn-primary">Login</button>
                 </form>
-            </div>
-        </div> *@
+                </div>
+                </div> *@
+            </NotAuthorized>
 
-        @******* Logged-In *******@
-        <div class="logged-in">
-            <div class="header">
-                <h3>Account Info</h3>
-            </div>
-            <hr />
-            <div data-bs-dismiss="offcanvas">
-                <a href="">
-                    My Orders
-                </a>
-            </div>
-            <div data-bs-dismiss="offcanvas">
-                <a href="/profile">
-                    Change Password
-                </a>
-            </div>
-            <div data-bs-dismiss="offcanvas">
-                <a href="">
-                    Log Out
-                </a>
-            </div>
-            <hr />
-            <h5>Admin</h5>
-            <div data-bs-dismiss="offcanvas">
-                <a href="/admin/orders">
-                    Orders
-                </a>
-            </div>
-            <div data-bs-dismiss="offcanvas">
-                <a href="/admin/products">
-                    Products
-                </a>
-            </div>
-            <div data-bs-dismiss="offcanvas">
-                <a href="/admin/product-types">
-                    Product Types
-                </a>
-            </div>
-        </div>
+            @******* Logged-In *******@
+            <Authorized>
+                <div class="logged-in">
+                    <div class="header">
+                        <h3>Account Info</h3>
+                    </div>
+                    <hr />
+                    <div data-bs-dismiss="offcanvas">
+                        <a href="">
+                            My Orders
+                        </a>
+                    </div>
+                    <div data-bs-dismiss="offcanvas">
+                        <a href="/profile">
+                            Change Password
+                        </a>
+                    </div>
+                    <div data-bs-dismiss="offcanvas">
+                        <a href="" @onclick="BeginSignOut">
+                            Log Out
+                        </a>
+                    </div>
+                    <hr />
+                    <AdminLinks />
+                </div>
+            </Authorized>
+        </AuthorizeView>
     </div>
 </div>
 
 @code {
-
+    private async Task BeginSignOut(MouseEventArgs args)
+    {
+        await SignOutManager.SetSignOutState();
+        Navigation.NavigateTo("authentication/logout");
+    }
 }

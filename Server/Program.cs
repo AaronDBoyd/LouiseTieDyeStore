@@ -4,7 +4,9 @@ global using LouiseTieDyeStore.Server.Data;
 global using LouiseTieDyeStore.Server.Services.ProductService;
 global using LouiseTieDyeStore.Server.Services.ProductTypeService;
 global using LouiseTieDyeStore.Server.Services.CategoryService;
+global using LouiseTieDyeStore.Server.Services.AuthService;
 using Microsoft.AspNetCore.ResponseCompression;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace LouiseTieDyeStore
 {
@@ -30,6 +32,19 @@ namespace LouiseTieDyeStore
             builder.Services.AddScoped<IProductService, ProductService>();
             builder.Services.AddScoped<IProductTypeService, ProductTypeService>();
             builder.Services.AddScoped<ICategoryService, CategoryService>();
+            builder.Services.AddScoped<IAuthService, AuthService>();
+
+            builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, c =>
+    {
+        c.Authority = $"{builder.Configuration["Auth0:Domain"]}";
+        c.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+        {
+            ValidAudience = builder.Configuration["Auth0:Audience"],
+            ValidIssuer = $"{builder.Configuration["Auth0:Domain"]}"
+        };
+    });
+            builder.Services.AddHttpContextAccessor();
 
             var app = builder.Build();
 
@@ -55,6 +70,8 @@ namespace LouiseTieDyeStore
 
             app.UseRouting();
 
+            app.UseAuthentication();
+            app.UseAuthorization();
 
             app.MapRazorPages();
             app.MapControllers();

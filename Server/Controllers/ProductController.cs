@@ -15,28 +15,28 @@ namespace LouiseTieDyeStore.Server.Controllers
             _productService = productService;
         }
 
-        [HttpGet("admin")] // TODO: Add Authorization
+        [HttpGet("admin"), Authorize(Roles = "Admin")] 
         public async Task<ActionResult<ServiceResponse<List<Product>>>> GetAdminProducts()
         {
             var result = await _productService.GetAdminProducts();
             return Ok(result);
         }
 
-        [HttpPost] // TODO: Add Authorization
+        [HttpPost, Authorize(Roles = "Admin")] 
         public async Task<ActionResult<ServiceResponse<Product>>> CreateProduct(Product product)
         {
             var result = await _productService.CreateProduct(product);
             return Ok(result);
         }
 
-        [HttpPut] // TODO: Add Authorization
+        [HttpPut, Authorize(Roles = "Admin")] 
         public async Task<ActionResult<ServiceResponse<Product>>> UpdateProduct(Product product)
         {
             var result = await _productService.UpdateProduct(product);
             return Ok(result);
         }
 
-        [HttpDelete("{id}")] // TODO: Add Authorization
+        [HttpDelete("{id}"), Authorize(Roles = "Admin")] 
         public async Task<ActionResult<ServiceResponse<bool>>> DeleteProduct(int id)
         {
             var result = await _productService.DeleteProduct(id);

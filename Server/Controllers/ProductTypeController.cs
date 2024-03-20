@@ -1,11 +1,11 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LouiseTieDyeStore.Server.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    // TODO: Add Authorize
     public class ProductTypeController : ControllerBase
     {
         private readonly IProductTypeService _productTypeService;
@@ -22,21 +22,21 @@ namespace LouiseTieDyeStore.Server.Controllers
             return Ok(response);
         }
 
-        [HttpPost]
+        [HttpPost, Authorize(Roles = "Admin")]
         public async Task<ActionResult<ServiceResponse<List<ProductType>>>> AddProductType(ProductType productType)
         {
             var response = await _productTypeService.AddProductType(productType);
             return Ok(response);
         }
 
-        [HttpPut]
+        [HttpPut, Authorize(Roles = "Admin")]
         public async Task<ActionResult<ServiceResponse<List<ProductType>>>> UpdateProductType(ProductType productType)
         {
             var response = await _productTypeService.UpdateProductType(productType);
             return Ok(response);
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("{id}"), Authorize(Roles = "Admin")]
         public async Task<ActionResult<ServiceResponse<List<Product>>>> DeleteProductType(int id)
         {
             var result = await _productTypeService.DeleteProductType(id);
