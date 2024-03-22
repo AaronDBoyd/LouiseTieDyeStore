@@ -4,9 +4,12 @@ global using LouiseTieDyeStore.Client.Services.ProductService;
 global using LouiseTieDyeStore.Client.Services.ProductTypeService;
 global using LouiseTieDyeStore.Client.Services.CategoryService;
 global using LouiseTieDyeStore.Client.Services.AuthService;
+global using LouiseTieDyeStore.Client.Services.CartService;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
+using Blazored.LocalStorage;
+using Blazored.SessionStorage;
 
 namespace LouiseTieDyeStore.Client
 {
@@ -17,6 +20,9 @@ namespace LouiseTieDyeStore.Client
             var builder = WebAssemblyHostBuilder.CreateDefault(args);
             builder.RootComponents.Add<App>("#app");
             builder.RootComponents.Add<HeadOutlet>("head::after");
+
+            builder.Services.AddBlazoredLocalStorage();
+            builder.Services.AddBlazoredSessionStorage();
 
             builder.Services.AddHttpClient<PublicClient>(client => client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress));
 
@@ -31,6 +37,7 @@ namespace LouiseTieDyeStore.Client
             builder.Services.AddScoped<IProductTypeService, ProductTypeService>();
             builder.Services.AddScoped<ICategoryService, CategoryService>();
             builder.Services.AddScoped<IAuthService, AuthService>();
+            builder.Services.AddScoped<ICartService, CartService>();
 
             builder.Services.AddOidcAuthentication(options =>
             {

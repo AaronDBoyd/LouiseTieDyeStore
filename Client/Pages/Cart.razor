@@ -1,5 +1,5 @@
 ﻿@page "/cart"
-
+@inject ICartService CartService
 
 
 <div class="container cart-container">
@@ -7,168 +7,167 @@
         <i class="oi oi-chevron-left"></i><span> Continue Shopping</span>
     </a>
 
-    <div class="cart-count my-5">
-        <h3>Cart (3)</h3>
-    </div>
-
-    <div class="quick-summary">
-        <table>
-            <tbody>
-                <tr>
-                    <th class="total-key">
-                        Estimated Total
-                    </th>
-                    <td class="total-value">$70.00</td>
-                </tr>
-            </tbody>
-        </table>
-        <hr />
-        <a href="/checkout-login" class="checkout-btn btn">
-            Continue to Checkout
-        </a>
-    </div>
-
-    <div class="items-summary-grid my-3">
-        <div class="cart-items">
-
-            @* #1 *@
-            <div class="item">
-                <div class="item-img-wrapper">
-                    <img class="item-img" src="/images/td1.png" />
-                </div>
-                <div class="details-subtotal-wrapper">
-
-                    <div class="item-details">
-                        <div class="title">Cool Tie-Dye Shirt</div>
-                        <div class="size">Size: Large</div>
-                        <div>Spiral, Blue/Yellow/Green on a Scooby Doo v-neck shirt</div>
-                    </div>
-                    <div class="item-subtotal">
-                        <div>Subtotal:</div>
-                        <hr />
-                        <div>$20.00</div>
-                    </div>
-                </div>
-                <div class="item-remove">
-                    @* TODO: enlarge area to click "x" *@
-                    <i class="oi oi-x" data-bs-toggle="modal" data-bs-target="#removeModal"></i>
-                </div>
-                @* <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#myModal">
-                Open modal
-                </button> *@
-            </div>
-
-            <!-- The Modal -->
-            <div class="modal fade remove-modal" id="removeModal">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-
-                        <!-- Modal Header -->
-                        <div class="modal-header">
-                            <h2 class="modal-title">Remove this item?</h2>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                        </div>
-
-                        <!-- Modal body -->
-                        <div class="modal-body">
-                            @* <p>Remove:</p> *@
-                            <p>Cool Tie-Dye Shirt</p>
-                        </div>
-
-                        <!-- Modal footer -->
-                        <div class="modal-footer">
-                            <button type="button" class="btn remove-confirm" data-bs-dismiss="modal">Yes</button>
-                            <button type="button" class="btn remove-cancel" data-bs-dismiss="modal">Cancel</button>
-                        </div>
-
-                    </div>
-                </div>
-            </div>
-
-
-            @* #2 *@
-            <div class="item">
-                <div class="item-img-wrapper">
-                    <img class="item-img" src="/images/td2.png" />
-                </div>
-
-                <div class="details-subtotal-wrapper">
-
-                    <div class="item-details">
-                        <div class="title">Cool Tie-Dye Shirt</div>
-                        <div class="size">Size: Large</div>
-                        <div>Spiral, Blue/Yellow/Green on a Scooby Doo v-neck shirt</div>
-                    </div>
-                    <div class="item-subtotal">
-                        <div>Subtotal:</div>
-                        <hr />
-                        <div>$20.00</div>
-                    </div>
-                </div>
-                <div class="item-remove">
-                    <i class="oi oi-x"></i>
-                </div>
-            </div>
-
-            <div class="item">
-                <div class="item-img">
-                </div>
-                <div class="item-details">
-                </div>
-                <div class="item-subtotal">
-                </div>
-                <div class="item-remove">
-                </div>
-            </div>
-
+    @if (cartProducts == null || cartProducts.Count == 0)
+    {
+        <span>@message</span>
+    }
+    else
+    {
+        <div class="cart-count my-5">
+            <h3>Cart (@cartProducts.Count)</h3>
         </div>
-        <div class="order-summary">
-            <h3>Order Summary</h3>
-            <hr />
-            <table>
-                <tbody>
-                    <tr>
-                        <th class="subtotal-key">
-                            Subtotal
-                        </th>
-                        <td class="subtotal-value">$70.00</td>
-                    </tr>
-                    <tr>
-                        <th class="shipping-key">
-                            Shipping
-                        </th>
-                        <td class="shipping-value">Calculated in Checkout</td>
-                    </tr>
-                    <tr>
-                        <th class="taxes-key">
-                            Taxes
-                        </th>
-                        <td class="taxes-value">Calculated in Checkout</td>
-                    </tr>
-                </tbody>
-            </table>
-            <br />
-            <hr />
+
+        <div class="quick-summary">
             <table>
                 <tbody>
                     <tr>
                         <th class="total-key">
                             Estimated Total
                         </th>
-                        <td class="total-value">$70.00</td>
+                        <td class="total-value">$@cartProducts.Sum(p => p.Price)</td>
                     </tr>
                 </tbody>
             </table>
-
             <hr />
             <a href="/checkout-login" class="checkout-btn btn">
                 Continue to Checkout
             </a>
-
         </div>
-    </div>
+
+        <div class="items-summary-grid my-3">
+            <div class="cart-items">
+
+                @foreach (var product in cartProducts)
+                {
+                    <div class="item">
+                        <div class="item-img-wrapper">
+                            <img class="item-img" src="@product.ImageUrl" />
+                        </div>
+                        <div class="details-subtotal-wrapper">
+
+                            <div class="item-details">
+                                <div class="title">@product.Title</div>
+                                <div class="size">Size: @product.Size</div>
+                                <div>@product.Description</div>
+                            </div>
+                            <div class="item-subtotal">
+                                <div>Subtotal:</div>
+                                <hr />
+                                <div>$@product.Price</div>
+                            </div>
+                        </div>
+                        <div class="item-remove">
+                            @* TODO: enlarge area to click "x" *@
+                            <i class="oi oi-x" data-bs-toggle="modal" data-bs-target="#removeModal"></i>
+                        </div>
+                        @* <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#myModal">
+                Open modal
+                </button> *@
+                    </div>
+
+                    <!-- The Modal -->
+                    <div class="modal fade remove-modal" id="removeModal">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+
+                                <!-- Modal Header -->
+                                <div class="modal-header">
+                                    <h2 class="modal-title">Remove this item?</h2>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                </div>
+
+                                <!-- Modal body -->
+                                <div class="modal-body">
+                                    @* <p>Remove:</p> *@
+                                    <p>@product.Title</p>
+                                </div>
+
+                                <!-- Modal footer -->
+                                <div class="modal-footer">
+                                    <button type="button" class="btn remove-confirm"
+                                            data-bs-dismiss="modal" @onclick="@(() => RemoveProductFromCart(product.ProductId))">
+                                        Yes
+                                    </button>
+                                    <button type="button" class="btn remove-cancel" data-bs-dismiss="modal">Cancel</button>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                }              
+            </div>
+
+            <div class="order-summary">
+                <h3>Order Summary</h3>
+                <hr />
+                <table>
+                    <tbody>
+                        <tr>
+                            <th class="subtotal-key">
+                                Subtotal
+                            </th>
+                            <td class="subtotal-value">$@cartProducts.Sum(p => p.Price)</td>
+                        </tr>
+                        <tr>
+                            <th class="shipping-key">
+                                Shipping
+                            </th>
+                            <td class="shipping-value">Calculated in Checkout</td>
+                        </tr>
+                        <tr>
+                            <th class="taxes-key">
+                                Taxes
+                            </th>
+                            <td class="taxes-value">Calculated in Checkout</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <br />
+                <hr />
+                <table>
+                    <tbody>
+                        <tr>
+                            <th class="total-key">
+                                Estimated Total
+                            </th>
+                            <td class="total-value">$@cartProducts.Sum(p => p.Price)</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <hr />
+                <a href="/checkout-login" class="checkout-btn btn">
+                    Continue to Checkout
+                </a>
+
+            </div>
+        </div>
+    }
 </div>
 
 @code {
+    List<CartProductResponse> cartProducts = null;
+    string message = "Loading cart...";
 
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadCart();
+    }
+
+    private async Task LoadCart()
+    {
+        await CartService.GetCartItemsCount();
+        cartProducts = await CartService.GetCartProducts();
+
+        if (cartProducts == null || cartProducts.Count == 0)
+        {
+            message = "Your cart is empty.";
+        }
+    }
+
+    private async Task RemoveProductFromCart(int productId)
+    {
+        await CartService.RemoveProductFromCart(productId);
+        await LoadCart();
+    }
 }

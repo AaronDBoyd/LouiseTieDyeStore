@@ -4,5 +4,6 @@
     {
         Task<ServiceResponse<int>> CheckInUser(string userName);
         Task<bool> UserExists(string email);
+        Task<int> GetUserId();
     }
 }

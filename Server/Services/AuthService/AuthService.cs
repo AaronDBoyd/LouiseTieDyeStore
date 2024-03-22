@@ -1,4 +1,5 @@
 ﻿
+using LouiseTieDyeStore.Shared;
 using System.Security.Claims;
 
 namespace LouiseTieDyeStore.Server.Services.AuthService
@@ -6,10 +7,12 @@ namespace LouiseTieDyeStore.Server.Services.AuthService
     public class AuthService : IAuthService
     {
         private readonly DataContext _context;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public AuthService(DataContext context)
+        public AuthService(DataContext context, IHttpContextAccessor httpContextAccessor)
         {
             _context = context;
+            _httpContextAccessor = httpContextAccessor;
         }
         public async Task<ServiceResponse<int>> CheckInUser(string userName)
         {
@@ -34,6 +37,15 @@ namespace LouiseTieDyeStore.Server.Services.AuthService
             response.Data = user.Id;
 
             return response;
+        }
+
+        public async Task<int> GetUserId()
+        {
+           string userEmail = _httpContextAccessor.HttpContext.User
+                                      .FindFirstValue(ClaimTypes.Name);
+
+            User user = await _context.Users.FirstOrDefaultAsync(u => u.Email.Equals(userEmail));
+            return user.Id;
         }
 
         public async Task<bool> UserExists(string email)

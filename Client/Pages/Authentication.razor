@@ -2,18 +2,28 @@
 @inject NavigationManager Navigation
 @inject IConfiguration Configuration
 @inject IAuthService AuthService
+@inject ICartService CartService
+@inject ILocalStorageService LocalStorage
+
 
 <h3>Authenticating...</h3>
 
-<RemoteAuthenticatorView Action="@Action" OnLogInSucceeded="LoggedIn">
+<RemoteAuthenticatorView Action="@Action" 
+    OnLogInSucceeded="LoggedIn">
     <LogOut>
         @{
-            var authority = (string)Configuration["Auth0:Authority"];
-            var clientId = (string)Configuration["Auth0:ClientId"];
-
-            Navigation.NavigateTo($"{authority}/v2/logout?client_id={clientId}");
+            LogOut();
         }
     </LogOut>    
+    <LogOutSucceeded>
+        <AuthorizeView>           
+            <NotAuthorized>
+                @{
+                   SuccessfullyLoggedOut();
+                }
+            </NotAuthorized>
+        </AuthorizeView>
+    </LogOutSucceeded>
 </RemoteAuthenticatorView>
 
 @code {
@@ -23,6 +33,26 @@
     private async Task LoggedIn()
     {
         await AuthService.CheckInUser();
+        await AuthService.StoreSessionIdToken();
+        await CartService.StoreCartItems(true);
+        await CartService.GetCartItemsCount();
     }
 
+    private async Task LogOut()
+    {
+        var authority = (string)Configuration["Auth0:Authority"];
+        var clientId = (string)Configuration["Auth0:ClientId"];
+        var callbackUrl = "https://localhost:7065/authentication/logged-out";
+        var idToken = await LocalStorage.GetItemAsync<string>("id_token");
+
+        //Navigation.NavigateTo($"{authority}/v2/logout?client_id={clientId}");
+        Navigation.NavigateTo($"{authority}/oidc/logout?id_token_hint={idToken}&post_logout_redirect_uri={callbackUrl}");
+    }
+
+    private async Task SuccessfullyLoggedOut()
+    {
+        await LocalStorage.RemoveItemAsync("id_token");
+        await CartService.GetCartItemsCount();
+        Navigation.NavigateTo("");
+    }
 }

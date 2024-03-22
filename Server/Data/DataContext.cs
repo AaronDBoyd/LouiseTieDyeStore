@@ -13,6 +13,10 @@ namespace LouiseTieDyeStore.Server.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<CartItem>()
+                .HasKey(ci => new { ci.UserId, ci.ProductId });
+
+
             modelBuilder.Entity<ProductType>().HasData(
                 new ProductType { Id = 1, Name = "T-Shirt" },
                 new ProductType { Id = 2, Name = "Long Sleeve Shirt" },
@@ -110,5 +114,6 @@ namespace LouiseTieDyeStore.Server.Data
         public DbSet<Category> Categories { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<Address> Addresses { get; set; }
+        public DbSet<CartItem> CartItems { get; set; }
     }
 }

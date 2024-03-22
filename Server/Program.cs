@@ -5,6 +5,7 @@ global using LouiseTieDyeStore.Server.Services.ProductService;
 global using LouiseTieDyeStore.Server.Services.ProductTypeService;
 global using LouiseTieDyeStore.Server.Services.CategoryService;
 global using LouiseTieDyeStore.Server.Services.AuthService;
+global using LouiseTieDyeStore.Server.Services.CartService;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 
@@ -33,6 +34,7 @@ namespace LouiseTieDyeStore
             builder.Services.AddScoped<IProductTypeService, ProductTypeService>();
             builder.Services.AddScoped<ICategoryService, CategoryService>();
             builder.Services.AddScoped<IAuthService, AuthService>();
+            builder.Services.AddScoped<ICartService, CartService>();
 
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, c =>

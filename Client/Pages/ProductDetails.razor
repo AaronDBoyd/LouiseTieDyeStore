@@ -1,5 +1,6 @@
 ﻿@page "/product/{id:int}"
 @inject IProductService ProductService
+@inject ICartService CartService
 
 @if (product == null)
 {
@@ -24,11 +25,11 @@ else
                         }
                     }
                     @* <input type="radio" name="slides" checked="checked" id="slide-1">
-                    <input type="radio" name="slides" id="slide-2">
-                    <input type="radio" name="slides" id="slide-3">
-                    <input type="radio" name="slides" id="slide-4">
-                    <input type="radio" name="slides" id="slide-5">
-                    <input type="radio" name="slides" id="slide-6"> *@
+                <input type="radio" name="slides" id="slide-2">
+                <input type="radio" name="slides" id="slide-3">
+                <input type="radio" name="slides" id="slide-4">
+                <input type="radio" name="slides" id="slide-5">
+                <input type="radio" name="slides" id="slide-6"> *@
                     <ul class="carousel__slides">
                         @foreach (var image in product.Images)
                         {
@@ -42,71 +43,71 @@ else
                         }
 
                         @* <li class="carousel__slide">
-                            <figure>
-                                <div>
-                                    <img src="https://picsum.photos/id/1041/800/450" alt="">
-                                </div>
-                                <figcaption>
-                                    Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                                    <span class="credit">Photo: Tim Marshall</span>
-                                </figcaption>
-                            </figure>
-                        </li>
-                        <li class="carousel__slide">
-                            <figure>
-                                <div>
-                                    <img src="https://picsum.photos/id/1043/800/450" alt="">
-                                </div>
-                                <figcaption>
-                                    Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                                    <span class="credit">Photo: Christian Joudrey</span>
-                                </figcaption>
-                            </figure>
-                        </li>
-                        <li class="carousel__slide">
-                            <figure>
-                                <div>
-                                    <img src="https://picsum.photos/id/1044/800/450" alt="">
-                                </div>
-                                <figcaption>
-                                    Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                                    <span class="credit">Photo: Steve Carter</span>
-                                </figcaption>
-                            </figure>
-                        </li>
-                        <li class="carousel__slide">
-                            <figure>
-                                <div>
-                                    <img src="https://picsum.photos/id/1045/800/450" alt="">
-                                </div>
-                                <figcaption>
-                                    Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                                    <span class="credit">Photo: Aleksandra Boguslawska</span>
-                                </figcaption>
-                            </figure>
-                        </li>
-                        <li class="carousel__slide">
-                            <figure>
-                                <div>
-                                    <img src="https://picsum.photos/id/1049/800/450" alt="">
-                                </div>
-                                <figcaption>
-                                    Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                                    <span class="credit">Photo: Rosan Harmens</span>
-                                </figcaption>
-                            </figure>
-                        </li>
-                        <li class="carousel__slide">
-                            <figure>
-                                <div>
-                                    <img src="https://picsum.photos/id/1052/800/450" alt="">
-                                </div>
-                                <figcaption>
-                                    Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                                    <span class="credit">Photo: Annie Spratt</span>
-                                </figcaption>
-                            </figure>
-                        </li> *@
+                    <figure>
+                    <div>
+                    <img src="https://picsum.photos/id/1041/800/450" alt="">
+                    </div>
+                    <figcaption>
+                    Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                    <span class="credit">Photo: Tim Marshall</span>
+                    </figcaption>
+                    </figure>
+                    </li>
+                    <li class="carousel__slide">
+                    <figure>
+                    <div>
+                    <img src="https://picsum.photos/id/1043/800/450" alt="">
+                    </div>
+                    <figcaption>
+                    Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                    <span class="credit">Photo: Christian Joudrey</span>
+                    </figcaption>
+                    </figure>
+                    </li>
+                    <li class="carousel__slide">
+                    <figure>
+                    <div>
+                    <img src="https://picsum.photos/id/1044/800/450" alt="">
+                    </div>
+                    <figcaption>
+                    Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                    <span class="credit">Photo: Steve Carter</span>
+                    </figcaption>
+                    </figure>
+                    </li>
+                    <li class="carousel__slide">
+                    <figure>
+                    <div>
+                    <img src="https://picsum.photos/id/1045/800/450" alt="">
+                    </div>
+                    <figcaption>
+                    Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                    <span class="credit">Photo: Aleksandra Boguslawska</span>
+                    </figcaption>
+                    </figure>
+                    </li>
+                    <li class="carousel__slide">
+                    <figure>
+                    <div>
+                    <img src="https://picsum.photos/id/1049/800/450" alt="">
+                    </div>
+                    <figcaption>
+                    Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                    <span class="credit">Photo: Rosan Harmens</span>
+                    </figcaption>
+                    </figure>
+                    </li>
+                    <li class="carousel__slide">
+                    <figure>
+                    <div>
+                    <img src="https://picsum.photos/id/1052/800/450" alt="">
+                    </div>
+                    <figcaption>
+                    Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                    <span class="credit">Photo: Annie Spratt</span>
+                    </figcaption>
+                    </figure>
+                    </li> *@
                     </ul>
                     <ul class="carousel__thumbnails">
                         @foreach (var image in product.Images)
@@ -115,24 +116,24 @@ else
                                 <label for="@image.Url"><img src="@image.Url" alt=""></label>
                             </li>
                         }
-                       @*  <li>
-                            <label for="slide-1"><img src="https://picsum.photos/id/1041/150/150" alt=""></label>
-                        </li>
-                        <li>
-                            <label for="slide-2"><img src="https://picsum.photos/id/1043/150/150" alt=""></label>
-                        </li>
-                        <li>
-                            <label for="slide-3"><img src="https://picsum.photos/id/1044/150/150" alt=""></label>
-                        </li>
-                        <li>
-                            <label for="slide-4"><img src="https://picsum.photos/id/1045/150/150" alt=""></label>
-                        </li>
-                        <li>
-                            <label for="slide-5"><img src="https://picsum.photos/id/1049/150/150" alt=""></label>
-                        </li>
-                        <li>
-                            <label for="slide-6"><img src="https://picsum.photos/id/1052/150/150" alt=""></label>
-                        </li> *@
+                        @*  <li>
+                    <label for="slide-1"><img src="https://picsum.photos/id/1041/150/150" alt=""></label>
+                    </li>
+                    <li>
+                    <label for="slide-2"><img src="https://picsum.photos/id/1043/150/150" alt=""></label>
+                    </li>
+                    <li>
+                    <label for="slide-3"><img src="https://picsum.photos/id/1044/150/150" alt=""></label>
+                    </li>
+                    <li>
+                    <label for="slide-4"><img src="https://picsum.photos/id/1045/150/150" alt=""></label>
+                    </li>
+                    <li>
+                    <label for="slide-5"><img src="https://picsum.photos/id/1049/150/150" alt=""></label>
+                    </li>
+                    <li>
+                    <label for="slide-6"><img src="https://picsum.photos/id/1052/150/150" alt=""></label>
+                    </li> *@
                     </ul>
                 </div>
             </div>
@@ -140,13 +141,13 @@ else
 
         @* ***** OLD VERSION **** *@
         @* <div class="images">
-            @foreach (var image in product.Images)
-            {
-                <div class="product-img-wrapper">
-                    <img class="product-img" src="@image.Url" />
-                </div>
-            }
-        </div> *@
+    @foreach (var image in product.Images)
+    {
+    <div class="product-img-wrapper">
+    <img class="product-img" src="@image.Url" />
+    </div>
+    }
+    </div> *@
 
         <div class="details">
             <div class="title">
@@ -164,7 +165,7 @@ else
             <div class="product-size">Size: @product.Size</div>
             <br />
             <br />
-            <button class="btn add-btn">Add to Cart</button>
+            <button class="btn add-btn" @onclick="AddToCart">Add to Cart</button>
 
         </div>
     </div>
@@ -190,5 +191,15 @@ else
         {
             product = result.Data;
         }
+    }
+
+    private async Task AddToCart()
+    {
+        var cartItem = new CartItem
+        {
+                ProductId = Id
+        };
+
+        await CartService.AddToCart(cartItem);
     }
 }
