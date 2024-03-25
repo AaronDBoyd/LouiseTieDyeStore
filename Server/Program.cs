@@ -6,8 +6,10 @@ global using LouiseTieDyeStore.Server.Services.ProductTypeService;
 global using LouiseTieDyeStore.Server.Services.CategoryService;
 global using LouiseTieDyeStore.Server.Services.AuthService;
 global using LouiseTieDyeStore.Server.Services.CartService;
+global using LouiseTieDyeStore.Server.Services.ShippingService;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.OpenApi.Models;
 
 namespace LouiseTieDyeStore
 {
@@ -28,24 +30,52 @@ namespace LouiseTieDyeStore
             builder.Services.AddRazorPages();
 
             builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
+            builder.Services.AddSwaggerGen(option =>
+            {
+                option.SwaggerDoc("v1", new OpenApiInfo { Title = "Demo API", Version = "v1" });
+                option.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    In = ParameterLocation.Header,
+                    Description = "Please enter a valid token",
+                    Name = "Authorization",
+                    Type = SecuritySchemeType.Http,
+                    BearerFormat = "JWT",
+                    Scheme = "Bearer"
+                });
+                option.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Type=ReferenceType.SecurityScheme,
+                                Id="Bearer"
+                            }
+                        },
+                        new string[]{}
+                    }
+                });
+            });
 
             builder.Services.AddScoped<IProductService, ProductService>();
             builder.Services.AddScoped<IProductTypeService, ProductTypeService>();
             builder.Services.AddScoped<ICategoryService, CategoryService>();
             builder.Services.AddScoped<IAuthService, AuthService>();
             builder.Services.AddScoped<ICartService, CartService>();
+            builder.Services.AddScoped<IShippingService, FedExShippingService>();
 
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, c =>
-    {
-        c.Authority = $"{builder.Configuration["Auth0:Domain"]}";
-        c.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
-        {
-            ValidAudience = builder.Configuration["Auth0:Audience"],
-            ValidIssuer = $"{builder.Configuration["Auth0:Domain"]}"
-        };
-    });
+                .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, c =>
+                {
+                    c.Authority = $"{builder.Configuration["Auth0:Domain"]}";
+                    c.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+                    {
+                        ValidAudience = builder.Configuration["Auth0:Audience"],
+                        ValidIssuer = $"{builder.Configuration["Auth0:Domain"]}"
+                    };
+                });
+
             builder.Services.AddHttpContextAccessor();
 
             var app = builder.Build();

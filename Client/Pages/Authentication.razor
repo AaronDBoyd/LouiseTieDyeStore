@@ -8,8 +8,10 @@
 
 <h3>Authenticating...</h3>
 
-<RemoteAuthenticatorView Action="@Action" 
+<RemoteAuthenticatorView 
+    Action="@Action" 
     OnLogInSucceeded="LoggedIn">
+
     <LogOut>
         @{
             LogOut();
@@ -36,6 +38,12 @@
         await AuthService.StoreSessionIdToken();
         await CartService.StoreCartItems(true);
         await CartService.GetCartItemsCount();
+
+        string returnUrl = await LocalStorage.GetItemAsync<string>("returnUrl");
+
+        await LocalStorage.RemoveItemAsync("returnUrl");
+
+        Navigation.NavigateTo($"{returnUrl ?? string.Empty}", true);
     }
 
     private async Task LogOut()

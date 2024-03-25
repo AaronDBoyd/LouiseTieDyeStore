@@ -1,5 +1,9 @@
 ﻿@page "/shipping"
 @inject IJSRuntime JsRuntime
+@inject ICartService CartService
+@implements IDisposable
+
+@using Newtonsoft.Json
 
 <div class="container">
     <div class="shipping-checkout-grid">
@@ -9,22 +13,26 @@
                 <button class="@EditShippingCssClass" @onclick="EditShipping">Edit</button>
             </div>
 
+            @* TODO: Add Loading Modal or something while costs are calculated *@
+
+            @**** TODO: Style Form ****@
             <div class="shipping-form-wrapper @ConfirmShippingCssClass">
-                <form class="shipping-form">
+                <EditForm Model="address" class="shipping-form" OnValidSubmit="ConfirmShipping" OnInvalidSubmit="InvalidSubmit">
+                    <DataAnnotationsValidator />
                     @* <div class="form-name"> *@
                     <div class="mb-3">
                         <label for="firstName">First Name<span class="reqAst">*</span></label>
-                        <input id="firstName" class="form-control" />
+                        <InputText id="firstName" @bind-Value="address.FirstName" class="form-control input" />
                     </div>
                     <div class="mb-3">
                         <label for="lastName">Last Name<span class="reqAst">*</span></label>
-                        <input id="lastName" class="form-control" />
+                        <InputText id="lastName" @bind-Value="address.LastName" class="form-control input" />
                     </div>
                     @* </div> *@
                     <div class="form-phoneNumber">
                         <div class="mb-3">
                             <label for="phoneNumber">Phone Number<span class="reqAst">*</span></label>
-                            <input id="phoneNumber" type="tel" class="form-control" />
+                            <InputText id="phoneNumber" type="tel" @bind-Value="address.PhoneNumber" class="form-control input" />
                         </div>
                     </div>
                     <div>
@@ -32,27 +40,27 @@
                     @* <div class="form-address"> *@
                     <div class="mb-3">
                         <label for="addressOne">Address Line 1<span class="reqAst">*</span></label>
-                        <input id="addressOne" type="text" class="form-control" />
+                        <InputText id="addressOne" type="text" @bind-Value="address.LineOne" class="form-control input" />
                     </div>
                     <div class="mb-3">
                         <label for="addressTwo">Address Line 2 (optional)</label>
-                        <input id="addressTwo" type="text" class="form-control" />
+                        <InputText id="addressTwo" type="text" @bind-Value="address.LineTwo" class="form-control input" />
                     </div>
                     @* </div> *@
                     @* <div class="form-city-zip"> *@
                     <div class="mb-3">
                         <label for="city">City<span class="reqAst">*</span></label>
-                        <input id="city" type="text" class="form-control" />
+                        <InputText id="city" type="text" @bind-Value="address.City" class="form-control input" />
                     </div>
                     <div class="mb-3">
                         <label for="zip">ZIP Code<span class="reqAst">*</span></label>
-                        <input id="zip" type="text" class="form-control" />
+                        <InputText id="zip" type="text" @bind-Value="address.Zip" class="form-control input" />
                     </div>
                     @* </div> *@
                     <div class="form-state">
                         <div class="mb-3">
                             <label for="state">State<span class="reqAst">*</span></label>
-                            <select class="form-select" name="state" id="state">
+                            <InputSelect class="form-select select" @bind-Value="address.State" name="state" id="state">
                                 <option>Select State</option>
                                 <option value="AL">Alabama</option>
                                 <option value="AK">Alaska</option>
@@ -105,14 +113,15 @@
                                 <option value="WV">West Virginia</option>
                                 <option value="WI">Wisconsin</option>
                                 <option value="WY">Wyoming</option>
-                            </select>
+                            </InputSelect>
                         </div>
                     </div>
                     <div></div>
                     <div class="form-submit">
-                        <button type="button" class="btn" @onclick="ConfirmShipping">Confirm Shipping Info</button>
+                        <button type="submit" class="btn">Confirm Shipping Info</button>
                     </div>
-                </form>
+                    <ValidationSummary />
+                </EditForm>
             </div>
 
             <div class="confirmed-address @EditShippingCssClass">
@@ -142,13 +151,21 @@
                             <th class="subtotal-key">
                                 subtotal
                             </th>
-                            <td class="subtotal-value">$70.00</td>
+                            <td class="subtotal-value">$@cartProducts.Sum(p => p.Price)</td>
                         </tr>
                         <tr>
                             <th class="shipping-key">
                                 shipping
                             </th>
-                            <td class="shipping-value">Calculated in Checkout</td>
+                            @if (shippingCost == default)
+                            {
+                                <td class="shipping-value">Calculated in Checkout</td>
+                            }
+                            else
+                            {
+                                <td class="shipping-value">@shippingCost</td>
+                            }
+
                         </tr>
                         <tr>
                             <th class="taxes-key">
@@ -175,56 +192,40 @@
             <div class="cart-info">
                 <div class="cart-header">
                     <div class="cart-count">
-                        <h3>Cart (3)</h3>
+                        <h3>Cart (@cartProducts.Count)</h3>
                     </div>
                     <div class="edit-cart">
                         <a href="/cart">Edit</a>
                     </div>
                 </div>
                 <hr />
+
+                @* TODO: item card spacing *@
                 <div class="cart-items">
 
-                    @* #1 *@
-                    <div class="item">
-                        <div class="item-img-wrapper">
-                            <img class="item-img" src="images/td1.png" />
-                        </div>
-                        <div class="item-details">
-                            <div class="title">
-                                Cool Tie-Dye Shirt
+                    @foreach (var product in cartProducts)
+                    {
+                        <div class="item">
+                            <div class="item-img-wrapper">
+                                <img class="item-img" src="@product.ImageUrl" />
                             </div>
-                            <div class="description">
-                                Spiral, Blue/Yellow/Green on a Scooby Doo v-neck shirt
-                            </div>
-                            <div class="size">
-                                Size: X-Medium
-                            </div>
-                            <div class="price">
-                                $20.00
-                            </div>
-                        </div>
-                    </div>
-
-                    @* #2 *@
-                    <div class="item">
-                        <div class="item-img-wrapper">
-                            <img class="item-img" src="images/td4.png" />
-                        </div>
-                        <div class="item-details">
-                            <div class="title">
-                                Cool Tie-Dye Shirt
-                            </div>
-                            <div class="description">
-                                Spiral, Blue/Yellow/Green on a Scooby Doo v-neck shirt
-                            </div>
-                            <div class="size">
-                                Size: X-Medium
-                            </div>
-                            <div class="price">
-                                $20.00
+                            <div class="item-details">
+                                <div class="title">
+                                    @product.Title
+                                </div>
+                                <div class="description">
+                                    @product.Description
+                                </div>
+                                <div class="size">
+                                    Size: @product.Size
+                                </div>
+                                <div class="price">
+                                    $@product.Price
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    }             
+                    
                 </div>
             </div>
         </div>
@@ -232,11 +233,40 @@
 </div>
 
 @code {
+    private Address address = new ();
+    List<CartProductResponse> cartProducts = new List<CartProductResponse>();
+    decimal shippingCost = default;
+
+    event Action OnChange;
+
+
     private bool confirmShipping = false;
     private bool editShipping = true;
 
     private string? ConfirmShippingCssClass => confirmShipping ? "hide" : null;
     private string? EditShippingCssClass => editShipping ? "hide" : null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        OnChange += StateHasChanged;
+        await LoadCart();
+    }
+
+    private async Task LoadCart()
+    {
+        await CartService.GetCartItemsCount();
+        cartProducts = await CartService.GetCartProducts();
+
+        // if (cartProducts == null || cartProducts.Count == 0)
+        // {
+        //     message = "Your cart is empty.";
+        // }
+    }
+
+    private void InvalidSubmit()
+    {
+        Console.WriteLine("Invalid Submit");
+    }
 
     private async void ConfirmShipping()
     {
@@ -244,11 +274,41 @@
         editShipping = !editShipping;
 
         await JsRuntime.InvokeVoidAsync("scrollUp");
+
+        // TODO: Move logic to service
+        ShippingInfoDTO shippingInfo = new ShippingInfoDTO
+            {
+                LineOne = address.LineOne,
+                LineTwo = address.LineTwo,
+                City = address.City,
+                Zip = int.Parse(address.Zip)
+        };
+        HttpClient httpClient = new HttpClient();
+        httpClient.BaseAddress = new Uri("https://localhost:7065");
+
+        var result = await httpClient.PostAsJsonAsync("api/shipping/validate-address", shippingInfo);
+        var response = (await result.Content.ReadFromJsonAsync<ServiceResponse<string>>()).Data;
+
+        Console.WriteLine("!!! Response: " + response);
+
+        if (decimal.TryParse(response, out decimal cost))
+        {
+
+            shippingCost = cost;
+            Console.WriteLine("!!! Cost: " + cost);
+
+            OnChange.Invoke();
+        }
     }
 
     private void EditShipping()
     {
         editShipping = !editShipping;
         confirmShipping = !confirmShipping;
+    }
+
+    public void Dispose()
+    {
+        OnChange -= StateHasChanged;
     }
 }

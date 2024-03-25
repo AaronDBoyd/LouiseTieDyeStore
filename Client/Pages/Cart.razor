@@ -1,5 +1,7 @@
 ﻿@page "/cart"
 @inject ICartService CartService
+@inject IAuthService AuthService
+@inject NavigationManager Navigation
 
 
 <div class="container cart-container">
@@ -9,7 +11,9 @@
 
     @if (cartProducts == null || cartProducts.Count == 0)
     {
-        <span>@message</span>
+        <br />
+        <br />
+        <h4>@message</h4>
     }
     else
     {
@@ -136,9 +140,9 @@
                 </table>
 
                 <hr />
-                <a href="/checkout-login" class="checkout-btn btn">
+                <button type="button" class="checkout-btn btn" @onclick="ContinueCheckout">
                     Continue to Checkout
-                </a>
+                </button>
 
             </div>
         </div>
@@ -169,5 +173,17 @@
     {
         await CartService.RemoveProductFromCart(productId);
         await LoadCart();
+    }
+
+    private async Task ContinueCheckout()
+    {
+        if (await AuthService.IsUserAuthenticated())
+        {
+            Navigation.NavigateTo("/shipping");
+        }
+        else
+        {
+            Navigation.NavigateTo("/checkout-login");
+        }
     }
 }

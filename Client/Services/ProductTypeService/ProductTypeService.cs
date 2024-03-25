@@ -28,7 +28,7 @@ namespace LouiseTieDyeStore.Client.Services.ProductTypeService
         public async Task DeleteProductType(int typeId)
         {
             var result = await _privateClient.DeleteAsync($"api/producttype/{typeId}");
-            var response = (await result.Content.ReadFromJsonAsync<ServiceResponse<List<ProductType>>>());
+            var response = await result.Content.ReadFromJsonAsync<ServiceResponse<List<ProductType>>>();
 
             if (response.Success)
             {
