@@ -1,0 +1,46 @@
+﻿@page "/admin/rates"
+@attribute [Authorize(Roles = "Admin")]
+@inject ISalesTaxService TaxService
+
+<div class="container">
+
+
+    <h3>Tax Rates</h3>
+
+    <p><a href="https://www.tax-rates.org/taxtables/sales-tax-by-state">https://www.tax-rates.org/taxtables/sales-tax-by-state</a></p>
+    <p><a href="https://taxfoundation.org/data/all/state/2024-sales-taxes/">https://taxfoundation.org/data/all/state/2024-sales-taxes/</a></p>
+
+    <br />
+
+    <EditForm Model="rates">
+
+        <button type="submit" @onclick="SaveRates" class="btn btn-success mb-4">Save Rates</button>
+
+        <div class="rate-list">
+
+            @foreach (var rate in rates)
+            {
+                <div class="mb-3">
+                    <label>@rate.State</label>
+                    <InputNumber @bind-Value="@rate.Rate" 
+                        class="form-control" 
+                        style="width:200px; border-radius:25px" />
+                </div>
+            }
+        </div>
+    </EditForm>
+</div>
+
+@code {
+    List<TaxRate> rates = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        rates = await TaxService.GetTaxRates();
+    }
+
+    private void SaveRates()
+    {
+        _ = TaxService.UpdateRates(rates);
+    }
+}

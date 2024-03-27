@@ -1,0 +1,16 @@
+﻿
+h3 {
+    text-align:center;
+}
+
+label {
+    margin-left: 20px;
+}
+
+.rate-list {
+    max-height: 1500px;
+
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+}
