@@ -21,6 +21,16 @@ namespace LouiseTieDyeStore.Server.Services.SalesTaxService
             };
         }
 
+        public async Task<ServiceResponse<decimal>> GetTaxRate(string state)
+        {
+            var dbRate = await _context.TaxRates.FirstOrDefaultAsync(x => x.Abbreviation == state);
+          
+            return new ServiceResponse<decimal>
+            {
+                Data = dbRate.Rate
+            };
+        }
+
         public async Task<ServiceResponse<List<TaxRate>>> UpdateRates(List<TaxRate> newTaxRates)
         {
             var dbRates = await _context.TaxRates.ToListAsync();

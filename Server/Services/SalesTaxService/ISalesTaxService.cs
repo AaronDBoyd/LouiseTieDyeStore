@@ -6,6 +6,6 @@ namespace LouiseTieDyeStore.Server.Services.SalesTaxService
     {
         Task<ServiceResponse<List<TaxRate>>> GetRates();
         Task<ServiceResponse<List<TaxRate>>> UpdateRates(List<TaxRate> newTaxRates);
-
+        Task<ServiceResponse<decimal>> GetTaxRate(string state);
     }
 }

@@ -22,7 +22,8 @@ namespace LouiseTieDyeStore.Shared
         [StringLength(30, MinimumLength = 1, ErrorMessage = "Last name should be between 1 and 30 characters")]
         public string LastName { get; set; } = string.Empty;
 
-        [Required, DataType(DataType.PhoneNumber, ErrorMessage = "Please Enter a Valid Phone Number")]
+        [Required, Phone( ErrorMessage = "Please Enter a Valid Phone Number")]
+        [RegularExpression(@"^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$", ErrorMessage = "Entered phone format is not valid.")]
         public string PhoneNumber { get; set; } = string.Empty;
 
         [Required]
@@ -35,6 +36,7 @@ namespace LouiseTieDyeStore.Shared
         public string City { get; set; } = string.Empty;
 
         [Required]
+        [StringLength(2, MinimumLength = 2, ErrorMessage = "Please Select State")]
         public string State { get; set; } = string.Empty;
 
         [Required]

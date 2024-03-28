@@ -12,6 +12,17 @@ namespace LouiseTieDyeStore.Client.Services.SalesTaxService
             _httpClient = httpClient;
         }
 
+        public async Task<decimal> CalculateSalesTax(decimal subtotal, string state)
+        {
+            var result = await _httpClient.GetFromJsonAsync<ServiceResponse<decimal>>($"api/tax/{state}");
+
+            var rate = result.Data/100;
+
+            var salesTax = Math.Round(subtotal * rate, 2);
+
+            return salesTax;
+        }
+
         public async Task<List<TaxRate>> GetTaxRates()
         {
             var result = await _httpClient.GetFromJsonAsync<ServiceResponse<List<TaxRate>>>("api/tax");
