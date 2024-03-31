@@ -11,6 +11,7 @@ global using LouiseTieDyeStore.Server.Services.SalesTaxService;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.OpenApi.Models;
+using Stripe;
 
 namespace LouiseTieDyeStore
 {
@@ -59,13 +60,20 @@ namespace LouiseTieDyeStore
                 });
             });
 
-            builder.Services.AddScoped<IProductService, ProductService>();
+            builder.Services.AddScoped<IProductService, Server.Services.ProductService.ProductService>();
             builder.Services.AddScoped<IProductTypeService, ProductTypeService>();
             builder.Services.AddScoped<ICategoryService, CategoryService>();
             builder.Services.AddScoped<IAuthService, AuthService>();
             builder.Services.AddScoped<ICartService, CartService>();
             builder.Services.AddScoped<IShippingService, FedExShippingService>();
             builder.Services.AddScoped<ISalesTaxService, SalesTaxService>();
+
+            builder.Services.AddHttpClient();
+            builder.Services.AddHttpClient("fedExApi", client =>
+            {
+                client.BaseAddress = new Uri("https://apis-sandbox.fedex.com");
+                client.DefaultRequestHeaders.Add("X-locale", "en_US");
+            });
 
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, c =>

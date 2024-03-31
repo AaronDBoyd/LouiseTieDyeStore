@@ -11,10 +11,12 @@ namespace LouiseTieDyeStore.Server.Services.ShippingService
     public class FedExShippingService : IShippingService
     {
         private readonly IConfiguration _config;
+        private readonly IHttpClientFactory _httpClientFactory;
 
-        public FedExShippingService(IConfiguration config)
+        public FedExShippingService(IConfiguration config, IHttpClientFactory httpClientFactory)
         {
             _config = config;
+            _httpClientFactory = httpClientFactory;
         }
         public async Task<string> GetAuthToken()
         {
@@ -29,7 +31,8 @@ namespace LouiseTieDyeStore.Server.Services.ShippingService
                 { "client_id", clientId },
                 { "client_secret", clientSecret }
             };
-            using var client = new HttpClient();
+
+            var client = _httpClientFactory.CreateClient();
 
             client.BaseAddress = new Uri("https://apis-sandbox.fedex.com");
 
@@ -52,7 +55,6 @@ namespace LouiseTieDyeStore.Server.Services.ShippingService
 
         public async Task<ServiceResponse<string>> GetShippingRateQuote(ShippingInfoDTO shippingInfo, string authToken)
         {
-
             var shippingInfoRequest = new FedExRateQuoteRequest
             {
                 AccountNumber = new AccountNumber
@@ -98,18 +100,11 @@ namespace LouiseTieDyeStore.Server.Services.ShippingService
                 }
             };
 
-            //Console.WriteLine("!!! ShippingInfo: " + JsonConvert.SerializeObject(shippingInfoRequest));
-
-
-            // TODO: Create Client for Fedex APIs
-            using var client = new HttpClient();
-            client.BaseAddress = new Uri("https://apis-sandbox.fedex.com");
+            var client = _httpClientFactory.CreateClient("fedExApi");
             client.DefaultRequestHeaders.Add("Authorization", "Bearer " + authToken);
-            client.DefaultRequestHeaders.Add("X-locale", "en_US");
 
             try
             {
-
                 var result = await client.PostAsJsonAsync("/rate/v1/rates/quotes", shippingInfoRequest);
 
                 //Console.WriteLine("!!!Quote Result: " + await result.Content.ReadAsStringAsync());
@@ -137,13 +132,6 @@ namespace LouiseTieDyeStore.Server.Services.ShippingService
 
         public async Task<ServiceResponse<string>> ValidateShippingAddress(ShippingInfoDTO shippingInfo)
         {
-            //ShippingInfoDTO shippingInfo = new ShippingInfoDTO
-            //{
-            //    LineOne = "8321 Cavaricci Ave",
-            //    City = "Las Vegas",
-            //    Zip = 89129
-            //};
-
             var requestAddress = new FedExValidateAddressRequest
             {
                 AddressesToValidate = new List<AddressToValidate>
@@ -165,16 +153,10 @@ namespace LouiseTieDyeStore.Server.Services.ShippingService
 
             Console.WriteLine("!!!Request Address: " + JsonConvert.SerializeObject(requestAddress));
 
-
             var authToken = await GetAuthToken();
 
-            
-
-            using var client = new HttpClient();
-
-            client.BaseAddress = new Uri("https://apis-sandbox.fedex.com");
+            var client = _httpClientFactory.CreateClient("fedExApi");
             client.DefaultRequestHeaders.Add("Authorization", "Bearer " + authToken);
-            client.DefaultRequestHeaders.Add("X-locale", "en_US");
 
             try
             {
