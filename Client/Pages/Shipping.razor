@@ -2,6 +2,11 @@
 @inject IJSRuntime JsRuntime
 @inject ICartService CartService
 @inject ISalesTaxService TaxService
+@inject IOrderService OrderService
+@inject IAuthService AuthService
+@inject IShippingService ShippingService
+@inject ILocalStorageService LocalStorage
+@inject NavigationManager NavigationManager
 @implements IDisposable
 
 @using Newtonsoft.Json
@@ -147,7 +152,7 @@
                     </div>
                 </div>
                 <div>
-                    <button type="button" class="btn proceed-btn @EditShippingCssClass">Proceed to Checkout</button>
+                    <button type="button" class="btn proceed-btn @EditShippingCssClass" @onclick="PlaceOrder">Proceed to Checkout</button>
                 </div>
             }
         </div>
@@ -301,38 +306,54 @@
 
         await JsRuntime.InvokeVoidAsync("scrollUp");
 
-        // TODO: Move logic to service
-        ShippingInfoDTO shippingInfo = new ShippingInfoDTO
-            {
-                LineOne = address.LineOne,
-                LineTwo = address.LineTwo,
-                City = address.City,
-                Zip = int.Parse(address.Zip)
-            };
-
         salesTax = await TaxService.CalculateSalesTax(subTotal, address.State);
 
-        HttpClient httpClient = new HttpClient();
-        httpClient.BaseAddress = new Uri("https://localhost:7065");
+        var shippingCostResponse = await ShippingService.GetShippingCost(address);
 
-        var result = await httpClient.PostAsJsonAsync("api/shipping/validate-address", shippingInfo);
-        var response = (await result.Content.ReadFromJsonAsync<ServiceResponse<string>>()).Data;
+        Console.WriteLine("!!! Response: " + shippingCostResponse);
 
-        Console.WriteLine("!!! Response: " + response);
-
-        if (decimal.TryParse(response, out decimal cost))
+        if (decimal.TryParse(shippingCostResponse, out decimal cost))
         {
-
-            shippingCost = cost;
-            Console.WriteLine("!!! Cost: " + cost);
-
-            //OnChange.Invoke();
+            shippingCost = Math.Round(cost, 2);
+            Console.WriteLine("!!! Cost: " + shippingCost);
         }
 
         isLoading = false;
 
         OnChange.Invoke();
     }
+
+    private async Task PlaceOrder()
+    {
+        var checkout = new CheckoutDTO
+        {
+            SalesTax = salesTax,
+            ShippingCost = shippingCost
+        };
+
+        foreach (var product in cartProducts)
+        {
+            checkout.Items.Add(new CheckoutItem
+            {
+                Title = product.Title,
+                Price = product.Price,
+                ImageUrl = product.ImageUrl
+            });
+        }
+
+        if (await AuthService.IsUserAuthenticated())
+        {
+            checkout.UserEmail = await AuthService.GetAuthenticatedUsername();
+        }
+        else
+        {
+            checkout.UserEmail = await LocalStorage.GetItemAsync<string>("guestCheckoutEmail");
+        }
+
+        // Get redirect URL from Stripe
+        string url = await OrderService.PlaceOrder(checkout);
+        NavigationManager.NavigateTo(url);
+    } 
 
     private void EditShipping()
     {

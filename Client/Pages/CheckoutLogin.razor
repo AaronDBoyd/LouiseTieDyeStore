@@ -30,10 +30,11 @@
         <div class="guest">
             <h5>Continue as Guest</h5>
             <p>You can create an account after checking out.</p>
-            <form>
+            <EditForm Model="guestEmail" OnValidSubmit="CheckoutAsGuest">
+                <DataAnnotationsValidator />
                 <div class="mb-3">
                     <label for="email">Email</label>
-                    <input id="email" class="form-control" />
+                    <InputText id="email" class="form-control" @bind-Value="@guestEmail.Email" />
                 </div>
                 <div class="form-check">
                     <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked" checked>
@@ -43,12 +44,15 @@
                 </div>
                 <br />
                 <button type="submit" class="btn guest-btn">Checkout as Guest</button>
-            </form>
+                <ValidationSummary />
+            </EditForm>
         </div>
     </div>
 </div>
 
 @code {
+    GuestEmail guestEmail { get; set; } = new();
+
     private async Task Login()
     {
         var returnUrl = "shipping";
@@ -58,10 +62,18 @@
         Navigation.NavigateTo("authentication/login");
     }
 
-    private void CheckoutAsGuest()
+    private async Task CheckoutAsGuest()
     {
+        Console.WriteLine("guestEmail: " + guestEmail.Email);
+
+        // TODO: When should I remove guestCheckoutEmail from localStorage??
+
         // Collect Email for order
+        await LocalStorage.SetItemAsync("guestCheckoutEmail", guestEmail.Email);
 
         // Collect Subscribed value
+
+
+        Navigation.NavigateTo("/shipping");
     }
 }

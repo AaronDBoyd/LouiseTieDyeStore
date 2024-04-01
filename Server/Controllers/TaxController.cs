@@ -7,7 +7,6 @@ namespace LouiseTieDyeStore.Server.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = "Admin")]
     public class TaxController : ControllerBase
     {
         private readonly ISalesTaxService _taxService;
@@ -26,6 +25,7 @@ namespace LouiseTieDyeStore.Server.Controllers
         }
 
         [HttpPut]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<ServiceResponse<List<TaxRate>>>> UpdateTaxRates(List<TaxRate> taxRates)
         {
             var result = await _taxService.UpdateRates(taxRates);

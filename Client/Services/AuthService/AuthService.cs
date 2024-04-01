@@ -27,12 +27,18 @@ namespace LouiseTieDyeStore.Client.Services.AuthService
         }
 
         public async Task CheckInUser()
-        {         
-            var authState = await _authStateProvider.GetAuthenticationStateAsync();
-            string userName = authState.User.Identity.Name;
+        {
+            string userName = await GetAuthenticatedUsername();
             var result = await _privateClient.PostAsJsonAsync("api/auth/check-in", userName);
 
             var userId = (await result.Content.ReadFromJsonAsync<ServiceResponse<int>>()).Data;
+        }
+
+        public async Task<string> GetAuthenticatedUsername()
+        {
+            var authState = await _authStateProvider.GetAuthenticationStateAsync();
+            string userName = authState.User.Identity.Name;
+            return userName;
         }
 
         public async Task<bool> IsUserAuthenticated()

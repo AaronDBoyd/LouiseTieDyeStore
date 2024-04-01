@@ -5,5 +5,6 @@
         Task CheckInUser();
         Task<bool> IsUserAuthenticated();
         Task StoreSessionIdToken();
+        Task<string> GetAuthenticatedUsername();
     }
 }

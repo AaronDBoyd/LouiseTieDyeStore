@@ -6,6 +6,8 @@ global using LouiseTieDyeStore.Client.Services.CategoryService;
 global using LouiseTieDyeStore.Client.Services.AuthService;
 global using LouiseTieDyeStore.Client.Services.CartService;
 global using LouiseTieDyeStore.Client.Services.SalesTaxService;
+global using LouiseTieDyeStore.Client.Services.OrderService;
+global using LouiseTieDyeStore.Client.Services.ShippingService;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
@@ -40,6 +42,8 @@ namespace LouiseTieDyeStore.Client
             builder.Services.AddScoped<IAuthService, AuthService>();
             builder.Services.AddScoped<ICartService, CartService>();
             builder.Services.AddScoped<ISalesTaxService, SalesTaxService>();
+            builder.Services.AddScoped<IOrderService, OrderService>();
+            builder.Services.AddScoped<IShippingService, ShippingService>();
 
             builder.Services.AddOidcAuthentication(options =>
             {
