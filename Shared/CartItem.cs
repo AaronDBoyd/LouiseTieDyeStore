@@ -8,8 +8,8 @@ namespace LouiseTieDyeStore.Shared
 {
     public class CartItem
     {
+        public string UserEmail { get; set; } = string.Empty;
         public int UserId { get; set; }
         public int ProductId { get; set; }
-        //public int ProductTypeId { get; set; } // Is this necessary??
     }
 }

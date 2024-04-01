@@ -1,5 +1,7 @@
 ﻿
 using Blazored.LocalStorage;
+using LouiseTieDyeStore.Client.Pages;
+using Newtonsoft.Json;
 
 namespace LouiseTieDyeStore.Client.Services.CartService
 {
@@ -27,6 +29,7 @@ namespace LouiseTieDyeStore.Client.Services.CartService
         {
             if (await _authService.IsUserAuthenticated())
             {
+                cartItem.UserEmail = await _authService.GetAuthenticatedUsername();
                 await _privateClient.PostAsJsonAsync("api/cart/add", cartItem);
             }
             else
@@ -81,9 +84,26 @@ namespace LouiseTieDyeStore.Client.Services.CartService
                 {
                     return new List<CartProductResponse>();
                 }
+
+                // Turn "CartItems" into "CartProductResponses" **if Products have not been sold**
                 var response = await _publicClient.PostAsJsonAsync("api/cart/products", cartItems);
                 var cartProducts =
                     await response.Content.ReadFromJsonAsync<ServiceResponse<List<CartProductResponse>>>();
+
+                List<int> cartProductIds = cartProducts.Data.Select(p => p.ProductId).ToList();
+
+                var newList = new List<CartItem>();
+
+                foreach (var item in cartItems)
+                {
+                    if (cartProductIds.Contains(item.ProductId))
+                    {
+                        newList.Add(item);
+                    }
+                }
+
+                await _localStorage.SetItemAsync("cart", newList);
+
                 return cartProducts.Data;
             }
         }
@@ -118,6 +138,21 @@ namespace LouiseTieDyeStore.Client.Services.CartService
             if (localCart == null)
             {
                 return;
+            }
+
+            string email;
+            if (await _authService.IsUserAuthenticated())
+            {
+                email = await _authService.GetAuthenticatedUsername();
+            }
+            else
+            {
+                email = await _localStorage.GetItemAsStringAsync("guestCheckoutEmail");
+            }
+
+            foreach (var item in localCart)
+            {
+                item.UserEmail = email;
             }
 
             await _privateClient.PostAsJsonAsync("api/cart", localCart);

@@ -4,6 +4,7 @@ using LouiseTieDyeStore.Server.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LouiseTieDyeStore.Server.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20240401044802_CartItem_UserEmail")]
+    partial class CartItem_UserEmail
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -226,9 +228,6 @@ namespace LouiseTieDyeStore.Server.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("Sold")
-                        .HasColumnType("bit");
-
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -255,7 +254,6 @@ namespace LouiseTieDyeStore.Server.Migrations
                             Price = 30.00m,
                             ProductTypeId = 1,
                             Size = "XL",
-                            Sold = false,
                             Title = "Cool TyeDye Shirt",
                             Visible = true
                         },
@@ -269,7 +267,6 @@ namespace LouiseTieDyeStore.Server.Migrations
                             Price = 20.00m,
                             ProductTypeId = 2,
                             Size = "S",
-                            Sold = false,
                             Title = "Really Cool TyeDye Shirt",
                             Visible = true
                         },
@@ -283,7 +280,6 @@ namespace LouiseTieDyeStore.Server.Migrations
                             Price = 10.00m,
                             ProductTypeId = 3,
                             Size = "M",
-                            Sold = false,
                             Title = "TyeDye Onesie",
                             Visible = true
                         });

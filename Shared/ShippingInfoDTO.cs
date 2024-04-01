@@ -15,5 +15,7 @@ namespace LouiseTieDyeStore.Shared
 
         [DataType(DataType.PostalCode)]
         public int Zip { get; set; }
+
+        public int ItemCount { get; set; }
     }
 }

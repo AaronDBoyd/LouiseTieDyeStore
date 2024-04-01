@@ -9,6 +9,7 @@ global using LouiseTieDyeStore.Server.Services.CartService;
 global using LouiseTieDyeStore.Server.Services.ShippingService;
 global using LouiseTieDyeStore.Server.Services.SalesTaxService;
 global using LouiseTieDyeStore.Server.Services.PaymentService;
+global using LouiseTieDyeStore.Server.Services.OrderService;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.OpenApi.Models;
@@ -69,6 +70,7 @@ namespace LouiseTieDyeStore
             builder.Services.AddScoped<IShippingService, FedExShippingService>();
             builder.Services.AddScoped<ISalesTaxService, SalesTaxService>();
             builder.Services.AddScoped<IPaymentService, PaymentService>();
+            builder.Services.AddScoped<IOrderService, OrderService>();
 
             builder.Services.AddHttpClient();
             builder.Services.AddHttpClient("fedExApi", client =>

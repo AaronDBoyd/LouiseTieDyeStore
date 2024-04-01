@@ -16,6 +16,17 @@ namespace LouiseTieDyeStore.Server.Services.CartService
 
         public async Task<ServiceResponse<bool>> AddToCart(CartItem cartItem)
         {
+            var product = _context.Products.FirstOrDefault(p => p.Id == cartItem.ProductId);
+
+            if (product.Sold)
+            {
+                return new ServiceResponse<bool>
+                {
+                    Success = false,
+                    Message = "This item has already been purchased."
+                };
+            }
+
             cartItem.UserId = await _authService.GetUserId();
 
             _context.CartItems.Add(cartItem);
@@ -51,6 +62,20 @@ namespace LouiseTieDyeStore.Server.Services.CartService
                     .FirstOrDefaultAsync();
 
                 if (product == null)
+                {
+                    continue;
+                }
+
+                var itemInDB = await _context.CartItems.AnyAsync(ci => ci.ProductId == product.Id);
+ 
+                if (product.Sold && itemInDB)
+                {
+                    _context.CartItems.Remove(item);
+                    await _context.SaveChangesAsync();
+                    continue;
+                }
+
+                if (product.Sold && !itemInDB)
                 {
                     continue;
                 }
@@ -108,13 +133,14 @@ namespace LouiseTieDyeStore.Server.Services.CartService
             return new ServiceResponse<bool> { Data = true };
         }
 
-        // Why am I returning a list of products?
+        // TODO: Why am I returning a list of products?
         public async Task<ServiceResponse<List<CartProductResponse>>> StoreCartItems(List<CartItem> cartItems)
         {
             int userId = await _authService.GetUserId();
 
             // Get list of ProductIds that are already in Db Cart
             List<int> storedProductIds = await _context.CartItems
+                .Where(ci => ci.UserId == userId)
                 .Select(ci => ci.ProductId).ToListAsync();
 
             // Do not Re-Add items to DB cart

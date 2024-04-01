@@ -54,7 +54,7 @@ namespace LouiseTieDyeStore.Server.Services.ProductService
         public async Task<ServiceResponse<List<Product>>> GetNewestProducts()
         {
             var products = await _context.Products
-                    .Where(p => p.Visible && !p.Deleted)
+                    .Where(p => p.Visible && !p.Deleted && !p.Sold)
                     .Include(p => p.Images)
                     .OrderByDescending(p => p.Id)
                     .Take(9)
@@ -82,6 +82,11 @@ namespace LouiseTieDyeStore.Server.Services.ProductService
                 response.Success = false;
                 response.Message = "Sorry, but this product does not exist.";
             }
+            else if (product.Sold)
+            {
+                response.Success = false;
+                response.Message = "Sorry, this product has already been purchased.";
+            }
             else
             {
                 response.Data = product;
@@ -93,7 +98,7 @@ namespace LouiseTieDyeStore.Server.Services.ProductService
         public async Task<ServiceResponse<List<Product>>> GetProducts()
         {
             var products = await _context.Products
-                    .Where(p => p.Visible && !p.Deleted)
+                    .Where(p => p.Visible && !p.Deleted && !p.Sold)
                     .Include(p => p.Images)
                     .ToListAsync();
 
@@ -117,14 +122,14 @@ namespace LouiseTieDyeStore.Server.Services.ProductService
             {
                 count = await _context.Products
                 .Where(p => p.Category.Url.ToLower().Equals(categoryUrl.ToLower()) &&
-                    p.Visible && !p.Deleted)
+                    p.Visible && !p.Deleted && !p.Sold)
                 .CountAsync();
             }
             else if (sizeFilter == null && typeFilter != null)
             {
                 count = await _context.Products
                 .Where(p => p.Category.Url.ToLower().Equals(categoryUrl.ToLower()) &&
-                    p.Visible && !p.Deleted
+                    p.Visible && !p.Deleted && !p.Sold
                     && p.ProductType.Name == typeFilter)
                 .CountAsync();
             }
@@ -132,7 +137,7 @@ namespace LouiseTieDyeStore.Server.Services.ProductService
             {
                 count = await _context.Products
                 .Where(p => p.Category.Url.ToLower().Equals(categoryUrl.ToLower()) &&
-                    p.Visible && !p.Deleted
+                    p.Visible && !p.Deleted && !p.Sold
                     && p.Size == sizeFilter)
                 .CountAsync();
             }
@@ -140,7 +145,7 @@ namespace LouiseTieDyeStore.Server.Services.ProductService
             {
                 count = await _context.Products
                 .Where(p => p.Category.Url.ToLower().Equals(categoryUrl.ToLower()) &&
-                    p.Visible && !p.Deleted 
+                    p.Visible && !p.Deleted && !p.Sold
                     && p.Size == sizeFilter
                     && p.ProductType.Name == typeFilter)
                 .CountAsync();
@@ -155,7 +160,7 @@ namespace LouiseTieDyeStore.Server.Services.ProductService
             {
                 products = await _context.Products
                 .Where(p => p.Category.Url.ToLower().Equals(categoryUrl.ToLower()) &&
-                    p.Visible && !p.Deleted)
+                    p.Visible && !p.Deleted && !p.Sold)
                 .Include(p => p.Images)
                 .Skip((page - 1) * (int)pageResults)
                 .Take((int)pageResults)
@@ -165,7 +170,7 @@ namespace LouiseTieDyeStore.Server.Services.ProductService
             {
                 products = await _context.Products
                 .Where(p => p.Category.Url.ToLower().Equals(categoryUrl.ToLower()) &&
-                    p.Visible && !p.Deleted
+                    p.Visible && !p.Deleted && !p.Sold
                     && p.ProductType.Name == typeFilter)
                 .Include(p => p.Images)
                 .Skip((page - 1) * (int)pageResults)
@@ -176,7 +181,7 @@ namespace LouiseTieDyeStore.Server.Services.ProductService
             {
                 products = await _context.Products
                 .Where(p => p.Category.Url.ToLower().Equals(categoryUrl.ToLower()) &&
-                    p.Visible && !p.Deleted
+                    p.Visible && !p.Deleted && !p.Sold
                     && p.Size == sizeFilter)
                 .Include(p => p.Images)
                 .Skip((page - 1) * (int)pageResults)
@@ -187,7 +192,7 @@ namespace LouiseTieDyeStore.Server.Services.ProductService
             {
                 products = await _context.Products
                 .Where(p => p.Category.Url.ToLower().Equals(categoryUrl.ToLower()) &&
-                    p.Visible && !p.Deleted 
+                    p.Visible && !p.Deleted && !p.Sold
                     && p.Size == sizeFilter
                     && p.ProductType.Name == typeFilter)
                 .Include(p => p.Images)
@@ -214,7 +219,7 @@ namespace LouiseTieDyeStore.Server.Services.ProductService
             var products = await _context.Products
                             .Where(p => p.Title.ToLower().Contains(searchText.ToLower()) ||
                                 p.Description.ToLower().Contains(searchText.ToLower()) &&
-                                p.Visible && !p.Deleted)
+                                p.Visible && !p.Deleted && !p.Sold)
                             .ToListAsync();
 
             List<string> result = new List<string>();
@@ -253,14 +258,14 @@ namespace LouiseTieDyeStore.Server.Services.ProductService
             var count = await _context.Products
                 .Where(p => p.Title.ToLower().Contains(searchText.ToLower()) ||
                                 p.Description.ToLower().Contains(searchText.ToLower()) &&
-                                p.Visible && !p.Deleted)
+                                p.Visible && !p.Deleted && !p.Sold)
                 .CountAsync();
 
             var pageCount = Math.Ceiling(count / pageResults);
             var products = await _context.Products
                             .Where(p => p.Title.ToLower().Contains(searchText.ToLower()) ||
                                 p.Description.ToLower().Contains(searchText.ToLower()) &&
-                                p.Visible && !p.Deleted)
+                                p.Visible && !p.Deleted && !p.Sold)
                             .Include(p => p.Images)
                             .Skip((page - 1) * (int)pageResults)
                             .Take((int)pageResults)

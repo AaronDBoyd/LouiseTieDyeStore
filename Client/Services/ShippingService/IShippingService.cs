@@ -2,6 +2,6 @@
 {
     public interface IShippingService
     {
-        Task<string> GetShippingCost(Address address);
+        Task<string> GetShippingCost(Address address, int itemCount);
     }
 }

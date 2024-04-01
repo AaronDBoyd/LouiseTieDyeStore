@@ -89,7 +89,7 @@ namespace LouiseTieDyeStore.Server.Services.ShippingService
                         {
                             Weight = new Weight
                             {                               
-                                Value = 1
+                                Value = shippingInfo.ItemCount * int.Parse(_config["Shipping:PoundsPerItem"])
                             }
                         }
                     }

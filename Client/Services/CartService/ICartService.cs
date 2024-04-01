@@ -6,7 +6,7 @@
         Task AddToCart(CartItem cartItem);
         Task<List<CartProductResponse>> GetCartProducts();
         Task RemoveProductFromCart(int productId);
-        Task StoreCartItems(bool emptyLocalCart);
+        Task StoreCartItems(bool emptyLocalCart = false);
         Task GetCartItemsCount();
     }
 }

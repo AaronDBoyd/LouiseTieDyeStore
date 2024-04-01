@@ -160,8 +160,8 @@
 
     private async Task LoadCart()
     {
-        await CartService.GetCartItemsCount();
         cartProducts = await CartService.GetCartProducts();
+        await CartService.GetCartItemsCount();
 
         if (cartProducts == null || cartProducts.Count == 0)
         {

@@ -36,6 +36,7 @@ namespace LouiseTieDyeStore.Shared
         public int ProductTypeId { get; set; }
         public bool Visible { get; set; } = true;
         public bool Deleted { get; set; } = false;
+        public bool Sold { get; set; } = false;
 
         [NotMapped]
         public bool Editing { get; set; } = false;
