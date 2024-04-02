@@ -16,6 +16,9 @@ namespace LouiseTieDyeStore.Server.Data
             modelBuilder.Entity<CartItem>()
                 .HasKey(ci => new { ci.UserEmail, ci.ProductId });
 
+            modelBuilder.Entity<OrderItem>()
+                .HasKey(oi => new { oi.OrderId, oi.ProductId });
+
             #region ProductTypes
             modelBuilder.Entity<ProductType>().HasData(
                 new ProductType { Id = 1, Name = "T-Shirt" },
@@ -485,5 +488,7 @@ namespace LouiseTieDyeStore.Server.Data
         public DbSet<Address> Addresses { get; set; }
         public DbSet<CartItem> CartItems { get; set; }
         public DbSet<TaxRate> TaxRates { get; set; }
+        public DbSet<Order> Orders { get; set; }
+        public DbSet<OrderItem> OrderItems { get; set; }
     }
 }

@@ -22,6 +22,9 @@ namespace LouiseTieDyeStore.Shared
         public decimal SalesTax { get; set; }
 
         [Column(TypeName = "decimal(18,2)")]
+        public decimal SubTotal { get; set; }
+
+        [Column(TypeName = "decimal(18,2)")]
         public decimal TotalPrice { get; set; }
         public List<OrderItem> OrderItems { get; set; }
     }

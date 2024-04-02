@@ -1,7 +1,19 @@
 ﻿@page "/order-success"
+@inject ILocalStorageService LocalStorage
+@inject ICartService CartService
+
 
 <h3>OrderSuccess</h3>
 
 @code {
+    protected override async Task OnInitializedAsync()
+    {
 
+        if (await LocalStorage.ContainKeyAsync("cart"))
+        {
+            await LocalStorage.RemoveItemAsync("cart");
+        }
+
+        await CartService.GetCartItemsCount();
+    }
 }

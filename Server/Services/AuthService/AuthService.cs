@@ -64,10 +64,15 @@ namespace LouiseTieDyeStore.Server.Services.AuthService
             return false;
         }
 
-        private async Task Register(User user)
+        public async Task Register(User user)
         {
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
+        }
+
+        public async Task<User> GetUserByEmail(string email)
+        {
+            return await _context.Users.FirstOrDefaultAsync(u => u.Email.Equals(email));
         }
     }
 }

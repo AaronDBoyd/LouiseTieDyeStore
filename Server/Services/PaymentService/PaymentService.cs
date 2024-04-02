@@ -130,8 +130,6 @@ namespace LouiseTieDyeStore.Server.Services.PaymentService
                 {
                     var session = stripeEvent.Data.Object as Session;
 
-                    Console.WriteLine("!!!Session: " + JsonConvert.SerializeObject(session));
-
                     var orderId = Guid.NewGuid();
 
                     var order = new Order
@@ -153,7 +151,6 @@ namespace LouiseTieDyeStore.Server.Services.PaymentService
                         ShippingCost = (decimal)session.ShippingCost.AmountTotal / 100,
                         TotalPrice = (decimal)session.AmountTotal / 100
                     };
-
 
                     await _orderService.PlaceOrder(order);
                 }
