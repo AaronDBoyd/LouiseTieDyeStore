@@ -2,6 +2,6 @@
 {
     public interface IOrderService
     {
-        Task<ServiceResponse<bool>> PlaceOrder(string userEmail);
+        Task<ServiceResponse<bool>> PlaceOrder(Order order);
     }
 }

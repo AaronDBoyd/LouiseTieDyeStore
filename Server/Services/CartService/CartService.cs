@@ -1,5 +1,7 @@
 ﻿
 using LouiseTieDyeStore.Server.Migrations;
+using LouiseTieDyeStore.Shared;
+using Newtonsoft.Json;
 
 namespace LouiseTieDyeStore.Server.Services.CartService
 {
@@ -98,15 +100,15 @@ namespace LouiseTieDyeStore.Server.Services.CartService
         }
 
         // Get CartItems from DB
-        public async Task<ServiceResponse<List<CartProductResponse>>> GetDbCartProducts(int? userId = null)
+        public async Task<ServiceResponse<List<CartProductResponse>>> GetDbCartProducts(string? userEmail = null)
         {
-            if (userId == null)
+            if (userEmail == null)
             {
-                userId = await _authService.GetUserId();
+                userEmail = await _authService.GetUserEmail();
             }
 
             return await GetCartProducts(await _context.CartItems
-                .Where(ci => ci.UserId == userId).ToListAsync());
+                .Where(ci => ci.UserEmail == userEmail).ToListAsync());
         }
 
         public async Task<ServiceResponse<bool>> RemoveItemFromCart(int productId)
@@ -136,11 +138,12 @@ namespace LouiseTieDyeStore.Server.Services.CartService
         // TODO: Why am I returning a list of products?
         public async Task<ServiceResponse<List<CartProductResponse>>> StoreCartItems(List<CartItem> cartItems)
         {
-            int userId = await _authService.GetUserId();
+ 
+            string userEmail = cartItems.Select(ci => ci.UserEmail).First();
 
             // Get list of ProductIds that are already in Db Cart
             List<int> storedProductIds = await _context.CartItems
-                .Where(ci => ci.UserId == userId)
+                .Where(ci => ci.UserEmail == userEmail)
                 .Select(ci => ci.ProductId).ToListAsync();
 
             // Do not Re-Add items to DB cart
@@ -154,7 +157,13 @@ namespace LouiseTieDyeStore.Server.Services.CartService
                 }
             }
 
-            newItems.ForEach(newItem => newItem.UserId = userId);
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == userEmail);
+
+            if (user != null)
+            {
+                newItems.ForEach(newItem => newItem.UserId = user.Id);
+            }
+           
             _context.CartItems.AddRange(newItems);
             await _context.SaveChangesAsync();
 

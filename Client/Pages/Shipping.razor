@@ -36,50 +36,21 @@
                 {
                     @**** TODO: Style Form ****@
                     <div class="shipping-form-wrapper @ConfirmShippingCssClass">
-                        <EditForm Model="address" class="shipping-form" OnValidSubmit="ConfirmShipping" OnInvalidSubmit="InvalidSubmit">
+
+                        <h5>Enter Shipping Postal Code and State to determine Shipping Cost and Sales Tax</h5>
+
+                        <EditForm Model="shippingInfo" class="shipping-form" OnValidSubmit="ConfirmShipping" OnInvalidSubmit="InvalidSubmit">
                             <DataAnnotationsValidator />
-                            @* <div class="form-name"> *@
-                            <div class="mb-3">
-                                <label for="firstName">First Name<span class="reqAst">*</span></label>
-                                <InputText id="firstName" @bind-Value="address.FirstName" class="form-control input" />
-                            </div>
-                            <div class="mb-3">
-                                <label for="lastName">Last Name<span class="reqAst">*</span></label>
-                                <InputText id="lastName" @bind-Value="address.LastName" class="form-control input" />
-                            </div>
-                            @* </div> *@
-                            <div class="form-phoneNumber">
-                                <div class="mb-3">
-                                    <label for="phoneNumber">Phone Number<span class="reqAst">*</span></label>
-                                    <InputText id="phoneNumber" type="tel" @bind-Value="address.PhoneNumber" class="form-control input" />
-                                </div>
-                            </div>
-                            <div>
-                            </div>
-                            @* <div class="form-address"> *@
-                            <div class="mb-3">
-                                <label for="addressOne">Address Line 1<span class="reqAst">*</span></label>
-                                <InputText id="addressOne" type="text" @bind-Value="address.LineOne" class="form-control input" />
-                            </div>
-                            <div class="mb-3">
-                                <label for="addressTwo">Address Line 2 (optional)</label>
-                                <InputText id="addressTwo" type="text" @bind-Value="address.LineTwo" class="form-control input" />
-                            </div>
-                            @* </div> *@
-                            @* <div class="form-city-zip"> *@
-                            <div class="mb-3">
-                                <label for="city">City<span class="reqAst">*</span></label>
-                                <InputText id="city" type="text" @bind-Value="address.City" class="form-control input" />
-                            </div>
+
                             <div class="mb-3">
                                 <label for="zip">ZIP Code<span class="reqAst">*</span></label>
-                                <InputText id="zip" type="text" @bind-Value="address.Zip" class="form-control input" />
+                                <InputText id="zip" type="text" @bind-Value="shippingInfo.Zip" class="form-control input" />
                             </div>
                             @* </div> *@
                             <div class="form-state">
                                 <div class="mb-3">
                                     <label for="state">State<span class="reqAst">*</span></label>
-                                    <InputSelect class="form-select select" @bind-Value="address.State" name="state" id="state">
+                                    <InputSelect class="form-select select" @bind-Value="shippingInfo.State" name="state" id="state">
                                         <option>Select State</option>
                                         <option value="AL">Alabama</option>
                                         <option value="AK">Alaska</option>
@@ -147,14 +118,20 @@
 
                     <div class="confirmed-address @EditShippingCssClass">
                         <div class="ship-to">
-                            Ship to:
+                            Enter Full Shipping info at Checkout:
                         </div>
-                        <div class="address">
-                            <div class="name">@address.FirstName @address.LastName</div>
+                        
+                        @* <div class="ship-to">
+                            Ship to:
+                        </div> *@
+
+                        @* TODO: Format *@
+                        <div class="address"> 
+                            @* <div class="name">@address.FirstName @address.LastName</div>
                             <div class="addressOne">@(address.LineOne), </div>
                             <div class="addressTwo">@address.LineTwo</div>
                             <div class="city-state-zip">@(address.City), @(address.State) @(address.Zip)</div>
-                            <div class="phone">@address.PhoneNumber</div>
+                            <div class="phone">@address.PhoneNumber</div> *@
                         </div>
                     </div>
                     <div>
@@ -265,7 +242,7 @@
 </div>
 
 @code {
-    private Address address = new();
+    private ShippingInfoDTO shippingInfo = new();
     List<CartProductResponse> cartProducts = new List<CartProductResponse>();
     decimal subTotal = default;
     decimal shippingCost = default;
@@ -295,6 +272,7 @@
         cartProducts = await CartService.GetCartProducts();
         await CartService.GetCartItemsCount();
         subTotal = cartProducts.Sum(p => p.Price);
+        shippingInfo.ItemCount = cartProducts.Count;
 
         if (cartProducts == null || cartProducts.Count == 0)
         {
@@ -315,9 +293,9 @@
 
         await JsRuntime.InvokeVoidAsync("scrollUp");
 
-        salesTax = await TaxService.CalculateSalesTax(subTotal, address.State);
+        salesTax = await TaxService.CalculateSalesTax(subTotal, shippingInfo.State);
 
-        var shippingCostResponse = await ShippingService.GetShippingCost(address, cartProducts.Count);
+        var shippingCostResponse = await ShippingService.GetShippingCost(shippingInfo);
 
         Console.WriteLine("!!! Response: " + shippingCostResponse);
 
@@ -347,18 +325,18 @@
 
         var checkout = new CheckoutDTO
             {
-                SalesTax = await TaxService.CalculateSalesTax(subTotal, address.State),
-                ShippingCost = decimal.Parse(await ShippingService.GetShippingCost(address, cartProducts.Count))
+                SalesTax = await TaxService.CalculateSalesTax(subTotal, shippingInfo.State),
+                ShippingCost = decimal.Parse(await ShippingService.GetShippingCost(shippingInfo))
             };
 
         foreach (var product in cartProducts)
         {
             checkout.Items.Add(new CheckoutItem
-                {
+            {
                     Title = product.Title,
                     Price = product.Price,
                     ImageUrl = product.ImageUrl
-                });
+            });
         }
 
         if (await AuthService.IsUserAuthenticated())

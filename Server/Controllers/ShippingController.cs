@@ -16,7 +16,7 @@ namespace LouiseTieDyeStore.Server.Controllers
         }
 
         // Is Valid Address
-        [HttpPost("validate-address")] // Will probably only call this endpoint
+        [HttpPost("validate-address")] // Calling this endpoint will Validate address AND Return Shipping Rate Quote
         public async Task<ActionResult<ServiceResponse<string>>> ValidateAddress(ShippingInfoDTO shippingInfo)
         {
             var result = await _shippingService.ValidateShippingAddress(shippingInfo);
@@ -24,12 +24,12 @@ namespace LouiseTieDyeStore.Server.Controllers
         }
 
         // Get Shipping Rate Quotes
-        //[HttpPost("rate-quote")]
-        //public async Task<ActionResult<ServiceResponse<string>>> GetShippingRateQuote()
-        //{
-        //    var result = await _shippingService.GetShippingRateQuote();
-        //    return Ok(result);
-        //}
+        [HttpPost("rate-quote")]
+        public async Task<ActionResult<ServiceResponse<string>>> GetShippingRateQuote(ShippingInfoDTO shippingInfo)
+        {
+            var result = await _shippingService.GetShippingRateQuote(shippingInfo);
+            return Ok(result);
+        }
 
         // Get Auth Token
         //[HttpPost("authToken")] 

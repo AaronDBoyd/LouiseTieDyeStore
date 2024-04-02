@@ -7,12 +7,10 @@ using System.Threading.Tasks;
 
 namespace LouiseTieDyeStore.Shared
 {
-
-    // TODO: Change to "ShippingInfo"
     public class Address
     {
         public int Id { get; set; }
-        public int UserId { get; set; }
+        public Guid OrderId { get; set; }
 
         [Required(ErrorMessage = "First Name is Required")]
         [StringLength(30, MinimumLength = 1, ErrorMessage = "First name should be between 1 and 30 characters")]

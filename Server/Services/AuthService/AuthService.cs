@@ -41,11 +41,17 @@ namespace LouiseTieDyeStore.Server.Services.AuthService
 
         public async Task<int> GetUserId()
         {
-           string userEmail = _httpContextAccessor.HttpContext.User
-                                      .FindFirstValue(ClaimTypes.Name);
+            string userEmail = _httpContextAccessor.HttpContext.User
+                                       .FindFirstValue(ClaimTypes.Name);
 
             User user = await _context.Users.FirstOrDefaultAsync(u => u.Email.Equals(userEmail));
             return user.Id;
+        }
+
+        public async Task<string> GetUserEmail()
+        {
+            return _httpContextAccessor.HttpContext.User
+                                       .FindFirstValue(ClaimTypes.Name);
         }
 
         public async Task<bool> UserExists(string email)

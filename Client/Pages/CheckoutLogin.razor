@@ -69,7 +69,7 @@
         // TODO: When should I remove guestCheckoutEmail from localStorage??
 
         // Collect Email for order
-        await LocalStorage.SetItemAsync("guestCheckoutEmail", guestEmail.Email);
+        await LocalStorage.SetItemAsStringAsync("guestCheckoutEmail", guestEmail.Email);
 
         // Collect Subscribed value
 

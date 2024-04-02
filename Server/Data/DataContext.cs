@@ -14,7 +14,7 @@ namespace LouiseTieDyeStore.Server.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<CartItem>()
-                .HasKey(ci => new { ci.UserId, ci.ProductId });
+                .HasKey(ci => new { ci.UserEmail, ci.ProductId });
 
             #region ProductTypes
             modelBuilder.Entity<ProductType>().HasData(

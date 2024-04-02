@@ -8,15 +8,18 @@ namespace LouiseTieDyeStore.Server.Services.PaymentService
     {
         private readonly ICartService _cartService;
         private readonly IAuthService _authService;
+        private readonly IOrderService _orderService;
         private readonly IConfiguration _config;
 
         public PaymentService(ICartService cartService,
             IAuthService authService,
+            IOrderService orderService,
             IConfiguration config
             )
         {
             _cartService = cartService;
             _authService = authService;
+            _orderService = orderService;
             _config = config;
 
             StripeConfiguration.ApiKey = _config["StripeKeys:ApiKey"];
@@ -93,6 +96,10 @@ namespace LouiseTieDyeStore.Server.Services.PaymentService
                     }
 
                 },
+                PhoneNumberCollection = new SessionPhoneNumberCollectionOptions
+                {
+                    Enabled = true,
+                },
                 PaymentMethodTypes = new List<string>
                 {
                     "card"
@@ -123,9 +130,32 @@ namespace LouiseTieDyeStore.Server.Services.PaymentService
                 {
                     var session = stripeEvent.Data.Object as Session;
 
-                    Console.WriteLine("session : " + JsonConvert.SerializeObject(session));
-                    
-                    // TODO: Process Order
+                    Console.WriteLine("!!!Session: " + JsonConvert.SerializeObject(session));
+
+                    var orderId = Guid.NewGuid();
+
+                    var order = new Order
+                    {
+                        Id = orderId,
+                        Email = session.CustomerEmail,
+                        Address = new Shared.Address
+                        {
+                            OrderId = orderId,
+                            FirstName = session.CustomerDetails.Name.Split(" ")[0],
+                            LastName = session.CustomerDetails.Name.Split(" ")[1],
+                            PhoneNumber = session.CustomerDetails.Phone,
+                            City = session.CustomerDetails.Address.City,
+                            LineOne = session.CustomerDetails.Address.Line1,
+                            LineTwo = session.CustomerDetails.Address.Line2 ?? string.Empty,
+                            Zip = session.CustomerDetails.Address.PostalCode,
+                            State = session.CustomerDetails.Address.State
+                        },
+                        ShippingCost = (decimal)session.ShippingCost.AmountTotal / 100,
+                        TotalPrice = (decimal)session.AmountTotal / 100
+                    };
+
+
+                    await _orderService.PlaceOrder(order);
                 }
 
                 return new ServiceResponse<bool> { Data = true };

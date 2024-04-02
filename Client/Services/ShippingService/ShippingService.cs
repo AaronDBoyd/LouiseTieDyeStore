@@ -12,18 +12,10 @@ namespace LouiseTieDyeStore.Client.Services.ShippingService
             _publicClient = publicClient.Client;
         }
         
-        public async Task<string> GetShippingCost(Address address, int itemCount)
+        public async Task<string> GetShippingCost(ShippingInfoDTO shippingInfo)
         {
-            ShippingInfoDTO shippingInfo = new ShippingInfoDTO
-            {
-                LineOne = address.LineOne,
-                LineTwo = address.LineTwo,
-                City = address.City,
-                Zip = int.Parse(address.Zip),
-                ItemCount = itemCount
-            };
 
-            var result = await _publicClient.PostAsJsonAsync("api/shipping/validate-address", shippingInfo);
+            var result = await _publicClient.PostAsJsonAsync("api/shipping/rate-quote", shippingInfo);
             var response = (await result.Content.ReadFromJsonAsync<ServiceResponse<string>>()).Data;
 
             return response;

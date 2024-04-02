@@ -53,8 +53,11 @@ namespace LouiseTieDyeStore.Server.Services.ShippingService
             }
         }
 
-        public async Task<ServiceResponse<string>> GetShippingRateQuote(ShippingInfoDTO shippingInfo, string authToken)
+        public async Task<ServiceResponse<string>> GetShippingRateQuote(ShippingInfoDTO shippingInfo, string? authToken = null)
         {
+            
+            authToken = await GetAuthToken(); // Comment out if Validating Address first
+
             var shippingInfoRequest = new FedExRateQuoteRequest
             {
                 AccountNumber = new AccountNumber
@@ -74,7 +77,7 @@ namespace LouiseTieDyeStore.Server.Services.ShippingService
                     {
                         Address = new Shared.FedExRequestResponse.RateQuote.Address
                         {
-                            PostalCode = shippingInfo.Zip
+                            PostalCode = int.Parse(shippingInfo.Zip)
                         }
                     },
                     PickupType = "DROPOFF_AT_FEDEX_LOCATION",

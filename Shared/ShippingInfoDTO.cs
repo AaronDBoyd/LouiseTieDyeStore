@@ -13,8 +13,15 @@ namespace LouiseTieDyeStore.Shared
         public string LineTwo { get; set; } = string.Empty;
         public string City { get; set; } = string.Empty;
 
-        [DataType(DataType.PostalCode)]
-        public int Zip { get; set; }
+
+        [Required]
+        [StringLength(2, MinimumLength = 2, ErrorMessage = "Please Select State")]
+        public string State { get; set; } = string.Empty;
+
+        [Required]
+        [RegularExpression(@"^\d{5}$",
+            ErrorMessage = "Please Enter a 5 Digit US Postal Code")]
+        public string Zip { get; set; }
 
         public int ItemCount { get; set; }
     }

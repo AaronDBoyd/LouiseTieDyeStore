@@ -147,7 +147,7 @@ namespace LouiseTieDyeStore.Client.Services.CartService
             }
             else
             {
-                email = await _localStorage.GetItemAsStringAsync("guestCheckoutEmail");
+                email = await _localStorage.GetItemAsync<string>("guestCheckoutEmail");
             }
 
             foreach (var item in localCart)
@@ -155,7 +155,7 @@ namespace LouiseTieDyeStore.Client.Services.CartService
                 item.UserEmail = email;
             }
 
-            await _privateClient.PostAsJsonAsync("api/cart", localCart);
+            await _publicClient.PostAsJsonAsync("api/cart", localCart);
 
             if (emptyLocalCart)
             {

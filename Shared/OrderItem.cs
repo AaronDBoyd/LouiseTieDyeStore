@@ -10,7 +10,7 @@ namespace LouiseTieDyeStore.Shared
     public class OrderItem
     {
         public Order Order { get; set; }
-        public int OrderId { get; set; }
+        public Guid OrderId { get; set; }
         public Product Product { get; set; }
         public int ProductId { get; set; }
 
