@@ -3,5 +3,6 @@
     public interface IOrderService
     {
         Task<string> PlaceOrder(CheckoutDTO checkout);
+        Task<string> GetLastOrderIdByUserEmail();
     }
 }

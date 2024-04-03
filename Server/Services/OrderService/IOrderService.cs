@@ -3,5 +3,6 @@
     public interface IOrderService
     {
         Task<ServiceResponse<bool>> PlaceOrder(Order order);
+        Task<ServiceResponse<string>> GetLastOrderIdByUserEmail(string email);
     }
 }

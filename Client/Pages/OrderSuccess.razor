@@ -1,19 +1,51 @@
 ﻿@page "/order-success"
 @inject ILocalStorageService LocalStorage
 @inject ICartService CartService
+@inject IOrderService OrderService
+@inject IAuthService AuthService
+@inject NavigationManager Navigation
 
-
-<h3>OrderSuccess</h3>
+<div class="container">
+    <div class="success-card">
+        <h2 class="text-center">Order Successfully Placed!!</h2>
+        <br />
+        @if (orderNumber != null)
+        {
+            <h3 class="text-center">Order # : @orderNumber</h3>
+        }
+        <br />
+        <AuthorizeView>
+            <Authorized>
+                <h5 class="text-center text-secondary"><a href="/orders">View your Orders</a></h5>
+            </Authorized>
+            <NotAuthorized>
+                <h5 class="text-center text-secondary"><a href ="" @onclick="Login">Log in</a> to view your Orders</h5>
+            </NotAuthorized>
+        </AuthorizeView>       
+    </div>
+</div>
 
 @code {
+    string? orderNumber { get; set; }
+
     protected override async Task OnInitializedAsync()
     {
-
         if (await LocalStorage.ContainKeyAsync("cart"))
         {
             await LocalStorage.RemoveItemAsync("cart");
         }
 
         await CartService.GetCartItemsCount();
+
+        orderNumber = await OrderService.GetLastOrderIdByUserEmail();
+    }
+
+    private async Task Login()
+    {
+        var returnUrl = "/orders";
+
+        await LocalStorage.SetItemAsync("returnUrl", returnUrl);
+
+        Navigation.NavigateTo("authentication/login");
     }
 }

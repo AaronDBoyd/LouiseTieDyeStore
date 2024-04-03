@@ -27,5 +27,15 @@ namespace LouiseTieDyeStore.Shared
         [Column(TypeName = "decimal(18,2)")]
         public decimal TotalPrice { get; set; }
         public List<OrderItem> OrderItems { get; set; }
+
+        public Status Status { get; set; } = Status.Placed;
+    }
+
+    public enum Status
+    {
+        Placed,
+        Packed,
+        Shipped,
+        Delivered
     }
 }

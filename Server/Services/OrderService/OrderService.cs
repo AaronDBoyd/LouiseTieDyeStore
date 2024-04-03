@@ -21,6 +21,29 @@ namespace LouiseTieDyeStore.Server.Services.OrderService
             _taxService = taxService;
         }
 
+        public async Task<ServiceResponse<string>> GetLastOrderIdByUserEmail(string email)
+        {
+            var lastOrder = await _context.Orders
+                .OrderByDescending(o => o.OrderDate)
+                .FirstOrDefaultAsync(o => o.Email == email);
+
+            if (lastOrder != null)
+            {
+                return new ServiceResponse<string>
+                {
+                    Data = lastOrder.Id.ToString()
+                };
+            }
+            else
+            {
+                return new ServiceResponse<string>
+                {
+                    Success = false,
+                    Message = "Order Not Found"
+                };
+            }         
+        }
+
         public async Task<ServiceResponse<bool>> PlaceOrder(Order order)
         {
         

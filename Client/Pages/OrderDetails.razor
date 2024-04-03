@@ -1,148 +1,167 @@
-﻿@page "/orders/1"
+﻿@page "/orders/{id:guid}"
+@inject IOrderService OrderService
 
-<div class="container info-items-grid">
-    <div class="order-info">
-        <div class="info-header">
-            <h3>Order Details</h3>
-            <div class="dropdown">
-                <button type="button" class="btn dropdown-toggle" data-bs-toggle="dropdown">
-                    Change Status
-                </button>
-                <ul class="dropdown-menu">
-                    <li><a class="dropdown-item placed" href="#">Placed</a></li>
-                    <li><a class="dropdown-item packed" href="#">Packed</a></li>
-                    <li><a class="dropdown-item shipped" href="#">Shipped</a></li>
-                    <li><a class="dropdown-item delivered" href="#">Delivered</a></li>
-                </ul>
+@if (order == null)
+{
+    <span>@message</span>
+}
+else
+{
+
+    <div class="container info-items-grid">
+        <div class="order-info">
+            <div class="info-header">
+                <h3>Order Details</h3>
+                <div class="dropdown">
+                    <button type="button" class="btn dropdown-toggle" data-bs-toggle="dropdown">
+                        Change Status
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item placed" href="#">Placed</a></li>
+                        <li><a class="dropdown-item packed" href="#">Packed</a></li>
+                        <li><a class="dropdown-item shipped" href="#">Shipped</a></li>
+                        <li><a class="dropdown-item delivered" href="#">Delivered</a></li>
+                    </ul>
+                </div>
             </div>
+            <hr />
+
+            <table class="table">
+                <tbody>
+                    <tr>
+                        <th class="order-num-key">Order Number:</th>
+                        <td class="order-num-value">#ON-213202481537</td>
+                    </tr>
+                    <tr>
+                        <th class="date-key">Order Date:</th>
+                        <td class="date-value">2/13/2024 8:15:37 PM</td>
+                    </tr>
+                    <tr>
+                        <th class="status-key">Status:</th>
+                        <td class="status-value">Shipped</td>
+                    </tr>
+                    <tr>
+                        <th class="shipping-key">Shipping to:</th>
+                        <td class="shipping-value">
+                            <div class="name">Dew Guy</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th></th>
+                        <td>
+                            <div class="addressOne">8321 Cavaricci Ave, </div>
+                            <div class="addressTwo"></div>
+                            <div class="city-state-zip">Las Vegas, NV 89129</div>
+                            <div class="phone">(702) 526-7986</div>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th class="subtotal-cost-key">Subtotal:</th>
+                        <td class="subtotal-cost-value">$60.00</td>
+                    </tr>
+                    <tr>
+                        <th class="shipping-cost-key">Shipping Cost:</th>
+                        <td class="shipping-cost-value">$10.00</td>
+                    </tr>
+                    <tr>
+                        <th class="taxes-key">Taxes:</th>
+                        <td class="taxes-value">$5.00</td>
+                    </tr>
+                    <tr>
+                        <th class="final-total-key">Final Total:</th>
+                        <td class="final-total-value">$75.00</td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
-        <hr />
 
-        <table class="table">
-            <tbody>
-                <tr>
-                    <th class="order-num-key">Order Number:</th>
-                    <td class="order-num-value">#ON-213202481537</td>
-                </tr>
-                <tr>
-                    <th class="date-key">Order Date:</th>
-                    <td class="date-value">2/13/2024 8:15:37 PM</td>
-                </tr>
-                <tr>
-                    <th class="status-key">Status:</th>
-                    <td class="status-value">Shipped</td>
-                </tr>
-                <tr>
-                    <th class="shipping-key">Shipping to:</th>
-                    <td class="shipping-value">
-                        <div class="name">Dew Guy</div>
-                    </td>
-                </tr>
-                <tr>
-                    <th></th>
-                    <td>
-                        <div class="addressOne">8321 Cavaricci Ave, </div>
-                        <div class="addressTwo"></div>
-                        <div class="city-state-zip">Las Vegas, NV 89129</div>
-                        <div class="phone">(702) 526-7986</div>
-                    </td>
-                </tr>
+        <div class="items">
+            <div class="items-header">
+                <h3>Items (3)</h3>
+                <div class="header-final-total">
+                </div>
 
-                <tr>
-                    <th class="subtotal-cost-key">Subtotal:</th>
-                    <td class="subtotal-cost-value">$60.00</td>
-                </tr>
-                <tr>
-                    <th class="shipping-cost-key">Shipping Cost:</th>
-                    <td class="shipping-cost-value">$10.00</td>
-                </tr>
-                <tr>
-                    <th class="taxes-key">Taxes:</th>
-                    <td class="taxes-value">$5.00</td>
-                </tr>
-                <tr>
-                    <th class="final-total-key">Final Total:</th>
-                    <td class="final-total-value">$75.00</td>
-                </tr>
-            </tbody>
-        </table>
+            </div>
+            <hr />
+
+            @* #1 *@
+            <div class="item">
+                <div class="item-img-wrapper">
+                    <img class="item-img" src="/images/td2.png" />
+                </div>
+                <div class="item-details">
+                    <h5>Cool Tie-Dye Shirt</h5>
+                    <h5>Size: Large</h5>
+                </div>
+                <div class="item-subtotal">
+                    $20.00
+                </div>
+            </div>
+
+            @* #2 *@
+            <div class="item">
+                <div class="item-img-wrapper">
+                    <img class="item-img" src="/images/td4.png" />
+                </div>
+                <div class="item-details">
+                    <h5>Cool Tie-Dye Shirt</h5>
+                    <h5>Size: Large</h5>
+                </div>
+                <div class="item-subtotal">
+                    $20.00
+                </div>
+            </div>
+
+            @* #3 *@
+            <div class="item">
+                <div class="item-img-wrapper">
+                    <img class="item-img" src="/images/td1.png" />
+                </div>
+                <div class="item-details">
+                    <h5>Cool Tie-Dye Shirt</h5>
+                    <h5>Size: Large</h5>
+                </div>
+                <div class="item-subtotal">
+                    $20.00
+                </div>
+            </div>
+            <hr />
+            <table class="cost-table">
+                <tbody>
+                    <tr>
+                        <th class="subtotal-cost-key">Subtotal:</th>
+                        <td class="subtotal-cost-value">$60.00</td>
+                    </tr>
+                    <tr>
+                        <th class="shipping-cost-key">Shipping Cost:</th>
+                        <td class="shipping-cost-value">$10.00</td>
+                    </tr>
+                    <tr>
+                        <th class="taxes-key">Taxes:</th>
+                        <td class="taxes-value">$5.00</td>
+                    </tr>
+                    <tr>
+                        <th class="final-total-key">Final Total:</th>
+                        <td class="final-total-value">$75.00</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
-
-    <div class="items">
-        <div class="items-header">
-            <h3>Items (3)</h3>
-            <div class="header-final-total">
-
-            </div>
-
-        </div>
-        <hr />
-
-        @* #1 *@
-        <div class="item">
-            <div class="item-img-wrapper">
-                <img class="item-img" src="/images/td2.png" />
-            </div>
-            <div class="item-details">
-                <h5>Cool Tie-Dye Shirt</h5>
-                <h5>Size: Large</h5>
-            </div>
-            <div class="item-subtotal">
-                $20.00
-            </div>
-        </div>
-
-        @* #2 *@
-        <div class="item">
-            <div class="item-img-wrapper">
-                <img class="item-img" src="/images/td4.png" />
-            </div>
-            <div class="item-details">
-                <h5>Cool Tie-Dye Shirt</h5>
-                <h5>Size: Large</h5>
-            </div>
-            <div class="item-subtotal">
-                $20.00
-            </div>
-        </div>
-
-        @* #3 *@
-        <div class="item">
-            <div class="item-img-wrapper">
-                <img class="item-img" src="/images/td1.png" />
-            </div>
-            <div class="item-details">
-                <h5>Cool Tie-Dye Shirt</h5>
-                <h5>Size: Large</h5>
-            </div>
-            <div class="item-subtotal">
-                $20.00
-            </div>
-        </div>
-        <hr />
-        <table class="cost-table">
-            <tbody>
-                <tr>
-                    <th class="subtotal-cost-key">Subtotal:</th>
-                    <td class="subtotal-cost-value">$60.00</td>
-                </tr>
-                <tr>
-                    <th class="shipping-cost-key">Shipping Cost:</th>
-                    <td class="shipping-cost-value">$10.00</td>
-                </tr>
-                <tr>
-                    <th class="taxes-key">Taxes:</th>
-                    <td class="taxes-value">$5.00</td>
-                </tr>
-                <tr>
-                    <th class="final-total-key">Final Total:</th>
-                    <td class="final-total-value">$75.00</td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-</div>
+}
 
 @code {
+    [Parameter]
+    public Guid Id { get; set; }
 
+    private Order? order = null;
+    private string message = string.Empty;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        message = "Loading Order...";
+
+        
+    }
 }
