@@ -52,7 +52,7 @@ namespace LouiseTieDyeStore.Shared.FedExRequestResponse.RateQuote
     public partial class Address
     {
         [JsonProperty("postalCode")]
-        public int PostalCode { get; set; }
+        public string PostalCode { get; set; }
 
         [JsonProperty("countryCode")]
         public string CountryCode { get; } = "US";

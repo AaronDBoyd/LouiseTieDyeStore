@@ -23,6 +23,6 @@ namespace LouiseTieDyeStore.Shared
             ErrorMessage = "Please Enter a 5 Digit US Postal Code")]
         public string Zip { get; set; }
 
-        public int ItemCount { get; set; }
+        public int ItemCount { get; set; } = 1;
     }
 }

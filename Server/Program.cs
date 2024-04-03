@@ -75,7 +75,7 @@ namespace LouiseTieDyeStore
             builder.Services.AddHttpClient();
             builder.Services.AddHttpClient("fedExApi", client =>
             {
-                client.BaseAddress = new Uri("https://apis-sandbox.fedex.com");
+                client.BaseAddress = new Uri("https://apis.fedex.com");
                 client.DefaultRequestHeaders.Add("X-locale", "en_US");
             });
 

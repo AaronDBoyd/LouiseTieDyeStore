@@ -34,7 +34,7 @@ namespace LouiseTieDyeStore.Server.Services.ShippingService
 
             var client = _httpClientFactory.CreateClient();
 
-            client.BaseAddress = new Uri("https://apis-sandbox.fedex.com");
+            client.BaseAddress = new Uri("https://apis.fedex.com");
 
             using var req = new HttpRequestMessage(HttpMethod.Post, "/oauth/token") { Content = new FormUrlEncodedContent(dict) };
             using var res = await client.SendAsync(req);
@@ -70,14 +70,14 @@ namespace LouiseTieDyeStore.Server.Services.ShippingService
                     {
                         Address = new Shared.FedExRequestResponse.RateQuote.Address
                         {
-                            PostalCode = int.Parse(_config["Shipping:LocalPostalCode"])
+                            PostalCode = _config["Shipping:LocalPostalCode"]
                         }
                     },
                     Recipient = new Recipient
                     {
                         Address = new Shared.FedExRequestResponse.RateQuote.Address
                         {
-                            PostalCode = int.Parse(shippingInfo.Zip)
+                            PostalCode = shippingInfo.Zip
                         }
                     },
                     PickupType = "DROPOFF_AT_FEDEX_LOCATION",
@@ -114,11 +114,13 @@ namespace LouiseTieDyeStore.Server.Services.ShippingService
 
                 var quoteResponse = JsonConvert.DeserializeObject<FedExRateQuoteResponse>(await result.Content.ReadAsStringAsync());
 
-                double shippingCost = quoteResponse.Output.RateReplyDetails[0].RatedShipmentDetails[0].TotalNetCharge;
+                //Console.WriteLine("!!!Quot Object : " + JsonConvert.SerializeObject(quoteResponse));
+
+                string shippingCost = quoteResponse.Output.RateReplyDetails[0].RatedShipmentDetails[0].TotalNetCharge.ToString();
 
                 return new ServiceResponse<string>
                 {
-                    Data = shippingCost.ToString()
+                    Data = shippingCost
                 };
             }
             catch (Exception ex)
@@ -135,6 +137,8 @@ namespace LouiseTieDyeStore.Server.Services.ShippingService
 
         public async Task<ServiceResponse<string>> ValidateShippingAddress(ShippingInfoDTO shippingInfo)
         {
+            //Console.WriteLine("!!! shipping info:  " + JsonConvert.SerializeObject(shippingInfo));
+
             var requestAddress = new FedExValidateAddressRequest
             {
                 AddressesToValidate = new List<AddressToValidate>
@@ -145,7 +149,8 @@ namespace LouiseTieDyeStore.Server.Services.ShippingService
                         {
                             StreetLines = new List<string>
                             {
-                                shippingInfo.LineOne
+                                shippingInfo.LineOne,
+                                shippingInfo.LineTwo
                             },
                             City = shippingInfo.City,
                             PostalCode = shippingInfo.Zip.ToString()
@@ -154,7 +159,7 @@ namespace LouiseTieDyeStore.Server.Services.ShippingService
                 }
             };
 
-            Console.WriteLine("!!!Request Address: " + JsonConvert.SerializeObject(requestAddress));
+            //Console.WriteLine("!!!Request Address: " + JsonConvert.SerializeObject(requestAddress));
 
             var authToken = await GetAuthToken();
 
@@ -163,21 +168,22 @@ namespace LouiseTieDyeStore.Server.Services.ShippingService
 
             try
             {
-                // TODO: !!! NEED TO RETEST PRODUCTION API
-
                 var result = await client.PostAsJsonAsync("/address/v1/addresses/resolve", requestAddress);
 
                 //Console.WriteLine("!!!Address Result: " + await result.Content.ReadAsStringAsync());
 
-                var returnString = JsonConvert.DeserializeObject<FedExValidateAddressResponse>(await result.Content.ReadAsStringAsync());
+                var returnObject = JsonConvert.DeserializeObject<FedExValidateAddressResponse>(await result.Content.ReadAsStringAsync());
 
-               // Console.WriteLine("!!! Address Object: " + JsonConvert.SerializeObject(returnString));
+                var matched = returnObject.Output.ResolvedAddresses[0].Attributes.Matched; // Bool for Valid Address
+                //Console.WriteLine("!!! Matched: " + JsonConvert.SerializeObject(matched));
+
+                //Console.WriteLine("!!! Address Object: " + JsonConvert.SerializeObject(returnObject));
 
                 return await GetShippingRateQuote(shippingInfo, authToken);
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                Console.WriteLine("!!!Exception: " + ex.Message);
 
                 return new ServiceResponse<string>
                 {
