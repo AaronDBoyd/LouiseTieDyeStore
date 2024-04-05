@@ -9,7 +9,7 @@ namespace LouiseTieDyeStore.Shared
 {
     public class OrderItem
     {
-        public Order Order { get; set; }
+        [ForeignKey(nameof(Order))]
         public Guid OrderId { get; set; }
         public Product Product { get; set; }
         public int ProductId { get; set; }

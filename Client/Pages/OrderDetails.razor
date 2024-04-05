@@ -1,5 +1,6 @@
-﻿@page "/orders/{id:guid}"
+﻿@page "/orders/{orderId:guid}"
 @inject IOrderService OrderService
+@attribute [Authorize]
 
 @if (order == null)
 {
@@ -7,22 +8,24 @@
 }
 else
 {
-
     <div class="container info-items-grid">
         <div class="order-info">
             <div class="info-header">
                 <h3>Order Details</h3>
+
+                <AuthorizeView Roles="Admin">
                 <div class="dropdown">
                     <button type="button" class="btn dropdown-toggle" data-bs-toggle="dropdown">
                         Change Status
                     </button>
                     <ul class="dropdown-menu">
-                        <li><a class="dropdown-item placed" href="#">Placed</a></li>
-                        <li><a class="dropdown-item packed" href="#">Packed</a></li>
-                        <li><a class="dropdown-item shipped" href="#">Shipped</a></li>
-                        <li><a class="dropdown-item delivered" href="#">Delivered</a></li>
+                        @foreach (var status in Enum.GetNames(typeof(Status)))
+                        {
+                            <li><a class="dropdown-item @status" @onclick="@(() => ChangeOrderStatus(@status))">@status</a></li>
+                        }
                     </ul>
                 </div>
+                </AuthorizeView>
             </div>
             <hr />
 
@@ -30,47 +33,47 @@ else
                 <tbody>
                     <tr>
                         <th class="order-num-key">Order Number:</th>
-                        <td class="order-num-value">#ON-213202481537</td>
+                        <td class="order-num-value">#@order.Id</td>
                     </tr>
                     <tr>
                         <th class="date-key">Order Date:</th>
-                        <td class="date-value">2/13/2024 8:15:37 PM</td>
+                        <td class="date-value">@order.OrderDate</td>
                     </tr>
                     <tr>
                         <th class="status-key">Status:</th>
-                        <td class="status-value">Shipped</td>
+                        <td class="status-value">@order.Status</td>
                     </tr>
                     <tr>
                         <th class="shipping-key">Shipping to:</th>
                         <td class="shipping-value">
-                            <div class="name">Dew Guy</div>
+                            <div class="name">@order.Address.FirstName @order.Address.LastName</div>
                         </td>
                     </tr>
                     <tr>
                         <th></th>
                         <td>
-                            <div class="addressOne">8321 Cavaricci Ave, </div>
-                            <div class="addressTwo"></div>
-                            <div class="city-state-zip">Las Vegas, NV 89129</div>
-                            <div class="phone">(702) 526-7986</div>
+                            <div class="addressOne">@order.Address.LineOne</div>
+                            <div class="addressTwo">@order.Address.LineTwo</div>
+                            <div class="city-state-zip">@order.Address.City, @order.Address.State @order.Address.Zip</div>
+                            <div class="phone">@order.Address.PhoneNumber</div>
                         </td>
                     </tr>
 
                     <tr>
                         <th class="subtotal-cost-key">Subtotal:</th>
-                        <td class="subtotal-cost-value">$60.00</td>
+                        <td class="subtotal-cost-value">$@order.SubTotal.ToString("0.00")</td>
                     </tr>
                     <tr>
                         <th class="shipping-cost-key">Shipping Cost:</th>
-                        <td class="shipping-cost-value">$10.00</td>
+                        <td class="shipping-cost-value">$@order.ShippingCost.ToString("0.00")</td>
                     </tr>
                     <tr>
                         <th class="taxes-key">Taxes:</th>
-                        <td class="taxes-value">$5.00</td>
+                        <td class="taxes-value">$@order.SalesTax.ToString("0.00")</td>
                     </tr>
                     <tr>
                         <th class="final-total-key">Final Total:</th>
-                        <td class="final-total-value">$75.00</td>
+                        <td class="final-total-value">$@order.TotalPrice.ToString("0.00")</td>
                     </tr>
                 </tbody>
             </table>
@@ -78,72 +81,47 @@ else
 
         <div class="items">
             <div class="items-header">
-                <h3>Items (3)</h3>
+                <h3>Items (@order.OrderItems.Count)</h3>
                 <div class="header-final-total">
                 </div>
 
             </div>
             <hr />
 
-            @* #1 *@
-            <div class="item">
-                <div class="item-img-wrapper">
-                    <img class="item-img" src="/images/td2.png" />
+            @foreach (var item in order.OrderItems)
+            {
+                <div class="item">
+                    <div class="item-img-wrapper">
+                        <img class="item-img" src="@item.Product.Images[0].Url" />
+                    </div>
+                    <div class="item-details">
+                        <h5>@item.Product.Title</h5>
+                        <h5>Size: @item.Product.Size</h5>
+                    </div>
+                    <div class="item-subtotal">
+                        $@item.Product.Price.ToString("0.00")
+                    </div>
                 </div>
-                <div class="item-details">
-                    <h5>Cool Tie-Dye Shirt</h5>
-                    <h5>Size: Large</h5>
-                </div>
-                <div class="item-subtotal">
-                    $20.00
-                </div>
-            </div>
+            }
 
-            @* #2 *@
-            <div class="item">
-                <div class="item-img-wrapper">
-                    <img class="item-img" src="/images/td4.png" />
-                </div>
-                <div class="item-details">
-                    <h5>Cool Tie-Dye Shirt</h5>
-                    <h5>Size: Large</h5>
-                </div>
-                <div class="item-subtotal">
-                    $20.00
-                </div>
-            </div>
-
-            @* #3 *@
-            <div class="item">
-                <div class="item-img-wrapper">
-                    <img class="item-img" src="/images/td1.png" />
-                </div>
-                <div class="item-details">
-                    <h5>Cool Tie-Dye Shirt</h5>
-                    <h5>Size: Large</h5>
-                </div>
-                <div class="item-subtotal">
-                    $20.00
-                </div>
-            </div>
             <hr />
             <table class="cost-table">
                 <tbody>
                     <tr>
                         <th class="subtotal-cost-key">Subtotal:</th>
-                        <td class="subtotal-cost-value">$60.00</td>
+                        <td class="subtotal-cost-value">$@order.SubTotal.ToString("0.00")</td>
                     </tr>
                     <tr>
                         <th class="shipping-cost-key">Shipping Cost:</th>
-                        <td class="shipping-cost-value">$10.00</td>
+                        <td class="shipping-cost-value">$@order.ShippingCost.ToString("0.00")</td>
                     </tr>
                     <tr>
                         <th class="taxes-key">Taxes:</th>
-                        <td class="taxes-value">$5.00</td>
+                        <td class="taxes-value">$@order.SalesTax.ToString("0.00")</td>
                     </tr>
                     <tr>
                         <th class="final-total-key">Final Total:</th>
-                        <td class="final-total-value">$75.00</td>
+                        <td class="final-total-value">$@order.TotalPrice.ToString("0.00")</td>
                     </tr>
                 </tbody>
             </table>
@@ -153,7 +131,7 @@ else
 
 @code {
     [Parameter]
-    public Guid Id { get; set; }
+    public Guid orderId { get; set; }
 
     private Order? order = null;
     private string message = string.Empty;
@@ -162,6 +140,45 @@ else
     {
         message = "Loading Order...";
 
-        
+        var result = await OrderService.GetOrder(orderId);
+        if (!result.Success)
+        {
+            message = result.Message;
+        }
+        else
+        {
+            order = result.Data;
+        }
+    }
+
+    public async Task ChangeOrderStatus(string status)
+    {
+        // Change local order
+        switch (status)
+        {
+            case "Placed":
+                order.Status = Status.Placed;
+                break;
+            case "Packed":
+                order.Status = Status.Packed;
+                break;
+            case "Shipped":
+                order.Status = Status.Shipped;
+                break;
+            case "Delivered":
+                order.Status = Status.Delivered;
+                break;
+            default:
+                break;
+        }
+
+        // Change DB order
+        var request = new OrderStatusRequest
+        {
+            OrderId = order.Id,
+            Status = status
+        };
+
+        await OrderService.ChangeOrderStatus(request);
     }
 }

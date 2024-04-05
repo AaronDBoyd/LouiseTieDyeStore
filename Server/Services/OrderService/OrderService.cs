@@ -21,6 +21,45 @@ namespace LouiseTieDyeStore.Server.Services.OrderService
             _taxService = taxService;
         }
 
+        public async Task<ServiceResponse<string>> ChangeOrderStatus(Guid orderId, string status)
+        {
+            var order = await _context.Orders.FirstOrDefaultAsync(o => o.Id == orderId);
+
+            if (order == null)
+            {
+                return new ServiceResponse<string>
+                {
+                    Success = false,
+                    Message = "Order not found"
+                };
+            }
+
+            switch (status)
+            {
+                case "Placed":
+                    order.Status = Status.Placed;
+                    break;
+                case "Packed":
+                    order.Status = Status.Packed;
+                    break;
+                case "Shipped":
+                    order.Status = Status.Shipped;
+                    break;
+                case "Delivered":
+                    order.Status = Status.Delivered;
+                    break;
+                default:
+                    break;
+            }
+
+            await _context.SaveChangesAsync();
+
+            return new ServiceResponse<string>
+            {
+                Data = order.Status.ToString()
+            };
+        }
+
         public async Task<ServiceResponse<string>> GetLastOrderIdByUserEmail(string email)
         {
             var lastOrder = await _context.Orders
@@ -42,6 +81,34 @@ namespace LouiseTieDyeStore.Server.Services.OrderService
                     Message = "Order Not Found"
                 };
             }         
+        }
+
+        public async Task<ServiceResponse<Order>> GetOrder(Guid orderId)
+        {
+            var email = await _authService.GetUserEmail();
+            var order = await _context.Orders
+                .Include(o => o.OrderItems)
+                .ThenInclude(oi => oi.Product)
+                .ThenInclude(p => p.Images)
+                .Include(o => o.Address)
+                .FirstOrDefaultAsync(o => o.Id == orderId && o.Email == email);
+
+            if (order != null)
+            {
+                return new ServiceResponse<Order>
+                {
+                    Data = order
+                };
+            }
+            else
+            {
+                return new ServiceResponse<Order>
+                {
+                    Success = false,
+                    Message = "Order Not Found"
+                };
+            }
+            
         }
 
         public async Task<ServiceResponse<bool>> PlaceOrder(Order order)
