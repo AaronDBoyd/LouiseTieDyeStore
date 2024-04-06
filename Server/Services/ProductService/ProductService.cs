@@ -113,7 +113,7 @@ namespace LouiseTieDyeStore.Server.Services.ProductService
 
         public async Task<ServiceResponse<ProductPageResults>> GetProductsByCategory(string categoryUrl, int page, string? sizeFilter = null, string? typeFilter = null)
         {
-            var pageResults = 3f;
+            var pageResults = 9f;
 
             // Get count of filtered products
             int count = new();

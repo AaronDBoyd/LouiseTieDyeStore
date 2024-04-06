@@ -1,4 +1,4 @@
-﻿@page "/orders/{orderId:guid}"
+﻿@page "/order/{orderId:guid}"
 @inject IOrderService OrderService
 @attribute [Authorize]
 
@@ -21,7 +21,7 @@ else
                     <ul class="dropdown-menu">
                         @foreach (var status in Enum.GetNames(typeof(Status)))
                         {
-                            <li><a class="dropdown-item @status" @onclick="@(() => ChangeOrderStatus(@status))">@status</a></li>
+                            <li><a class="dropdown-item @status" @onclick="@(() => ChangeOrderStatus(status))">@status</a></li>
                         }
                     </ul>
                 </div>

@@ -1,4 +1,5 @@
 ﻿
+using LouiseTieDyeStore.Shared;
 using Newtonsoft.Json;
 
 namespace LouiseTieDyeStore.Server.Services.OrderService
@@ -10,9 +11,9 @@ namespace LouiseTieDyeStore.Server.Services.OrderService
         private readonly IAuthService _authService;
         private readonly ISalesTaxService _taxService;
 
-        public OrderService(DataContext context, 
-            ICartService cartService, 
-            IAuthService authService, 
+        public OrderService(DataContext context,
+            ICartService cartService,
+            IAuthService authService,
             ISalesTaxService taxService)
         {
             _context = context;
@@ -60,6 +61,150 @@ namespace LouiseTieDyeStore.Server.Services.OrderService
             };
         }
 
+        public async Task<ServiceResponse<Order>> GetAdminOrder(Guid orderId)
+        {
+            var order = await _context.Orders
+                .Include(o => o.OrderItems)
+                .ThenInclude(oi => oi.Product)
+                .ThenInclude(p => p.Images)
+                .Include(o => o.Address)
+                .FirstOrDefaultAsync(o => o.Id == orderId);
+
+            if (order != null)
+            {
+                return new ServiceResponse<Order>
+                {
+                    Data = order
+                };
+            }
+            else
+            {
+                return new ServiceResponse<Order>
+                {
+                    Success = false,
+                    Message = "Order Not Found"
+                };
+            }
+        }
+
+        public async Task<ServiceResponse<OrderPageResults>> GetAdminOrders(int page, string? statusFilter = null, bool orderByNewest = true)
+        {
+            var pageResults = 10f;
+
+            int count;
+
+            if (statusFilter == null)
+            {
+                count = await _context.Orders
+                    .CountAsync();
+            }
+            else
+            {
+                Status status = (Status)Enum.Parse(typeof(Status), statusFilter);
+
+                count = await _context.Orders
+                    .Where(o => o.Status == status)
+                    .CountAsync();
+            }
+
+            if (count == 0)
+            {
+                return new ServiceResponse<OrderPageResults>
+                {
+                    Success = false,
+                    Message = "No Orders Found"
+                };
+            }
+
+            var pageCount = Math.Ceiling(count / pageResults);
+
+            List<Order> orders = new List<Order>();
+
+            if (statusFilter == null && orderByNewest)
+            {
+                orders = await _context.Orders
+                    .Include(o => o.OrderItems)
+                    .ThenInclude(oi => oi.Product)
+                    .ThenInclude(p => p.Images)
+                    .OrderByDescending(o => o.OrderDate)
+                    .Skip((page - 1) * (int)pageResults)
+                    .Take((int)pageResults)
+                    .ToListAsync();
+            }
+            else if (statusFilter == null && !orderByNewest)
+            {
+                orders = await _context.Orders
+                    .Include(o => o.OrderItems)
+                    .ThenInclude(oi => oi.Product)
+                    .ThenInclude(p => p.Images)
+                    .OrderBy(o => o.OrderDate)
+                    .Skip((page - 1) * (int)pageResults)
+                    .Take((int)pageResults)
+                    .ToListAsync();
+            }
+            else if (statusFilter != null && orderByNewest)
+            {
+                Status status = (Status)Enum.Parse(typeof(Status), statusFilter);
+
+                orders = await _context.Orders
+                    .Include(o => o.OrderItems)
+                    .ThenInclude(oi => oi.Product)
+                    .ThenInclude(p => p.Images)
+                    .Where(o => o.Status == status)
+                    .OrderByDescending(o => o.OrderDate)
+                    .Skip((page - 1) * (int)pageResults)
+                    .Take((int)pageResults)
+                    .ToListAsync();
+            }
+            else if (statusFilter != null && !orderByNewest)
+            {
+                Status status = (Status)Enum.Parse(typeof(Status), statusFilter);
+
+                orders = await _context.Orders
+                    .Include(o => o.OrderItems)
+                    .ThenInclude(oi => oi.Product)
+                    .ThenInclude(p => p.Images)
+                    .Where(o => o.Status == status)
+                    .OrderBy(o => o.OrderDate)
+                    .Skip((page - 1) * (int)pageResults)
+                    .Take((int)pageResults)
+                    .ToListAsync();
+            }
+
+            if (orders.Count == 0)
+            {
+                return new ServiceResponse<OrderPageResults>
+                {
+                    Success = false,
+                    Message = "No Orders Found"
+                };
+            }
+
+            var orderResponse = new List<OrderOverviewResponse>();
+            orders.ForEach(o => orderResponse.Add(new OrderOverviewResponse
+            {
+                Id = o.Id,
+                OrderDate = o.OrderDate,
+                TotalPrice = o.TotalPrice,
+                Status = o.Status.ToString(),
+                Product = o.OrderItems.Count > 1 ?
+                    $"{o.OrderItems.First().Product.Title} and" +
+                    $" {o.OrderItems.Count - 1} more..." :
+                    o.OrderItems.First().Product.Title,
+                ProductImageUrl = o.OrderItems.First().Product.Images[0].Url
+            }));
+
+            return new ServiceResponse<OrderPageResults>
+            {
+                Data = new OrderPageResults
+                {
+                    Orders = orderResponse,
+                    CurrentPage = page,
+                    Pages = (int)pageCount
+                }
+            };
+        }
+
         public async Task<ServiceResponse<string>> GetLastOrderIdByUserEmail(string email)
         {
             var lastOrder = await _context.Orders
@@ -80,7 +225,7 @@ namespace LouiseTieDyeStore.Server.Services.OrderService
                     Success = false,
                     Message = "Order Not Found"
                 };
-            }         
+            }
         }
 
         public async Task<ServiceResponse<Order>> GetOrder(Guid orderId)
@@ -108,12 +253,131 @@ namespace LouiseTieDyeStore.Server.Services.OrderService
                     Message = "Order Not Found"
                 };
             }
-            
+        }
+
+        public async Task<ServiceResponse<OrderPageResults>> GetOrders(int page, string? statusFilter = null, bool orderByNewest = true)
+        {
+            var userId = await _authService.GetUserId();
+            var pageResults = 10f;           
+            int count;
+
+            if (statusFilter == null)
+            {
+                count = await _context.Orders
+                    .Where(o => o.UserId == userId).CountAsync();
+            }
+            else
+            {
+                Status status = (Status)Enum.Parse(typeof(Status), statusFilter);
+
+                count = await _context.Orders
+                    .Where(o => o.UserId == userId &&
+                    o.Status == status).CountAsync();
+            }
+
+            if (count == 0)
+            {
+                return new ServiceResponse<OrderPageResults>
+                {
+                    Success = false,
+                    Message = "No Orders Found"
+                };
+            }
+
+            var pageCount = Math.Ceiling(count / pageResults);
+
+            List<Order> orders = new List<Order>();
+
+            if (statusFilter == null && orderByNewest)
+            {
+                orders = await _context.Orders
+                    .Include(o => o.OrderItems)
+                    .ThenInclude(oi => oi.Product)
+                    .ThenInclude(p => p.Images)
+                    .Where(o => o.UserId == userId)
+                    .OrderByDescending(o => o.OrderDate)
+                    .Skip((page - 1) * (int)pageResults)
+                    .Take((int)pageResults)
+                    .ToListAsync();
+            }
+            else if (statusFilter == null && !orderByNewest)
+            {
+                orders = await _context.Orders
+                    .Include(o => o.OrderItems)
+                    .ThenInclude(oi => oi.Product)
+                    .ThenInclude(p => p.Images)
+                    .Where(o => o.UserId == userId)
+                    .OrderBy(o => o.OrderDate)
+                    .Skip((page - 1) * (int)pageResults)
+                    .Take((int)pageResults)
+                    .ToListAsync();
+            }
+            else if (statusFilter != null && orderByNewest)
+            {
+                Status status = (Status)Enum.Parse(typeof(Status), statusFilter);
+
+                orders = await _context.Orders
+                    .Include(o => o.OrderItems)
+                    .ThenInclude(oi => oi.Product)
+                    .ThenInclude(p => p.Images)
+                    .Where(o => o.UserId == userId && o.Status == status)
+                    .OrderByDescending(o => o.OrderDate)
+                    .Skip((page - 1) * (int)pageResults)
+                    .Take((int)pageResults)
+                    .ToListAsync();
+            }
+            else if (statusFilter != null && !orderByNewest)
+            {
+                Status status = (Status)Enum.Parse(typeof(Status), statusFilter);
+
+                orders = await _context.Orders
+                    .Include(o => o.OrderItems)
+                    .ThenInclude(oi => oi.Product)
+                    .ThenInclude(p => p.Images)
+                    .Where(o => o.UserId == userId && o.Status == status)
+                    .OrderBy(o => o.OrderDate)
+                    .Skip((page - 1) * (int)pageResults)
+                    .Take((int)pageResults)
+                    .ToListAsync();
+            }
+
+            if (orders.Count == 0)
+            {
+                return new ServiceResponse<OrderPageResults>
+                {
+                    Success = false,
+                    Message = "No Orders Found"
+                };
+            }
+
+            var orderResponse = new List<OrderOverviewResponse>();
+            orders.ForEach(o => orderResponse.Add(new OrderOverviewResponse
+            {
+                Id = o.Id,
+                OrderDate = o.OrderDate,
+                TotalPrice = o.TotalPrice,
+                Status = o.Status.ToString(),
+                Product = o.OrderItems.Count > 1 ?
+                    $"{o.OrderItems.First().Product.Title} and" +
+                    $" {o.OrderItems.Count - 1} more..." :
+                    o.OrderItems.First().Product.Title,
+                ProductImageUrl = o.OrderItems.First().Product.Images[0].Url
+            }));
+
+            return new ServiceResponse<OrderPageResults>
+            {
+                Data = new OrderPageResults
+                {
+                    Orders = orderResponse,
+                    CurrentPage = page,
+                    Pages = (int)pageCount
+                }
+            };
         }
 
         public async Task<ServiceResponse<bool>> PlaceOrder(Order order)
         {
-        
+
             // get products from cartitems
             var cartProducts = (await _cartService.GetDbCartProducts(order.Email)).Data;
 

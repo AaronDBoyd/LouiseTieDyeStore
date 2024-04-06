@@ -31,6 +31,30 @@ namespace LouiseTieDyeStore.Server.Controllers
             return Ok(result);
         }
 
+        [HttpGet("admin/{orderId}")]
+        public async Task<ActionResult<ServiceResponse<Order>>> GetAdminOrder(Guid orderId)
+        {
+            var result = await _orderService.GetAdminOrder(orderId);
+
+            return Ok(result);
+        }
+
+        [HttpPost("admin"), Authorize(Roles = "Admin")]
+        public async Task<ActionResult<ServiceResponse<OrderPageResults>>> GetAdminOrders(OrderPageRequest request)
+        {
+            var result = await _orderService.GetAdminOrders(request.Page, request.StatusFilter, request.OrderByNewest);
+
+            return Ok(result);
+        }
+
+        [HttpPost, Authorize]
+        public async Task<ActionResult<ServiceResponse<OrderPageResults>>> GetOrders(OrderPageRequest request)
+        {
+            var result = await _orderService.GetOrders(request.Page, request.StatusFilter, request.OrderByNewest);
+
+            return Ok(result);
+        }
+
         [Authorize(Roles = "Admin")]
         [HttpPut("status")]
         public async Task<ActionResult<ServiceResponse<string>>> ChangeOrderStatus(OrderStatusRequest request)

@@ -7,21 +7,6 @@
     max-width: 400px;
 }
 
-.Placed {
-    background-color: #ffcdda;
-}
-
-.Packed {
-    background-color: #fff7c8;
-}
-
-.Shipped {
-    background-color: #bdebef;
-}
-
-.Delivered {
-    background-color: #ccebd3;
-}
 
 .order-wrapper {
     display: flex;
@@ -38,12 +23,8 @@
     .img-wrapper img {
         max-height: 200px;
         max-width: 200px;
-        /*transition: transform .2s;*/
     }
 
-/*.order-link:hover .img-wrapper img {
-    transform: scale(1.1);
-}*/
 
 .details {
     display: flex;
@@ -56,10 +37,9 @@
     font-size: 1.2rem;
     font-weight: 600;
     padding: 10px;
-
     display: flex;
     flex-direction: column;
-    justify-content:space-between;
+    justify-content: space-between;
 }
 
 .page-buttons {
@@ -78,7 +58,7 @@
         margin: 20px 0;
     }
 
-    .ing-wrapper {
+    .img-wrapper {
         float: left;
     }
 

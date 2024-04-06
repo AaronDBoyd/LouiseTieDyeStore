@@ -1,13 +1,13 @@
-﻿@page "/admin/orders/{page:int}"
+﻿@page "/orders/{page:int}"
 @inject IOrderService OrderService
-@attribute [Authorize(Roles = "Admin")]
+@attribute [Authorize]
 @implements IDisposable
 
 <div class="container">
 
-    <h3>All Orders</h3>
+    <h3>Your Orders</h3>
 
-    <div class="filter-dropdowns">
+    @* <div class="filter-dropdowns">
 
         <div class="input-group mb-3 search-order-num">
             <input type="text" class="form-control" placeholder="Search by Order #" aria-label="Search by Order #" aria-describedby="button-addon2">
@@ -36,8 +36,9 @@
                 <li><a class="dropdown-item" disabled="!@OrderByNewest" @onclick="@(() => SortOrder(false))">Oldest to Newest</a></li>
             </ul>
         </div>
-    </div>
+    </div> *@
     <hr />
+
 
     @if (OrderService.Orders == null || OrderService.Orders.Count == 0)
     {
@@ -47,7 +48,7 @@
     {
         @foreach (var order in OrderService.Orders)
         {
-            <div class="order-wrapper @order.Status">
+            <div class="order-wrapper">
                 <div class="img-wrapper">
                     <img src="@order.ProductImageUrl" />
                 </div>
@@ -74,7 +75,7 @@
             @for (int i = 1; i <= OrderService.PageCount; i++)
             {
                 <a class="btn @(i == OrderService.CurrentPage ? "btn-dark" : "btn-outline-dark") page-selection"
-                   href=@($"/admin/orders/{i}")>@i</a>
+                   href=@($"/orders/{i}")>@i</a>
             }
         }
     </div>
@@ -94,7 +95,7 @@
                 Page = Page
             };
 
-        await OrderService.GetAdminOrders(request);
+        await OrderService.GetOrders(request);
     }
 
     protected override void OnInitialized()
@@ -113,7 +114,7 @@
                 OrderByNewest = OrderByNewest
             };
 
-        await OrderService.GetAdminOrders(request);
+        await OrderService.GetOrders(request);
     }
 
     public async Task SortOrder(bool byNewest)
@@ -127,7 +128,7 @@
                 OrderByNewest = byNewest
             };
 
-        await OrderService.GetAdminOrders(request);
+        await OrderService.GetOrders(request);
     }
 
     public void Dispose()

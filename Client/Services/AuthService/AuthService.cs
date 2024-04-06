@@ -2,6 +2,8 @@
 using Blazored.SessionStorage;
 using LouiseTieDyeStore.Client.Pages;
 using Microsoft.AspNetCore.Components.Authorization;
+using Newtonsoft.Json;
+using System.Security.Claims;
 
 namespace LouiseTieDyeStore.Client.Services.AuthService
 {
@@ -56,6 +58,20 @@ namespace LouiseTieDyeStore.Client.Services.AuthService
             var idToken = sessionToken.id_token;
 
             await _localStorage.SetItemAsync("id_token", idToken);
+        }
+
+        public async Task<bool> IsUserAnAdmin()
+        {
+            var authState = await _authStateProvider.GetAuthenticationStateAsync();
+            var roleClaims = authState.User.FindAll(ClaimTypes.Role).ToList();
+            var roles = new List<string>();
+
+            foreach (var role in roleClaims)
+            {
+                roles.Add(role.Value);
+            }
+
+            return roles.Contains("Admin");
         }
     }
 }

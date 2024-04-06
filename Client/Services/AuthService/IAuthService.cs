@@ -4,6 +4,7 @@
     {
         Task CheckInUser();
         Task<bool> IsUserAuthenticated();
+        Task<bool> IsUserAnAdmin();
         Task StoreSessionIdToken();
         Task<string> GetAuthenticatedUsername();
     }
