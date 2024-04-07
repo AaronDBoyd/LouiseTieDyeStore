@@ -12,7 +12,8 @@ namespace LouiseTieDyeStore.Shared
         public DateTime OrderDate { get; set; }
         public decimal TotalPrice { get; set; }
         public string Status { get; set; } = string.Empty;
-        public string Product { get; set; } = string.Empty;
-        public string ProductImageUrl { get; set; } = string.Empty;
+        public string OrderTitle { get; set; } = string.Empty;
+        public string OrderImageUrl { get; set; } = string.Empty;
+        public string CustomerName { get; set; } = string.Empty;
     }
 }

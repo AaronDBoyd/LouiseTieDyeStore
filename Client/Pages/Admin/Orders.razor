@@ -1,17 +1,46 @@
 ﻿@page "/admin/orders/{page:int}"
+@page "/admin/orders/search/{searchText}/{page:int}"
 @inject IOrderService OrderService
+@inject NavigationManager NavigationManager
 @attribute [Authorize(Roles = "Admin")]
 @implements IDisposable
 
 <div class="container">
 
-    <h3>All Orders</h3>
-
+    @if (SearchText != null)
+    {
+        <h2 class="m-3">@OrderService.LastSearchText</h2>
+    }
+    else
+    {
+        <h2 class="m-3">All Orders</h2>
+    }
+    
     <div class="filter-dropdowns">
 
         <div class="input-group mb-3 search-order-num">
-            <input type="text" class="form-control" placeholder="Search by Order #" aria-label="Search by Order #" aria-describedby="button-addon2">
-            <button class="btn btn-outline-secondary" type="button" id="button-addon2">Search</button>
+            <input type="search" 
+                class="form-control" 
+                placeholder="Search Order #, Name, Email" 
+                aria-label="Search Order #, Name, Email" 
+                aria-describedby="button-addon2"
+                   list="orders"
+                   @onkeyup="HandleSearch"
+                   @ref="searchInput"
+                   @bind-value="searchTxt"
+                   @bind-value:event="oninput">
+            <button class="btn btn-outline-secondary" 
+                    type="button" 
+                    id="button-addon2"
+                    @onclick="@(() => SearchOrders())">
+                Search
+            </button>
+            <datalist id="orders">
+                @foreach (var suggestion in suggestions)
+                {
+                    <option>@suggestion</option>
+                }
+            </datalist>
         </div>
 
         <div class="dropdown">
@@ -49,14 +78,14 @@
         {
             <div class="order-wrapper @order.Status">
                 <div class="img-wrapper">
-                    <img src="@order.ProductImageUrl" />
+                    <img src="@order.OrderImageUrl" />
                 </div>
                 <div class="details">
-                    <h5>Date: @order.OrderDate</h5>
-                    <h5>Order Number: @order.Id</h5>
-                    <h5>@order.Product</h5>
-
-                    <h5>Status: Order <strong>@order.Status</strong></h5>
+                    <h6>Date: @order.OrderDate</h6>
+                    <p>Order Number: @order.Id</p>
+                    <h6>@order.OrderTitle</h6>
+                    <h6>For: @order.CustomerName</h6>
+                    <h6>Status: Order <strong>@order.Status</strong></h6>
                 </div>
                 <div class="order-price">
                     <p>$@order.TotalPrice</p>
@@ -74,7 +103,7 @@
             @for (int i = 1; i <= OrderService.PageCount; i++)
             {
                 <a class="btn @(i == OrderService.CurrentPage ? "btn-dark" : "btn-outline-dark") page-selection"
-                   href=@($"/admin/orders/{i}")>@i</a>
+                   href=@(SearchText != null ? $"/admin/orders/search/{OrderService.LastSearchText}/{i}" : $"/admin/orders/{i}")>@i</a>
             }
         }
     </div>
@@ -83,18 +112,48 @@
 @code {
     [Parameter]
     public int Page { get; set; } = 1;
+    [Parameter]
+    public string? SearchText { get; set; } = null;
 
     public string? StatusFilter = null;
     public bool OrderByNewest = true;
 
+    private string searchTxt = string.Empty;
+    private List<string> suggestions = new List<string>();
+    protected ElementReference searchInput;
+
+    public async Task HandleSearch(KeyboardEventArgs args)
+    {
+        if (args.Key == null || args.Key.Equals("Enter"))
+        {
+            SearchOrders();
+        }
+        else if (searchTxt.Length > 1)
+        {
+            suggestions = await OrderService.GetOrderSearchSuggestions(searchTxt);
+        }
+    }
+
+    public void SearchOrders()
+    {
+        NavigationManager.NavigateTo($"/admin/orders/search/{searchTxt}/1");
+    }
+
     protected override async Task OnParametersSetAsync()
     {
-        OrderPageRequest request = new OrderPageRequest
-            {
-                Page = Page
-            };
+        if (SearchText != null)
+        {
+            await OrderService.SearchOrders(SearchText, Page);
+        }
+        else
+        {
+            OrderPageRequest request = new OrderPageRequest
+                {
+                    Page = Page
+                };
 
-        await OrderService.GetAdminOrders(request);
+            await OrderService.GetAdminOrders(request);
+        }       
     }
 
     protected override void OnInitialized()

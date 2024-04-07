@@ -10,11 +10,14 @@ namespace LouiseTieDyeStore.Client.Services.OrderService
         string Message { get; set; }
         int CurrentPage { get; set; }
         int PageCount { get; set; }
+        string LastSearchText { get; set; }
         Task<string> PlaceOrder(CheckoutDTO checkout);
         Task<string> GetLastOrderIdByUserEmail();
         Task<ServiceResponse<Order>> GetOrder(Guid orderId);
         Task ChangeOrderStatus(OrderStatusRequest request);
         Task GetOrders(OrderPageRequest request);
         Task GetAdminOrders(OrderPageRequest request);
+        Task<List<string>> GetOrderSearchSuggestions(string searchText);
+        Task SearchOrders(string searchText, int page);
     }
 }

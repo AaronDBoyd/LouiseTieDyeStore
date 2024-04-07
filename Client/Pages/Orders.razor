@@ -5,38 +5,8 @@
 
 <div class="container">
 
-    <h3>Your Orders</h3>
+    <h2 class="m-3">Your Orders</h2>
 
-    @* <div class="filter-dropdowns">
-
-        <div class="input-group mb-3 search-order-num">
-            <input type="text" class="form-control" placeholder="Search by Order #" aria-label="Search by Order #" aria-describedby="button-addon2">
-            <button class="btn btn-outline-secondary" type="button" id="button-addon2">Search</button>
-        </div>
-
-        <div class="dropdown">
-            <button type="button" class="btn dropdown-toggle" data-bs-toggle="dropdown">
-                Filter Status
-            </button>
-            <ul class="dropdown-menu">
-                @foreach (var status in Enum.GetNames(typeof(Status)))
-                {
-                    <li><a class="dropdown-item @status" @onclick="@(() => FilterStatus(status))">@status</a></li>
-                }
-            </ul>
-        </div>
-
-        <div class="dropdown">
-            <button type="button" class="btn dropdown-toggle" data-bs-toggle="dropdown">
-                Sort By
-            </button>
-            <ul class="dropdown-menu">
-                <li><h5 class="dropdown-header">Date</h5></li>
-                <li><a class="dropdown-item" disabled="@OrderByNewest" @onclick="@(() => SortOrder(true))">Newest to Oldest</a></li>
-                <li><a class="dropdown-item" disabled="!@OrderByNewest" @onclick="@(() => SortOrder(false))">Oldest to Newest</a></li>
-            </ul>
-        </div>
-    </div> *@
     <hr />
 
 
@@ -50,12 +20,12 @@
         {
             <div class="order-wrapper">
                 <div class="img-wrapper">
-                    <img src="@order.ProductImageUrl" />
+                    <img src="@order.OrderImageUrl" />
                 </div>
                 <div class="details">
                     <h5>Date: @order.OrderDate</h5>
                     <h5>Order Number: @order.Id</h5>
-                    <h5>@order.Product</h5>
+                    <h5>@order.OrderTitle</h5>
 
                     <h5>Status: Order <strong>@order.Status</strong></h5>
                 </div>

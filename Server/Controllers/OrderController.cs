@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel;
 
 namespace LouiseTieDyeStore.Server.Controllers
 {
@@ -61,6 +62,20 @@ namespace LouiseTieDyeStore.Server.Controllers
         {
             var result = await _orderService.ChangeOrderStatus(request.OrderId, request.Status);
             
+            return Ok(result);
+        }
+
+        [HttpGet("searchsuggestions/{searchText}")]
+        public async Task<ActionResult<ServiceResponse<List<string>>>> GetOrderSearchSuggestions(string searchText)
+        {
+            var result = await _orderService.GetOrderSearchSuggestions(searchText);
+            return Ok(result);
+        }
+
+        [HttpGet("search/{searchText}/{page}")]
+        public async Task<ActionResult<ServiceResponse<OrderPageResults>>> SearchOrders(string searchText, int page = 1)
+        {
+            var result = await _orderService.SearchOrders(searchText, page);
             return Ok(result);
         }
     }

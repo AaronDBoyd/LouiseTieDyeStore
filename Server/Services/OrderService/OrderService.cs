@@ -123,6 +123,7 @@ namespace LouiseTieDyeStore.Server.Services.OrderService
             if (statusFilter == null && orderByNewest)
             {
                 orders = await _context.Orders
+                    .Include(o => o.Address)
                     .Include(o => o.OrderItems)
                     .ThenInclude(oi => oi.Product)
                     .ThenInclude(p => p.Images)
@@ -134,6 +135,7 @@ namespace LouiseTieDyeStore.Server.Services.OrderService
             else if (statusFilter == null && !orderByNewest)
             {
                 orders = await _context.Orders
+                    .Include(o => o.Address)
                     .Include(o => o.OrderItems)
                     .ThenInclude(oi => oi.Product)
                     .ThenInclude(p => p.Images)
@@ -147,6 +149,7 @@ namespace LouiseTieDyeStore.Server.Services.OrderService
                 Status status = (Status)Enum.Parse(typeof(Status), statusFilter);
 
                 orders = await _context.Orders
+                    .Include(o => o.Address)
                     .Include(o => o.OrderItems)
                     .ThenInclude(oi => oi.Product)
                     .ThenInclude(p => p.Images)
@@ -161,6 +164,7 @@ namespace LouiseTieDyeStore.Server.Services.OrderService
                 Status status = (Status)Enum.Parse(typeof(Status), statusFilter);
 
                 orders = await _context.Orders
+                    .Include(o => o.Address)
                     .Include(o => o.OrderItems)
                     .ThenInclude(oi => oi.Product)
                     .ThenInclude(p => p.Images)
@@ -187,11 +191,12 @@ namespace LouiseTieDyeStore.Server.Services.OrderService
                 OrderDate = o.OrderDate,
                 TotalPrice = o.TotalPrice,
                 Status = o.Status.ToString(),
-                Product = o.OrderItems.Count > 1 ?
+                OrderTitle = o.OrderItems.Count > 1 ?
                     $"{o.OrderItems.First().Product.Title} and" +
                     $" {o.OrderItems.Count - 1} more..." :
                     o.OrderItems.First().Product.Title,
-                ProductImageUrl = o.OrderItems.First().Product.Images[0].Url
+                OrderImageUrl = o.OrderItems.First().Product.Images[0].Url,
+                CustomerName = $"{o.Address.FirstName} {o.Address.LastName}",
             }));
 
             return new ServiceResponse<OrderPageResults>
@@ -357,11 +362,11 @@ namespace LouiseTieDyeStore.Server.Services.OrderService
                 OrderDate = o.OrderDate,
                 TotalPrice = o.TotalPrice,
                 Status = o.Status.ToString(),
-                Product = o.OrderItems.Count > 1 ?
+                OrderTitle = o.OrderItems.Count > 1 ?
                     $"{o.OrderItems.First().Product.Title} and" +
                     $" {o.OrderItems.Count - 1} more..." :
                     o.OrderItems.First().Product.Title,
-                ProductImageUrl = o.OrderItems.First().Product.Images[0].Url
+                OrderImageUrl = o.OrderItems.First().Product.Images[0].Url
             }));
 
             return new ServiceResponse<OrderPageResults>
@@ -373,6 +378,47 @@ namespace LouiseTieDyeStore.Server.Services.OrderService
                     Pages = (int)pageCount
                 }
             };
+        }
+
+        public async Task<ServiceResponse<List<string>>> GetOrderSearchSuggestions(string searchText)
+        {
+            var orders = await _context.Orders
+                .Where(o => o.Email.ToLower().Contains(searchText.ToLower()) 
+                || o.Id.ToString().ToLower().Contains(searchText.ToLower())
+                || o.Address.FirstName.ToLower().Contains(searchText.ToLower())
+                || o.Address.LastName.ToLower().Contains(searchText.ToLower()))
+                .Include(o => o.Address).ToListAsync();
+
+            List<string> result = new();
+
+            if (orders != null)
+            {
+                foreach (var order in orders)
+                {
+                    if (order.Email.Contains(searchText, StringComparison.OrdinalIgnoreCase)
+                        && !result.Contains(order.Email))
+                    {
+                        result.Add(order.Email);
+                    }
+
+                    string fullName = $"{order.Address.FirstName} {order.Address.LastName}";
+
+                    if (!result.Contains(fullName) 
+                        && order.Address.FirstName.ToLower().Contains(searchText.ToLower())
+                        || order.Address.LastName.ToLower().Contains(searchText.ToLower()))
+                    {
+                        result.Add(fullName);
+                    }
+
+                    if (order.Id.ToString().ToLower().Contains(searchText.ToLower())
+                        && !result.Contains($"{order.Id}"))
+                    {
+                        result.Add($"{order.Id}");
+                    }
+                }
+            }
+
+            return new ServiceResponse<List<string>> { Data = result };
         }
 
         public async Task<ServiceResponse<bool>> PlaceOrder(Order order)
@@ -434,6 +480,61 @@ namespace LouiseTieDyeStore.Server.Services.OrderService
             await _context.SaveChangesAsync();
 
             return new ServiceResponse<bool> { Data = true };
+        }
+
+        public async Task<ServiceResponse<OrderPageResults>> SearchOrders(string searchText, int page)
+        {
+            var pageResults = 10f;
+            var count = await _context.Orders
+                .Where(o => o.Email.ToLower().Contains(searchText.ToLower())
+                || o.Id.ToString().ToLower().Contains(searchText.ToLower())
+                || o.Address.FirstName.ToLower().Contains(searchText.ToLower())
+                || o.Address.LastName.ToLower().Contains(searchText.ToLower())
+                || (o.Address.FirstName + " " + o.Address.LastName).ToLower() == searchText.ToLower())
+                .Include(o => o.Address).CountAsync();
+
+            var pageCount = Math.Ceiling(count / pageResults);
+
+            var orders = await _context.Orders
+                .Where(o => o.Email.ToLower().Contains(searchText.ToLower())
+                || o.Id.ToString().ToLower().Contains(searchText.ToLower())
+                || o.Address.FirstName.ToLower().Contains(searchText.ToLower())
+                || o.Address.LastName.ToLower().Contains(searchText.ToLower())
+                || (o.Address.FirstName + " " + o.Address.LastName).ToLower() == searchText.ToLower())
+                .Include(o => o.Address)
+                .Include(o => o.OrderItems)
+                .ThenInclude(oi => oi.Product)
+                .ThenInclude(p => p.Images)
+                .Skip((page - 1) * (int)pageResults)
+                .Take((int)pageResults)
+                .OrderBy(o => o.OrderDate)
+                .ToListAsync();
+
+            var orderResponse = new List<OrderOverviewResponse>();
+
+            orders.ForEach(o => orderResponse.Add(new OrderOverviewResponse
+            {
+                Id = o.Id,
+                OrderDate = o.OrderDate,
+                TotalPrice = o.TotalPrice,
+                Status = o.Status.ToString(),
+                OrderTitle = o.OrderItems.Count > 1 ?
+                    $"{o.OrderItems.First().Product.Title} and" +
+                    $" {o.OrderItems.Count - 1} more..." :
+                    o.OrderItems.First().Product.Title,
+                OrderImageUrl = o.OrderItems.First().Product.Images[0].Url,
+                CustomerName = $"{o.Address.FirstName} {o.Address.LastName}",
+            }));
+
+            return new ServiceResponse<OrderPageResults>
+            {
+                Data = new OrderPageResults
+                {
+                    Orders = orderResponse,
+                    CurrentPage = page,
+                    Pages = (int)pageCount
+                }
+            };
         }
     }
 }

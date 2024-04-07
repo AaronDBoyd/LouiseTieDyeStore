@@ -30,6 +30,7 @@ namespace LouiseTieDyeStore.Client.Services.OrderService
         public string Message { get; set; } = "Loading Orders...";
         public int CurrentPage { get; set; } = 1;
         public int PageCount { get; set; } = 0;
+        public string LastSearchText { get; set; } = string.Empty;
 
         public event Action OrdersChanged;
 
@@ -116,6 +117,33 @@ namespace LouiseTieDyeStore.Client.Services.OrderService
             }
 
             if (!response.Success)
+            {
+                Message = "No Orders Found";
+                Orders.Clear();
+            }
+
+            OrdersChanged.Invoke();
+        }
+
+        public async Task<List<string>> GetOrderSearchSuggestions(string searchText)
+        {
+            var result = await _privateClient.GetFromJsonAsync<ServiceResponse<List<string>>>($"api/order/searchsuggestions/{searchText}");
+            return result.Data;
+        }
+
+        public async Task SearchOrders(string searchText, int page)
+        {
+            LastSearchText = searchText;
+            var result = await _privateClient.GetFromJsonAsync<ServiceResponse<OrderPageResults>>($"api/order/search/{searchText}/{page}");
+
+            if (result != null && result.Data != null && result.Data.Orders != null)
+            {
+                Orders =    result.Data.Orders;
+                CurrentPage = result.Data.CurrentPage;
+                PageCount = result.Data.Pages;
+            }
+
+            if (!result.Success)
             {
                 Message = "No Orders Found";
                 Orders.Clear();
