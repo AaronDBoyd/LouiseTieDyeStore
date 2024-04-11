@@ -1,0 +1,83 @@
+﻿@page "/admin/message/{id:int}"
+@inject IMessageService MessageService
+@inject NavigationManager Navigation
+
+<div class="container">
+
+    @if (message == null)
+    {
+        <h2 class="text-center">@loadingMessage</h2>
+    }
+    else
+    {
+        <div class="card">
+            <div class="card-body">
+                <div class="header">
+                    <div class="header-left">
+                        <p>@message.FirstName @message.LastName</p>
+                        <p>@message.Email</p>
+                        <p>@message.PhoneNumber</p>
+                    </div>
+                    <div class="header-right">
+                        <p>@message.Date</p>
+                    </div>
+                </div>
+
+                <h4 class="card-title">@message.Subject</h4>
+
+                <hr />
+
+                @foreach (var line in body)
+                {
+                    <p>@line</p>
+                }
+
+                <br />
+
+                <div class="footer">
+                    <button class="btn btn-danger text-end" style="float: right;" @onclick="DeleteMessage">Delete Message</button>
+                </div>
+
+            </div>
+        </div>
+    }
+
+</div>
+
+
+@code {
+    private Message? message = null;
+    private string loadingMessage = "Loading Message...";
+    private List<string> body = new List<string>();
+
+
+    [Parameter]
+    public int Id { get; set; }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        var result = await MessageService.GetMessage(Id);
+
+        if (!result.Success)
+        {
+            loadingMessage = "No Message Found";
+        }
+        else
+        {
+            message = result.Data;
+
+            body = message.Body.Split("\n").ToList();
+        }
+    }
+
+    private async Task DeleteMessage()
+    {
+        bool success = await MessageService.DeleteMessage(message.Id); 
+
+        if (success)
+        {
+            Navigation.NavigateTo("admin/messages/1");
+        }
+    }
+
+}

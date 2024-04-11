@@ -1,0 +1,67 @@
+﻿@page "/admin/messages/{page:int}"
+@inject IMessageService MessageService
+@inject NavigationManager Navigation
+
+<div class="container">
+    <h3 class="mx-5">Message List</h3>
+
+    @if (MessageService.MessageList == null || MessageService.MessageList.Count == 0)
+    {
+        <h2 class="text-center">@MessageService.LoadingMessage</h2>
+    }
+    else
+    {
+        <table class="table table-dark table-hover mx-5">
+            <thead>
+                <tr>
+                    <th scope="col">Unread</th>
+                    <th scope="col">Subject</th>
+                    <th scope="col">Date</th>
+
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var message in MessageService.MessageList)
+                {
+                    <tr @onclick="@(() => Navigation.NavigateTo($"admin/message/{message.Id}"))">
+                        @if (message.Read)
+                        {
+                            <th scope="row"></th>
+                        }
+                        else
+                        {
+                            <th scope="row"><span class="oi oi-circle-check"></span></th>
+                        }
+
+                        <td>@message.Subject</td>
+                        <td>@message.Date</td>
+
+                    </tr>
+                }
+
+            </tbody>
+        </table>
+
+        <div class="page-buttons">
+            @if (MessageService.PageCount > 1)
+            {
+                @for (int i = 1; i <= MessageService.PageCount; i++)
+                {
+                    <a class="btn @(i == MessageService.CurrentPage ? "btn-dark" : "btn-outline-dark") page-selection"
+                       href=@($"/admin/messages/{i}")>@i</a>
+                }
+            }
+        </div>
+    }
+</div>
+
+
+@code {
+    [Parameter]
+    public int Page { get; set; } = 1;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await MessageService.GetMessages(Page);
+    }
+}

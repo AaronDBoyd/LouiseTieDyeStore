@@ -17,6 +17,11 @@
    gap: 40px;
 }
 
+.message-body {
+    border-radius: 15px;
+    min-height: 220px;
+}
+
 form {
     margin-top: 20px;
 }

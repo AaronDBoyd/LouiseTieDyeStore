@@ -1,0 +1,10 @@
+﻿.page-buttons {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.page-selection {
+    margin-right: 15px;
+    margin-bottom: 30px;
+}

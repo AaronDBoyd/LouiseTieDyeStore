@@ -490,5 +490,6 @@ namespace LouiseTieDyeStore.Server.Data
         public DbSet<TaxRate> TaxRates { get; set; }
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrderItem> OrderItems { get; set; }
+        public DbSet<Message> Messages { get; set; }
     }
 }
