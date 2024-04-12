@@ -62,7 +62,7 @@
                         </div>
                         <div class="item-remove">
                             @* TODO: enlarge area to click "x" *@
-                            <i class="oi oi-x" data-bs-toggle="modal" data-bs-target="#removeModal"></i>
+                            <i class="oi oi-x" data-bs-toggle="modal" data-bs-target=@($"#removeModal{product.ProductId}")></i>
                         </div>
                         @* <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#myModal">
                 Open modal
@@ -70,7 +70,7 @@
                     </div>
 
                     <!-- The Modal -->
-                    <div class="modal fade remove-modal" id="removeModal">
+                    <div class="modal fade remove-modal" id=@($"removeModal{product.ProductId}")>
                         <div class="modal-dialog">
                             <div class="modal-content">
 
