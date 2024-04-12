@@ -22,8 +22,10 @@ namespace LouiseTieDyeStore.Server.Services.ShippingService
         {
             // TODO: Do I abstract away this client setup?
 
-            string clientId = _config["FedExKeys:ClientId"];
-            string clientSecret = _config["FedExKeys:ClientSecret"];
+            string clientId = _config["FedExKeys:ClientId"]
+                ?? Environment.GetEnvironmentVariable("FedExKeys_ClientId");
+            string clientSecret = _config["FedExKeys:ClientSecret"]
+                ?? Environment.GetEnvironmentVariable("FedExKeys_ClientSecret");
 
             var dict = new Dictionary<string, string>
             {
@@ -62,7 +64,8 @@ namespace LouiseTieDyeStore.Server.Services.ShippingService
             {
                 AccountNumber = new AccountNumber
                 {
-                    Value = _config["FedExKeys:AccountNumber"],
+                    Value = _config["FedExKeys:AccountNumber"]
+                    ?? Environment.GetEnvironmentVariable("FedExKeys_AccountNumber"),
                 },
                 RequestedShipment = new RequestedShipment
                 {

@@ -22,7 +22,8 @@ namespace LouiseTieDyeStore.Server.Services.PaymentService
             _orderService = orderService;
             _config = config;
 
-            StripeConfiguration.ApiKey = _config["StripeKeys:ApiKey"];
+            StripeConfiguration.ApiKey = _config["StripeKeys:ApiKey"]
+                ?? Environment.GetEnvironmentVariable("StripeKeys_ApiKey");
         }
 
         public Session CreateCheckoutSession(CheckoutDTO checkout)
@@ -124,7 +125,8 @@ namespace LouiseTieDyeStore.Server.Services.PaymentService
                 var stripeEvent = EventUtility.ConstructEvent(
                         json,
                         request.Headers["Stripe-Signature"],
-                        _config["StripeKeys:WebHookSecret"]);
+                        _config["StripeKeys:WebHookSecret"]
+                        ?? Environment.GetEnvironmentVariable("StripeKeys_WebHookSecret"));
 
                 if (stripeEvent.Type == Events.CheckoutSessionCompleted)
                 {

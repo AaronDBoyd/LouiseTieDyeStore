@@ -29,12 +29,14 @@ namespace LouiseTieDyeStore
             // Add services to the container.
 
             builder.Services.AddDbContext<DataContext>(options =>
-            
+
                 //options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 
-                
-                options.UseNpgsql(builder.Configuration.GetConnectionString("RenderConnection"), x => x.MigrationsHistoryTable("__efmigrationshistory", "public")).ReplaceService<IHistoryRepository, LoweredCaseMigrationHistoryRepository>());
-            
+                options.UseNpgsql(builder.Configuration.GetConnectionString("RenderConnection")
+                ?? Environment.GetEnvironmentVariable("ConnectionStrings_RenderConnection"),
+                x => x.MigrationsHistoryTable("__efmigrationshistory", "public"))
+                .ReplaceService<IHistoryRepository, LoweredCaseMigrationHistoryRepository>());
+
 
             builder.Services.AddControllersWithViews();
             builder.Services.AddRazorPages();
