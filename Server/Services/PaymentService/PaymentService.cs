@@ -22,8 +22,8 @@ namespace LouiseTieDyeStore.Server.Services.PaymentService
             _orderService = orderService;
             _config = config;
 
-            StripeConfiguration.ApiKey = _config["StripeKeys:ApiKey"]
-                ?? Environment.GetEnvironmentVariable("StripeKeys_ApiKey");
+            StripeConfiguration.ApiKey = Environment.GetEnvironmentVariable("StripeKeys_ApiKey")
+                ?? _config["StripeKeys:ApiKey"];
         }
 
         public Session CreateCheckoutSession(CheckoutDTO checkout)

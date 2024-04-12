@@ -32,8 +32,7 @@ namespace LouiseTieDyeStore
 
                 //options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 
-                options.UseNpgsql(builder.Configuration.GetConnectionString("RenderConnection")
-                ?? Environment.GetEnvironmentVariable("ConnectionStrings_RenderConnection"),
+                options.UseNpgsql(Environment.GetEnvironmentVariable("ConnectionStrings_RenderConnection") ?? builder.Configuration.GetConnectionString("RenderConnection"),                
                 x => x.MigrationsHistoryTable("__efmigrationshistory", "public"))
                 .ReplaceService<IHistoryRepository, LoweredCaseMigrationHistoryRepository>());
 
