@@ -1,4 +1,5 @@
 ﻿using LouiseTieDyeStore.Client.Pages.Admin;
+using Marques.EFCore.SnakeCase;
 using System.Security.Policy;
 using System.Xml.Linq;
 
@@ -478,6 +479,9 @@ namespace LouiseTieDyeStore.Server.Data
                 }
            );
             #endregion
+
+            // For PostgreSQL Migration
+            modelBuilder.ToSnakeCase();
         }
 
         public DbSet<Product> Products { get; set; }

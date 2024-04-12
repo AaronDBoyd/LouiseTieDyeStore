@@ -15,6 +15,8 @@ using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.OpenApi.Models;
 using Stripe;
+using Microsoft.EntityFrameworkCore.Migrations;
+using LouiseTieDyeStore.Server.PostgreSQL;
 
 namespace LouiseTieDyeStore
 {
@@ -27,9 +29,12 @@ namespace LouiseTieDyeStore
             // Add services to the container.
 
             builder.Services.AddDbContext<DataContext>(options =>
-            {
-                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
-            });
+            
+                //options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+
+                
+                options.UseNpgsql(builder.Configuration.GetConnectionString("RenderConnection"), x => x.MigrationsHistoryTable("__efmigrationshistory", "public")).ReplaceService<IHistoryRepository, LoweredCaseMigrationHistoryRepository>());
+            
 
             builder.Services.AddControllersWithViews();
             builder.Services.AddRazorPages();
