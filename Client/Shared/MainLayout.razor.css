@@ -18,13 +18,13 @@ main {
     
 }
 
-    .top-row a {
+    .top-row a, .top-row span {
         text-decoration: none;
         color: white;
         text-align: start;
     }
 
-    .top-row ::deep a, .top-row ::deep .btn-link {
+    .top-row ::deep a, .top-row ::deep .btn-link, .top-row span {
         white-space: nowrap;
         margin-left: 1rem;
         margin-right: 1rem;

@@ -13,7 +13,7 @@ namespace LouiseTieDyeStore.Shared
         public int UserId { get; set; }
         public string Email { get; set; } = string.Empty;
         public Address Address { get; set; }
-        public DateTime OrderDate { get; set; } = DateTime.Now;
+        public DateTime OrderDate { get; set; } = DateTime.UtcNow;
 
         [Column(TypeName = "decimal(18,2)")]
         public decimal ShippingCost { get; set; }

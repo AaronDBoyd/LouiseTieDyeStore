@@ -10,6 +10,6 @@ namespace LouiseTieDyeStore.Shared
     {
         public int Id { get; set; }
         public string Email { get; set; } = string.Empty;
-        public DateTime DateCreated { get; set; } = DateTime.Now;
+        public DateTime DateCreated { get; set; } = DateTime.UtcNow;
     }
 }

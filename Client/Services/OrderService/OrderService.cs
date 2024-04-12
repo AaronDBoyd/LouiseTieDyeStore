@@ -25,7 +25,7 @@ namespace LouiseTieDyeStore.Client.Services.OrderService
             _localStorage = localStorage;
         }
 
-        public List<OrderOverviewResponse> Orders { get; set; }
+        public List<OrderOverviewResponse> Orders { get; set; } = new List<OrderOverviewResponse>();
         public string? StatusFilter { get; set; }
         public string Message { get; set; } = "Loading Orders...";
         public int CurrentPage { get; set; } = 1;

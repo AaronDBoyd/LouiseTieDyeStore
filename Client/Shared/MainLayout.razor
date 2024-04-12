@@ -5,8 +5,7 @@
     <main>
         <div class="top-row px-4" style="height: 36px;">
             <AuthorizeView>
-                @* TODO: ? Why should this be a link? *@
-                <a> Hello, <i>@context.User.Identity.Name</i></a>
+                <span> Hello, <i>@context.User.Identity.Name</i></span>
             </AuthorizeView>
             <a href="/contact" >Contact</a>
             <a href="/gallery" >Gallery</a>

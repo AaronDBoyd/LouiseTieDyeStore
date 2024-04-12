@@ -12,7 +12,7 @@ namespace LouiseTieDyeStore.Client.Services.MessageService
             _privateClient = privateClient;
         }
 
-        public List<Message> MessageList { get; set; }
+        public List<Message> MessageList { get; set; } = new List<Message>();
         public string LoadingMessage { get; set; } = "Loading Messages...";
         public int CurrentPage { get; set; } = 1;
         public int PageCount { get; set; } = 0;

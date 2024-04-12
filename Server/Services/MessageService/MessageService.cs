@@ -116,7 +116,7 @@ namespace LouiseTieDyeStore.Server.Services.MessageService
         {
             try
             {
-                message.Date = DateTime.Now;
+                message.Date = DateTime.UtcNow;
 
                 _context.Messages.Add(message);
                 await _context.SaveChangesAsync();

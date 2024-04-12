@@ -26,15 +26,13 @@
         <Search />
 
         @* Account *@
-
-        @* BUG: Tooltip causes full size screen to have space on the right *@
-        @* TODO: Change to using Bootstrap version *@
-        @* <Tooltip Text="Sign-in"> *@
-        <a class="person-icon" data-bs-toggle="offcanvas" href="#offcanvasRight" role="button" aria-controls="offcanvasRight">
-            @* <i class="oi oi-person"></i> *@
-            <i class="fas fa-user-circle"></i>
-        </a>
-        @* </Tooltip> *@
+        <Tooltip Tip="Account">
+            <a class="person-icon" data-bs-toggle="offcanvas" href="#offcanvasRight"
+               role="button" aria-controls="offcanvasRight">
+                @* <i class="oi oi-person"></i> *@
+                <i class="fas fa-user-circle"></i>
+            </a>
+        </Tooltip>
 
         @* Account Pop-out *@
         <AccountForms />
@@ -43,18 +41,16 @@
         @* TODO: Move Cart button into it's own component *@
         @* Cart Button *@
         <div class="cart-btn">
-            @* BUG: Tooltip causes full size screen to have space on the right *@
-            @* TODO: Change to using Bootstrap version *@
-            @* <Tooltip Text="View Cart"> *@
-            <a href="/cart" class="cart-btn">
-                @* <i class="oi oi-cart"></i>  *@
-                <i class="fas fa-shopping-bag"></i>
-                @if (GetCartItemsCount() != 0)
-                {
-                    <span class="badge rounded-pill bg-dark">@GetCartItemsCount()</span>                   
-                }
-            </a>
-            @* </Tooltip> *@
+            <Tooltip Tip="View Cart">
+                <a href="/cart" class="cart-btn">
+                    @* <i class="oi oi-cart"></i>  *@
+                    <i class="fas fa-shopping-bag"></i>
+                    @if (GetCartItemsCount() != 0)
+                    {
+                        <span class="badge rounded-pill bg-dark">@GetCartItemsCount()</span>
+                    }
+                </a>
+            </Tooltip>
         </div>
 
         @* Menu Toggle *@
