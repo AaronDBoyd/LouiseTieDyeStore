@@ -44,13 +44,13 @@
 
                             <div class="mb-3">
                                 <label for="zip">ZIP Code<span class="reqAst">*</span></label>
-                                <InputText id="zip" type="text" @bind-Value="shippingInfo.Zip" class="form-control input" style="border-radius: 255px; width: 60%" />
+                                <InputText id="zip" type="text" @bind-Value="shippingInfo.Zip" class="form-control input" style="border-radius: 255px;" />
                             </div>
 
                             <div class="form-state">
                                 <div class="mb-3">
                                     <label for="state">State<span class="reqAst">*</span></label>
-                                    <InputSelect class="form-select select" @bind-Value="shippingInfo.State" name="state" id="state" style="border-radius: 255px; width: 60%">
+                                    <InputSelect class="form-select select" @bind-Value="shippingInfo.State" name="state" id="state" style="border-radius: 255px;">
                                         <option>Select State</option>
                                         <option value="AL">Alabama</option>
                                         <option value="AK">Alaska</option>
@@ -108,7 +108,7 @@
                             </div>
                             <div></div>
                             <div class="form-submit">
-                                <button type="submit" class="btn">
+                                <button type="submit" class="btn btn-dark">
                                     Confirm Shipping Info
                                 </button>
                             </div>
@@ -170,7 +170,7 @@
                                 <th class="taxes-key">
                                     taxes
                                 </th>
-                                @if (salesTax == default)
+                                @if (!taxCalculated)
                                 {
                                     <td class="taxes-value">Calculated by Shipping</td>
                                 }
@@ -248,6 +248,7 @@
     decimal shippingCost = default;
     decimal salesTax = default;
     decimal totalPrice = default;
+    bool taxCalculated = false;
 
     string message = string.Empty;
 
@@ -294,15 +295,16 @@
         await JsRuntime.InvokeVoidAsync("scrollUp");
 
         salesTax = await TaxService.CalculateSalesTax(subTotal, shippingInfo.State);
+        taxCalculated = true;
 
         var shippingCostResponse = await ShippingService.GetShippingCost(shippingInfo);
 
-        Console.WriteLine("!!! Response: " + shippingCostResponse);
+        //Console.WriteLine("!!! Response: " + shippingCostResponse);
 
         if (decimal.TryParse(shippingCostResponse, out decimal cost))
         {
             shippingCost = Math.Round(cost, 2);
-            Console.WriteLine("!!! Cost: " + shippingCost);
+            //Console.WriteLine("!!! Cost: " + shippingCost);
         }
         else
         {
