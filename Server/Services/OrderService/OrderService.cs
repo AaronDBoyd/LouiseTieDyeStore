@@ -1,6 +1,9 @@
 ﻿
 using LouiseTieDyeStore.Shared;
 using Newtonsoft.Json;
+using SendGrid.Helpers.Mail;
+using SendGrid;
+using System.Security.Cryptography;
 
 namespace LouiseTieDyeStore.Server.Services.OrderService
 {
@@ -10,16 +13,19 @@ namespace LouiseTieDyeStore.Server.Services.OrderService
         private readonly ICartService _cartService;
         private readonly IAuthService _authService;
         private readonly ISalesTaxService _taxService;
+        private readonly IConfiguration _configuration;
 
         public OrderService(DataContext context,
             ICartService cartService,
             IAuthService authService,
-            ISalesTaxService taxService)
+            ISalesTaxService taxService,
+            IConfiguration configuration)
         {
             _context = context;
             _cartService = cartService;
             _authService = authService;
             _taxService = taxService;
+            _configuration = configuration;
         }
 
         public async Task<ServiceResponse<string>> ChangeOrderStatus(Guid orderId, string status)
@@ -479,6 +485,8 @@ namespace LouiseTieDyeStore.Server.Services.OrderService
 
             await _context.SaveChangesAsync();
 
+            await SendOrderNotification(order);
+
             return new ServiceResponse<bool> { Data = true };
         }
 
@@ -535,6 +543,39 @@ namespace LouiseTieDyeStore.Server.Services.OrderService
                     Pages = (int)pageCount
                 }
             };
+        }
+
+        // SendGrid.com
+        private async Task SendOrderNotification(Order order)
+        {
+            var apiKey = Environment.GetEnvironmentVariable("SendGrid_ApiKey") ?? _configuration["SendGrid_ApiKey"];
+            var client = new SendGridClient(apiKey);
+
+            var from = new EmailAddress(Environment.GetEnvironmentVariable("SendGrid_Email") ?? _configuration["SendGrid_Email"], "Z Creates");
+            var to = new EmailAddress(Environment.GetEnvironmentVariable("SendGrid_Email") ?? _configuration["SendGrid_Email"], "Z Creates Admin");
+
+            var subject = $"Order Placed for {order.OrderItems.Count} items";
+            var plainTextContent = ""; // TODO: Should I add this?
+            var htmlContent = "<h3>Customer: </h3>"
+                    + $"<p><strong>Name:</strong> {order.Address.FirstName} {order.Address.LastName}</p>"
+                    + $"<p><strong>Email:</strong> {order.Email}</p>"
+                    + $"<p><strong>Phone:</strong> {order.Address.PhoneNumber}</p>"
+                    + $"<p><strong>Address:</strong> {order.Address.LineOne}, {order.Address.LineTwo}, {order.Address.City}, {order.Address.State}, {order.Address.Zip}</p>"
+                    + $"<h3>Items Sold: <h3>";
+            foreach(var item in order.OrderItems)
+            {
+                htmlContent += $"<p><strong>{item.Product.Title} - ${item.Price}</strong></p>";
+            }
+            htmlContent += $"<br /><p><strong>Subtotal:</strong> ${order.SubTotal}</p>"
+                + $"<p><strong>Taxes:</strong> ${order.SalesTax}</p>"
+                + $"<p><strong>Shipping:</strong> ${order.ShippingCost}</p>"
+                + $"<p><strong>Total:</strong> ${order.TotalPrice}</p>"
+                + "<br /><a href=\"https://tiedyestore.onrender.com/admin/orders/1\"><strong>View Orders</strong></a>";
+
+            var msg = MailHelper.CreateSingleEmail(from, to, subject, plainTextContent, htmlContent);
+            var response = await client.SendEmailAsync(msg);
+
+            //Console.WriteLine(JsonConvert.SerializeObject(response));
         }
     }
 }

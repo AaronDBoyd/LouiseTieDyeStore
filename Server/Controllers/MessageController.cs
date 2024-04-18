@@ -43,5 +43,13 @@ namespace LouiseTieDyeStore.Server.Controllers
             var result = await (_messageService.DeleteMessage(id));
             return Ok(result);
         }
+
+        // To test the SendGrid service
+        [HttpPost("notify-email")]
+        public async Task<ActionResult<string>> SendEmail(Message message)
+        {
+            var result = await _messageService.SendMessageNotification(message);
+            return Ok(result);
+        }
     }
 }

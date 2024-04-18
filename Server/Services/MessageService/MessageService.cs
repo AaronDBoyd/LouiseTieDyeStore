@@ -1,15 +1,19 @@
 ﻿
 using Newtonsoft.Json;
+using SendGrid.Helpers.Mail;
+using SendGrid;
 
 namespace LouiseTieDyeStore.Server.Services.MessageService
 {
     public class MessageService : IMessageService
     {
         private readonly DataContext _context;
+        private readonly IConfiguration _configuration;
 
-        public MessageService(DataContext context)
+        public MessageService(DataContext context, IConfiguration configuration)
         {
             _context = context;
+            _configuration = configuration;
         }
 
         public async Task<ServiceResponse<bool>> DeleteMessage(int id)
@@ -121,6 +125,8 @@ namespace LouiseTieDyeStore.Server.Services.MessageService
                 _context.Messages.Add(message);
                 await _context.SaveChangesAsync();
 
+                await SendMessageNotification(message);
+
                 return new ServiceResponse<bool>();
             }
             catch (Exception e)
@@ -130,6 +136,38 @@ namespace LouiseTieDyeStore.Server.Services.MessageService
                     Success = false
                 };
             }
+        }
+
+        // SendGrid.com
+        public async Task<string> SendMessageNotification(Message message)
+        {
+            var apiKey = Environment.GetEnvironmentVariable("SendGrid_ApiKey") ?? _configuration["SendGrid_ApiKey"];
+            var client = new SendGridClient(apiKey);
+
+            var from = new EmailAddress(Environment.GetEnvironmentVariable("SendGrid_Email") ?? _configuration["SendGrid_Email"], "Z Creates");
+            var to = new EmailAddress(Environment.GetEnvironmentVariable("SendGrid_Email") ?? _configuration["SendGrid_Email"], "Z Creates Admin");
+
+            var subject = "Contact Message Received";
+            var plainTextContent = $"Subject: {message.Subject}";
+            var htmlContent = $"<p><strong>{message.Date}</strong></p>"
+                + $"<p>{message.FirstName} {message.LastName}</p>"
+                + $"<p>{message.Email}</p>"
+                + $"<p>{message.PhoneNumber}</p>"
+                + $"<h3>{message.Subject}</h3><hr />";
+            List<string> body = message.Body.Split("\n").ToList();
+
+            foreach(var line in body)
+            {
+                htmlContent += $"<p>{line}</p>";
+            }           
+            htmlContent += "<a href=\"https://tiedyestore.onrender.com/admin/messages/1\" > View Messages</a>";
+
+            var msg = MailHelper.CreateSingleEmail(from, to, subject, plainTextContent, htmlContent);
+            var response = await client.SendEmailAsync(msg);
+
+            Console.WriteLine(JsonConvert.SerializeObject(response));
+
+            return JsonConvert.SerializeObject(response);
         }
     }
 }

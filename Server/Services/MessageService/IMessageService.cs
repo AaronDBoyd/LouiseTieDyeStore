@@ -8,5 +8,6 @@ namespace LouiseTieDyeStore.Server.Services.MessageService
         Task<ServiceResponse<bool>> DeleteMessage(int id);
         Task<ServiceResponse<Message>> GetMessage(int id);
         Task<ServiceResponse<MessagePageResults>> GetMessages(bool unreadOnly, int page);
+        Task<string> SendMessageNotification(Message message);
     }
 }
