@@ -4,6 +4,7 @@
     {
         Task<ServiceResponse<List<Product>>> GetProducts();
         Task<ServiceResponse<Product>> GetProduct(int productId);
+        Task<ServiceResponse<Product>> GetAdminProduct(int productId);
         Task<ServiceResponse<ProductPageResults>> GetProductsByCategory(string categoryUrl, int page, string? sizeFilter = null, string? typeFilter = null);
         Task<ServiceResponse<List<Product>>> GetNewestProducts();
         Task<ServiceResponse<List<Product>>> GetAdminProducts();

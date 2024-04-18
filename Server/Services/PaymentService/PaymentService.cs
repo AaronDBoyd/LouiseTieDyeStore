@@ -107,7 +107,7 @@ namespace LouiseTieDyeStore.Server.Services.PaymentService
                 },
                 LineItems = lineItems,
                 Mode = "payment",
-                SuccessUrl = $"{_config["ActiveDomain"]}/order-success",
+                SuccessUrl = $"{_config["ActiveDomain"]}/order-success", // Change "ActiveDomain" when testing
                 CancelUrl = $"{_config["ActiveDomain"]}/cart"
             };
 

@@ -149,5 +149,11 @@ namespace LouiseTieDyeStore.Client.Services.ProductService
 
             await GetProducts(1, category);
         }
+
+        public async Task<ServiceResponse<Product>> GetAdminProduct(int productId)
+        {
+            var result = await _privateClient.GetFromJsonAsync<ServiceResponse<Product>>($"api/product/admin/{productId}");
+            return result;
+        }
     }
 }

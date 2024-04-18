@@ -57,6 +57,13 @@ namespace LouiseTieDyeStore.Server.Controllers
             return Ok(result);
         }
 
+        [HttpGet("admin/{productId}"), Authorize(Roles = "Admin")]
+        public async Task<ActionResult<ServiceResponse<Product>>> GetAdminProduct(int productId)
+        {
+            var result = await _productService.GetAdminProduct(productId);
+            return Ok(result);
+        }
+
         [HttpGet("category/{categoryUrl}/{page}")]
         public async Task<ActionResult<ServiceResponse<ProductPageResults>>> GetProductsByCategory(
             string categoryUrl, 

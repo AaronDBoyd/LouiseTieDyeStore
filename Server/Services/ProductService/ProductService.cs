@@ -36,6 +36,28 @@ namespace LouiseTieDyeStore.Server.Services.ProductService
             return new ServiceResponse<bool> { Data = true };
         }
 
+        public async Task<ServiceResponse<Product>> GetAdminProduct(int productId)
+        {
+            var response = new ServiceResponse<Product>();
+            Product? product = null;
+
+            product = await _context.Products
+                .Include(p => p.Images)
+                .FirstOrDefaultAsync(p => p.Id == productId && !p.Deleted);
+
+            if (product == null)
+            {
+                response.Success = false;
+                response.Message = "Sorry, but this product does not exist.";
+            }
+            else
+            {
+                response.Data = product;
+            }
+
+            return response;
+        }
+
         public async Task<ServiceResponse<List<Product>>> GetAdminProducts()
         {
             var response = new ServiceResponse<List<Product>>
@@ -71,7 +93,7 @@ namespace LouiseTieDyeStore.Server.Services.ProductService
         public async Task<ServiceResponse<Product>> GetProduct(int productId)
         {
             var response = new ServiceResponse<Product>();
-            Product product = null;
+            Product? product = null;
 
             product = await _context.Products
                 .Include(p => p.Images)
