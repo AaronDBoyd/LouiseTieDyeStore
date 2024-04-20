@@ -227,6 +227,7 @@
     .item-details {
         width: 100%;
         padding: 20px 15px;
+        overflow: hidden;
     }
 
         .item-details .title {
@@ -235,6 +236,10 @@
 
         .item-details .size {
             font-size: 1rem;
+        }
+
+        .item-details .description {
+            overflow-y: scroll;
         }
 
     .item-subtotal {
