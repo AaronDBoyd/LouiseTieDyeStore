@@ -3,3 +3,14 @@
     max-width: 100px;
 }
 
+.filter-dropdowns {
+    display: flex;
+    justify-content: end;
+}
+
+    .filter-dropdowns .dropdown-item.disabled, .dropdown-item:disabled {
+        color: whitesmoke;
+        pointer-events: none;
+        background-color: grey;
+    }
+

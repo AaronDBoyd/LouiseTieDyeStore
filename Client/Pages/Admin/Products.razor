@@ -7,10 +7,71 @@
 
     <h3>Products</h3>
 
-    <div>
+    <div style="display:flex;justify-content:space-between">
         <a href="/admin/product" class="btn btn-primary ">
             <i class="oi oi-plus"></i> Add new product
         </a>
+        <div class="filter-dropdowns">
+            <div class="dropdown">
+                <button type="button" class="btn dropdown-toggle" data-bs-toggle="dropdown">
+                    Filter Sold
+                </button>
+                <ul class="dropdown-menu">
+                    <li>
+                        <button class="dropdown-item" type="button"
+                                @onclick='(() => FilterSold("All"))'
+                                disabled="@(soldFilter == "All")">
+                            All
+                        </button>
+                    </li>
+                    <li>
+                        <button class="dropdown-item" type="button"
+                                @onclick='(() => FilterSold("Sold"))'
+                                disabled="@(soldFilter == "Sold")">
+                            Sold
+                        </button>
+                    </li>
+                    <li>
+                        <button class="dropdown-item" type="button"
+                                @onclick='(() => FilterSold("Not Sold"))'
+                                disabled="@(soldFilter == "Not Sold")">
+                            Not Sold
+                        </button>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="dropdown">
+                <button type="button" class="btn dropdown-toggle" data-bs-toggle="dropdown">
+                    Filter Visible
+                </button>
+                <ul class="dropdown-menu">
+                    <li>
+                        <button class="dropdown-item" type="button"
+                                @onclick='(() => FilterVisible("All"))'
+                                disabled="@(visibleFilter == "All")">
+                            All
+                        </button>
+                    </li>
+                    <li>
+                        <button class="dropdown-item" type="button"
+                                @onclick='(() => FilterVisible("Visible"))'
+                                disabled="@(visibleFilter == "Visible")">
+                            Visible
+                        </button>
+                    </li>
+                    <li>
+                        <button class="dropdown-item" type="button"
+                                @onclick='(() => FilterVisible("Not Visible"))'
+                                disabled="@(visibleFilter == "Not Visible")">
+                            Not Visible
+                        </button>
+                    </li>
+                </ul>
+            </div>
+
+
+        </div>
     </div>
 
     <div class="table-responsive">
@@ -28,7 +89,7 @@
                 </tr>
             </thead>
             <tbody>
-                <Virtualize Items="ProductService.AdminProducts" Context="product">
+                <Virtualize Items="filteredProducts" Context="product">
                     <tr>
                         <td>
                             <img src="@product.Images.First(i => i.IsMainImage).Url" />
@@ -53,13 +114,80 @@
 </div>
 
 @code {
+    List<Product> filteredProducts = new();
+    string soldFilter = "All"; // ["All", "Sold", "Not Sold"]
+    string visibleFilter = "All"; // ["All", "Visibe", "Not Visible"]
+
     protected override async Task OnInitializedAsync()
     {
         await ProductService.GetAdminProducts();
+        filteredProducts = ProductService.AdminProducts;
     }
 
     void EditProduct(int productId)
     {
         NavigationManager.NavigateTo($"admin/product/{productId}");
+    }
+
+    void FilterSold(string filter)
+    {
+        soldFilter = filter;
+        FilterProducts();
+    }
+
+    void FilterVisible(string filter)
+    {
+        visibleFilter = filter;
+        FilterProducts();
+    }
+
+    void FilterProducts()
+    {
+        if (soldFilter == "All" && visibleFilter == "All")
+        {
+            filteredProducts = ProductService.AdminProducts;
+        }
+
+        if (soldFilter == "All" && visibleFilter == "Visible")
+        {
+            filteredProducts = ProductService.AdminProducts.Where(p => p.Visible).ToList();
+        }
+
+        if (soldFilter == "All" && visibleFilter == "Not Visible")
+        {
+            filteredProducts = ProductService.AdminProducts.Where(p => !p.Visible).ToList();
+        }
+
+
+        if (soldFilter == "Sold" && visibleFilter == "All")
+        {
+            filteredProducts = ProductService.AdminProducts.Where(p => p.Sold).ToList();
+        }
+
+        if (soldFilter == "Sold" && visibleFilter == "Visible")
+        {
+            filteredProducts = ProductService.AdminProducts.Where(p => p.Sold && p.Visible).ToList();
+        }
+
+        if (soldFilter == "Sold" && visibleFilter == "Not Visible")
+        {
+            filteredProducts = ProductService.AdminProducts.Where(p => p.Sold && !p.Visible).ToList();
+        }
+
+
+        if (soldFilter == "Not Sold" && visibleFilter == "All")
+        {
+            filteredProducts = ProductService.AdminProducts.Where(p => !p.Sold).ToList();
+        }
+
+        if (soldFilter == "Not Sold" && visibleFilter == "Visible")
+        {
+            filteredProducts = ProductService.AdminProducts.Where(p => !p.Sold && p.Visible).ToList();
+        }
+
+        if (soldFilter == "Not Sold" && visibleFilter == "Not Visible")
+        {
+            filteredProducts = ProductService.AdminProducts.Where(p => !p.Sold && !p.Visible).ToList();
+        }
     }
 }
