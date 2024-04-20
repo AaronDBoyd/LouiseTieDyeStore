@@ -154,7 +154,10 @@ else
                 <h1>@product.Title</h1>
             </div>
             <div class="description">
-                <p>@product.Description</p>
+                @foreach(var line in descriptionLines)
+                {
+                    <p>@line</p>
+                }
             </div>
             @if (product.OriginalPrice > product.Price)
             {
@@ -181,6 +184,7 @@ else
 
     private string AlertCss = "visually-hidden";
     private string AddBtnCss = string.Empty;
+    private List<string> descriptionLines = new();
 
     [Parameter]
     public int Id { get; set; }
@@ -197,6 +201,7 @@ else
         else
         {
             product = result.Data;
+            descriptionLines = product.Description.Split("\n").ToList();
         }
     }
 

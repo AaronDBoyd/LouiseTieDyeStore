@@ -222,7 +222,13 @@
                                         @product.Title
                                     </div>
                                     <div class="description">
-                                        @product.Description
+                                        @{
+                                            var lines = product.Description.Split("\n").ToList();
+                                            foreach (var line in lines)
+                                            {
+                                                <p>@line</p>
+                                            }
+                                        }
                                     </div>
                                     <div class="size">
                                         Size: @product.Size

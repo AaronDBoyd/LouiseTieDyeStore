@@ -52,7 +52,15 @@
                             <div class="item-details">
                                 <div class="title">@product.Title</div>
                                 <div class="size">Size: @product.Size</div>
-                                <div>@product.Description</div>
+                                <div class="description">
+                                @{
+                                    var lines = product.Description.Split("\n").ToList();
+                                    foreach(var line in lines)
+                                    {
+                                        <p>@line</p>
+                                    }
+                                }
+                                </div>
                             </div>
                             <div class="item-subtotal">
                                 <div>Subtotal:</div>
@@ -151,7 +159,7 @@
 
 @code {
     List<CartProductResponse>? cartProducts = null;
-    string message = "Loading cart...";
+    string message = "Loading cart..."; 
 
     protected override async Task OnInitializedAsync()
     {
