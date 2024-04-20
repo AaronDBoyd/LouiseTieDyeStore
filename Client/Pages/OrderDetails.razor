@@ -92,7 +92,7 @@ else
             {
                 <div class="item">
                     <div class="item-img-wrapper">
-                        <img class="item-img" src="@item.Product.Images[0].Url" />
+                        <img class="item-img" src="@item.Product.Images.First(i => i.IsMainImage).Url" />
                     </div>
                     <div class="item-details">
                         <h5>@item.Product.Title</h5>

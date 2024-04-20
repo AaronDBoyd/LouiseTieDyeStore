@@ -1,4 +1,5 @@
-﻿@page "/admin/product/{id:int}"
+﻿@page "/admin/product"
+@page "/admin/product/{id:int}"
 @inject IProductService ProductService
 @inject IProductTypeService ProductTypeService
 @inject ICategoryService CategoryService
@@ -7,10 +8,13 @@
 @attribute [Authorize(Roles = "Admin")]
 
 <div class="container">
-    @* TODO: Add "back to List" button *@
     @if (loading)
     {
-        <span>@msg</span>
+        <div style="text-align:center">
+            <div class="spinner-grow text-dark m-5" style="margin-left: -3rem !important;" role="status">
+                <span class="h2" style="margin-left: 3rem !important;">Loading...</span>
+            </div>
+        </div>
     }
     else
     {
@@ -32,15 +36,20 @@
             <div class="mb-3">
                 <label for="imageUrl">Image Url</label>
                 <input id="imageUrl" @bind="imgUrl" class="form-control" />
-                <button type="button" class="btn btn-primary" @onclick="AddImage">
+                <button type="button" class="btn btn-primary m-3" @onclick="AddImage">
                     <i class="oi oi-plus"></i> Add Image
                 </button>
             </div>
-            <div class="mb-0" style="display: flex; flex-wrap: wrap; flex-direction: row; justify-content: center;">
+            <div class="mb-0" style="display: flex; flex-wrap: wrap; flex-direction: row; justify-content: center; gap: 5px;">
                 @foreach (var image in product.Images)
                 {
-                    <img src="@image.Url" />
-                    <button type="button" @onclick="(() => RemoveImage(image.Id))">Remove</button>
+                    <div style="display:flex;">
+                        <img src="@image.Url" />
+                        <div style="display:grid">
+                            <button class="btn btn-outline-danger" type="button" @onclick="(() => RemoveImage(image.Url))">Remove</button>
+                            <button class="btn btn-outline-success" type="button" disabled="@image.IsMainImage" @onclick="(() => ChangeMainImage(image.Url))">Main</button>
+                        </div>
+                    </div>
                 }
             </div>
             <div class="mb-3">
@@ -151,13 +160,13 @@
         if (product.IsNew)
         {
             var result = await ProductService.CreateProduct(product);
-            NavigationManager.NavigateTo($"admin/product/{result.Id}");
+            NavigationManager.NavigateTo($"admin/products");
         }
         else
         {
             product.IsNew = false;
             product = await ProductService.UpdateProduct(product);
-            NavigationManager.NavigateTo($"admin/product/{product.Id}", true);
+            NavigationManager.NavigateTo($"admin/products");
         }
     }
 
@@ -176,14 +185,35 @@
     {
         product.Images.Add(new Image { Url = imgUrl });
         imgUrl = "";
+        if (product.Images.Count == 1)
+        {
+            product.Images[0].IsMainImage = true;
+        }
     }
 
-    void RemoveImage(int id)
+    void RemoveImage(string url)
     {
-        var image = product.Images.FirstOrDefault(i => i.Id == id);
+        var image = product.Images.FirstOrDefault(i => i.Url == url);
         if (image != null)
         {
             product.Images.Remove(image);
+        }
+        if (product.Images.Count == 1)
+        {
+            product.Images[0].IsMainImage = true;
+        }
+    }
+
+    void ChangeMainImage(string url)
+    {
+        var image = product.Images.FirstOrDefault(i => i.Url == url);
+        if (image != null)
+        {
+            image.IsMainImage = true;
+            foreach (var img in product.Images.Where(i => i.Url != url))
+            {
+                img.IsMainImage = false;
+            }
         }
     }
 }

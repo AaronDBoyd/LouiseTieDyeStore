@@ -14,5 +14,6 @@ namespace LouiseTieDyeStore.Shared
 
         [ForeignKey(nameof(Product))]
         public int ProductId { get; set; }
+        public bool IsMainImage { get; set; }
     }
 }

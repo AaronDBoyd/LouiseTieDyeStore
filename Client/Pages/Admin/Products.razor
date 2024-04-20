@@ -31,7 +31,7 @@
                 <Virtualize Items="ProductService.AdminProducts" Context="product">
                     <tr>
                         <td>
-                            <img src="@product.Images[0].Url" />
+                            <img src="@product.Images.First(i => i.IsMainImage).Url" />
                         </td>
                         <td>@product.Title</td>
                         <td>@product.Category.Name</td>

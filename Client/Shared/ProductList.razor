@@ -107,7 +107,7 @@ else
             <div class="product-tile">
                 <a href="product/@product.Id">
                     <div class="product-img-wrapper">
-                        <img class="product-img" src="@product.Images[0].Url" />
+                        <img class="product-img" src="@product.Images.First(i => i.IsMainImage).Url" />
                     </div>
 
                     <div class="product-name p-2">

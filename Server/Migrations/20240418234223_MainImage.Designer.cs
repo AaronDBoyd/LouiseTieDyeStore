@@ -3,6 +3,7 @@ using System;
 using LouiseTieDyeStore.Server.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,10 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace LouiseTieDyeStore.Server.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20240418234223_MainImage")]
+    partial class MainImage
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -167,9 +169,9 @@ namespace LouiseTieDyeStore.Server.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<bool>("IsMainImage")
+                    b.Property<bool>("MainImage")
                         .HasColumnType("boolean")
-                        .HasColumnName("is_main_image");
+                        .HasColumnName("main_image");
 
                     b.Property<int>("ProductId")
                         .HasColumnType("integer")
@@ -192,42 +194,42 @@ namespace LouiseTieDyeStore.Server.Migrations
                         new
                         {
                             Id = 1,
-                            IsMainImage = false,
+                            MainImage = false,
                             ProductId = 1,
                             Url = "https://i.imgur.com/1DnQj7V.jpg"
                         },
                         new
                         {
                             Id = 2,
-                            IsMainImage = false,
+                            MainImage = false,
                             ProductId = 1,
                             Url = "https://i.imgur.com/tGJkEL9.jpg"
                         },
                         new
                         {
                             Id = 3,
-                            IsMainImage = false,
+                            MainImage = false,
                             ProductId = 2,
                             Url = "https://i.imgur.com/zw3Olrp.jpg"
                         },
                         new
                         {
                             Id = 4,
-                            IsMainImage = false,
+                            MainImage = false,
                             ProductId = 2,
                             Url = "https://i.imgur.com/9uEVXR1.png"
                         },
                         new
                         {
                             Id = 5,
-                            IsMainImage = false,
+                            MainImage = false,
                             ProductId = 3,
                             Url = "https://i.imgur.com/uHKlJtV.jpg"
                         },
                         new
                         {
                             Id = 6,
-                            IsMainImage = false,
+                            MainImage = false,
                             ProductId = 3,
                             Url = "https://i.imgur.com/MD7Wzx4.jpg"
                         });

@@ -15,7 +15,7 @@ else
                 <div class="carousel">
                     @foreach (var image in product.Images)
                     {
-                        if (image == product.Images[0])
+                        if (image == product.Images.First(i => i.IsMainImage))
                         {
                             <input type="radio" name="slides" checked="checked" id="@image.Url">
                         }

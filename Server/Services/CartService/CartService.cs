@@ -85,7 +85,7 @@ namespace LouiseTieDyeStore.Server.Services.CartService
                 {
                     ProductId = product.Id,
                     Title = product.Title,
-                    ImageUrl = product.Images[0].Url, 
+                    ImageUrl = product.Images.First(i => i.IsMainImage).Url, 
                     Price = product.Price,
                     ProductType = product.ProductType.Name,
                     Size = product.Size,

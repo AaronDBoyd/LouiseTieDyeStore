@@ -201,7 +201,7 @@ namespace LouiseTieDyeStore.Server.Services.OrderService
                     $"{o.OrderItems.First().Product.Title} and" +
                     $" {o.OrderItems.Count - 1} more..." :
                     o.OrderItems.First().Product.Title,
-                OrderImageUrl = o.OrderItems.First().Product.Images[0].Url,
+                OrderImageUrl = o.OrderItems.First().Product.Images.First(i => i.IsMainImage).Url,
                 CustomerName = $"{o.Address.FirstName} {o.Address.LastName}",
             }));
 
@@ -372,7 +372,7 @@ namespace LouiseTieDyeStore.Server.Services.OrderService
                     $"{o.OrderItems.First().Product.Title} and" +
                     $" {o.OrderItems.Count - 1} more..." :
                     o.OrderItems.First().Product.Title,
-                OrderImageUrl = o.OrderItems.First().Product.Images[0].Url
+                OrderImageUrl = o.OrderItems.First().Product.Images.First(i => i.IsMainImage).Url
             }));
 
             return new ServiceResponse<OrderPageResults>
@@ -530,7 +530,7 @@ namespace LouiseTieDyeStore.Server.Services.OrderService
                     $"{o.OrderItems.First().Product.Title} and" +
                     $" {o.OrderItems.Count - 1} more..." :
                     o.OrderItems.First().Product.Title,
-                OrderImageUrl = o.OrderItems.First().Product.Images[0].Url,
+                OrderImageUrl = o.OrderItems.First().Product.Images.First(i => i.IsMainImage).Url,
                 CustomerName = $"{o.Address.FirstName} {o.Address.LastName}",
             }));
 
