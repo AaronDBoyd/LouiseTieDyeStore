@@ -1,4 +1,8 @@
-﻿<AuthorizeView Roles="Admin">
+﻿@inject ISyncLocalStorageService LocalStorage
+@inject IMessageService MessageService
+@implements IDisposable
+
+<AuthorizeView Roles="Admin">
     <h5>Admin</h5>
     <div data-bs-dismiss="offcanvas">
         <a href="/admin/orders/1">
@@ -22,11 +26,19 @@
     </div>
     <div data-bs-dismiss="offcanvas">
         <a href="/admin/messages/1">
-            Messages
+            Messages (@MessageService.UnreadMessages unread)
         </a>
     </div>
 </AuthorizeView>
 
 @code {
+    protected override void OnInitialized()
+    {
+        MessageService.OnChange += StateHasChanged;
+    }
 
+    public void Dispose()
+    {
+        MessageService.OnChange -= StateHasChanged;
+    }
 }

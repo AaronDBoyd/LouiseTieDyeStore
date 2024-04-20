@@ -1,5 +1,6 @@
 ﻿@inherits LayoutComponentBase
-
+@inject IAuthService AuthService
+@inject IMessageService MessageService
 
 <div class="page">
     <main>
@@ -20,3 +21,13 @@
        <Footer />
     </main>
 </div>
+
+@code {
+    protected override async Task OnInitializedAsync()
+    {
+        if (await AuthService.IsUserAnAdmin())
+        {
+            await MessageService.GetUnreadMessagesCount();
+        }
+    }
+}

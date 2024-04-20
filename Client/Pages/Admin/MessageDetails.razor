@@ -19,7 +19,7 @@
                         <p>@message.PhoneNumber</p>
                     </div>
                     <div class="header-right">
-                        <p>@TimeZoneInfo.ConvertTime(message.Date, TimeZoneInfo.FindSystemTimeZoneById("Pacific Standard Time"))</p>
+                        <p>@TimeZoneInfo.ConvertTime(message.Date, TimeZoneInfo.FindSystemTimeZoneById("America/Los_Angeles"))</p>
                     </div>
                 </div>
 
@@ -67,6 +67,8 @@
             message = result.Data;
 
             body = message.Body.Split("\n").ToList();
+
+            await MessageService.GetUnreadMessagesCount();
         }
     }
 

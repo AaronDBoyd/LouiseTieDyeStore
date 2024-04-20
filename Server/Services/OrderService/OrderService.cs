@@ -194,7 +194,7 @@ namespace LouiseTieDyeStore.Server.Services.OrderService
             orders.ForEach(o => orderResponse.Add(new OrderOverviewResponse
             {
                 Id = o.Id,
-                OrderDate = TimeZoneInfo.ConvertTime(o.OrderDate, TimeZoneInfo.FindSystemTimeZoneById("Pacific Standard Time")),
+                OrderDate = TimeZoneInfo.ConvertTime(o.OrderDate, TimeZoneInfo.FindSystemTimeZoneById("America/Los_Angeles")),
                 TotalPrice = o.TotalPrice,
                 Status = o.Status.ToString(),
                 OrderTitle = o.OrderItems.Count > 1 ?
@@ -365,7 +365,7 @@ namespace LouiseTieDyeStore.Server.Services.OrderService
             orders.ForEach(o => orderResponse.Add(new OrderOverviewResponse
             {
                 Id = o.Id,
-                OrderDate = TimeZoneInfo.ConvertTime(o.OrderDate, TimeZoneInfo.FindSystemTimeZoneById("Pacific Standard Time")),
+                OrderDate = TimeZoneInfo.ConvertTime(o.OrderDate, TimeZoneInfo.FindSystemTimeZoneById("America/Los_Angeles")),
                 TotalPrice = o.TotalPrice,
                 Status = o.Status.ToString(),
                 OrderTitle = o.OrderItems.Count > 1 ?
@@ -523,7 +523,7 @@ namespace LouiseTieDyeStore.Server.Services.OrderService
             orders.ForEach(o => orderResponse.Add(new OrderOverviewResponse
             {
                 Id = o.Id,
-                OrderDate = TimeZoneInfo.ConvertTime(o.OrderDate, TimeZoneInfo.FindSystemTimeZoneById("Pacific Standard Time")),
+                OrderDate = TimeZoneInfo.ConvertTime(o.OrderDate, TimeZoneInfo.FindSystemTimeZoneById("America/Los_Angeles")),
                 TotalPrice = o.TotalPrice,
                 Status = o.Status.ToString(),
                 OrderTitle = o.OrderItems.Count > 1 ?
@@ -556,7 +556,7 @@ namespace LouiseTieDyeStore.Server.Services.OrderService
 
             var subject = $"Order Placed for {order.OrderItems.Count} items";
             var plainTextContent = ""; // TODO: Should I add this?
-            var htmlContent = $"<p>{@TimeZoneInfo.ConvertTime(order.OrderDate, TimeZoneInfo.FindSystemTimeZoneById("Pacific Standard Time"))}</p><br />"
+            var htmlContent = $"<p>{@TimeZoneInfo.ConvertTime(order.OrderDate, TimeZoneInfo.FindSystemTimeZoneById("America/Los_Angeles"))}</p><br />"
                     + "<h3>Customer: </h3>"
                     + $"<p><strong>Name:</strong> {order.Address.FirstName} {order.Address.LastName}</p>"
                     + $"<p><strong>Email:</strong> {order.Email}</p>"

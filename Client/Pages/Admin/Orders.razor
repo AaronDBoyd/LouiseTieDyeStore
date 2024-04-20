@@ -81,7 +81,7 @@
                     <img src="@order.OrderImageUrl" />
                 </div>
                 <div class="details">
-                    <h6>Date: @TimeZoneInfo.ConvertTime(order.OrderDate, TimeZoneInfo.FindSystemTimeZoneById("Pacific Standard Time"))</h6>
+                    <h6>Date: @TimeZoneInfo.ConvertTime(order.OrderDate, TimeZoneInfo.FindSystemTimeZoneById("America/Los_Angeles"))</h6>
                     <p>Order Number: @order.Id</p>
                     <h6>@order.OrderTitle</h6>
                     <h6>For: @order.CustomerName</h6>

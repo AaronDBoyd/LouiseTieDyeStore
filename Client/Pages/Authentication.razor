@@ -3,6 +3,7 @@
 @inject IConfiguration Configuration
 @inject IAuthService AuthService
 @inject ICartService CartService
+@inject IMessageService MessageService
 @inject ILocalStorageService LocalStorage
 
 
@@ -38,6 +39,10 @@
         await AuthService.StoreSessionIdToken();
         await CartService.StoreCartItems(true);
         await CartService.GetCartItemsCount();
+        if (await AuthService.IsUserAnAdmin())
+        {
+            await MessageService.GetUnreadMessagesCount();
+        }
 
         string returnUrl = await LocalStorage.GetItemAsync<string>("returnUrl");
 

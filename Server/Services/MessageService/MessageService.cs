@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using SendGrid.Helpers.Mail;
 using SendGrid;
+using LouiseTieDyeStore.Shared;
 
 namespace LouiseTieDyeStore.Server.Services.MessageService
 {
@@ -116,6 +117,16 @@ namespace LouiseTieDyeStore.Server.Services.MessageService
             };           
         }
 
+        public async Task<ServiceResponse<int>> GetUnreadMessagesCount()
+        {
+            var count = await _context.Messages
+                .Where(m => m.Read == false)
+                .CountAsync();
+
+            Console.WriteLine("!! count : " + count.ToString());
+            return new ServiceResponse<int> { Data = count };
+        }
+
         public async Task<ServiceResponse<bool>> SaveMessage(Message message)
         {
             try
@@ -149,7 +160,7 @@ namespace LouiseTieDyeStore.Server.Services.MessageService
 
             var subject = "Contact Message Received";
             var plainTextContent = $"Subject: {message.Subject}";
-            var htmlContent = $"<p><strong>{TimeZoneInfo.ConvertTime(message.Date, TimeZoneInfo.FindSystemTimeZoneById("Pacific Standard Time"))}</strong></p>"
+            var htmlContent = $"<p><strong>{TimeZoneInfo.ConvertTime(message.Date, TimeZoneInfo.FindSystemTimeZoneById("America/Los_Angeles"))}</strong></p>"
                 + $"<p>{message.FirstName} {message.LastName}</p>"
                 + $"<p>{message.Email}</p>"
                 + $"<p>{message.PhoneNumber}</p>"

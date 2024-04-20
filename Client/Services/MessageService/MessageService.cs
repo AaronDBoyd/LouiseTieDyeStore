@@ -1,4 +1,6 @@
 ﻿
+using Blazored.LocalStorage;
+
 namespace LouiseTieDyeStore.Client.Services.MessageService
 {
     public class MessageService : IMessageService
@@ -17,6 +19,9 @@ namespace LouiseTieDyeStore.Client.Services.MessageService
         public int CurrentPage { get; set; } = 1;
         public int PageCount { get; set; } = 0;
         public bool UnreadOnly { get; set; } = false;
+        public int UnreadMessages { get; set; }
+
+        public event Action OnChange;
 
         public async Task<bool> DeleteMessage(int id)
         {
@@ -48,6 +53,15 @@ namespace LouiseTieDyeStore.Client.Services.MessageService
                 CurrentPage = result.Data.CurrentPage;
                 LoadingMessage = "Loading Messages...";
             }
+        }
+
+        public async Task GetUnreadMessagesCount()
+        {
+            var result = await _privateClient.GetFromJsonAsync<ServiceResponse<int>>("api/message/count");
+            var count = result.Data;
+
+            UnreadMessages = count;
+            OnChange.Invoke();
         }
 
         public async Task<bool> SaveMessage(Message message)

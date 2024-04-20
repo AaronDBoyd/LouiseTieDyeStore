@@ -37,6 +37,12 @@ namespace LouiseTieDyeStore.Server.Controllers
             return Ok(result);
         }
 
+        [HttpGet("count"), Authorize(Roles = "Admin")]
+        public async Task<ActionResult<ServiceResponse<int>>> GetUnreadMessagesCount()
+        {
+            return await _messageService.GetUnreadMessagesCount();
+        }
+
         [HttpDelete("{id}"), Authorize(Roles = "Admin")]
         public async Task<ActionResult<ServiceResponse<bool>>> DeleteMessage(int id)
         {

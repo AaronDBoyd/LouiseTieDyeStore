@@ -34,8 +34,7 @@
                         }
 
                         <td>@message.Subject</td>
-                        <td>@TimeZoneInfo.ConvertTime(message.Date, TimeZoneInfo.FindSystemTimeZoneById("Pacific Standard Time"))</td>
-
+                        <td>@TimeZoneInfo.ConvertTime(message.Date, TimeZoneInfo.FindSystemTimeZoneById("America/Los_Angeles"))</td>
                     </tr>
                 }
 
