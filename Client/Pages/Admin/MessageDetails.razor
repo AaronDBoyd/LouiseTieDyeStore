@@ -19,7 +19,7 @@
                         <p>@message.PhoneNumber</p>
                     </div>
                     <div class="header-right">
-                        <p>@message.Date</p>
+                        <p>@TimeZoneInfo.ConvertTime(message.Date, TimeZoneInfo.FindSystemTimeZoneById("Pacific Standard Time"))</p>
                     </div>
                 </div>
 

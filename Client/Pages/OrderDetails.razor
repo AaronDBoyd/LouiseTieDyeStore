@@ -37,7 +37,7 @@ else
                     </tr>
                     <tr>
                         <th class="date-key">Order Date:</th>
-                        <td class="date-value">@order.OrderDate</td>
+                        <td class="date-value">@TimeZoneInfo.ConvertTime(order.OrderDate, TimeZoneInfo.FindSystemTimeZoneById("Pacific Standard Time"))</td>
                     </tr>
                     <tr>
                         <th class="status-key">Status:</th>

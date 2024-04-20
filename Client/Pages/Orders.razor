@@ -23,7 +23,7 @@
                     <img src="@order.OrderImageUrl" />
                 </div>
                 <div class="details">
-                    <h5>Date: @order.OrderDate</h5>
+                    <h5>Date: @TimeZoneInfo.ConvertTime(order.OrderDate, TimeZoneInfo.FindSystemTimeZoneById("Pacific Standard Time"))</h5>
                     <h5>Order Number: @order.Id</h5>
                     <h5>@order.OrderTitle</h5>
 

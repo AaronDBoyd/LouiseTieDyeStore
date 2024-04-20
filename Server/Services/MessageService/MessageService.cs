@@ -149,7 +149,7 @@ namespace LouiseTieDyeStore.Server.Services.MessageService
 
             var subject = "Contact Message Received";
             var plainTextContent = $"Subject: {message.Subject}";
-            var htmlContent = $"<p><strong>{message.Date}</strong></p>"
+            var htmlContent = $"<p><strong>{TimeZoneInfo.ConvertTime(message.Date, TimeZoneInfo.FindSystemTimeZoneById("Pacific Standard Time"))}</strong></p>"
                 + $"<p>{message.FirstName} {message.LastName}</p>"
                 + $"<p>{message.Email}</p>"
                 + $"<p>{message.PhoneNumber}</p>"
@@ -165,7 +165,7 @@ namespace LouiseTieDyeStore.Server.Services.MessageService
             var msg = MailHelper.CreateSingleEmail(from, to, subject, plainTextContent, htmlContent);
             var response = await client.SendEmailAsync(msg);
 
-            Console.WriteLine(JsonConvert.SerializeObject(response));
+            //Console.WriteLine(JsonConvert.SerializeObject(response));
 
             return JsonConvert.SerializeObject(response);
         }
