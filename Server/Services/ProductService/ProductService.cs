@@ -276,17 +276,17 @@ namespace LouiseTieDyeStore.Server.Services.ProductService
 
         public async Task<ServiceResponse<ProductPageResults>> SearchProducts(string searchText, int page)
         {
-            var pageResults = 3f;
+            var pageResults = 9f;
             var count = await _context.Products
-                .Where(p => p.Title.ToLower().Contains(searchText.ToLower()) ||
-                                p.Description.ToLower().Contains(searchText.ToLower()) &&
+                .Where(p => (p.Title.ToLower().Contains(searchText.ToLower()) ||
+                                p.Description.ToLower().Contains(searchText.ToLower())) &&
                                 p.Visible && !p.Deleted && !p.Sold)
                 .CountAsync();
 
             var pageCount = Math.Ceiling(count / pageResults);
             var products = await _context.Products
-                            .Where(p => p.Title.ToLower().Contains(searchText.ToLower()) ||
-                                p.Description.ToLower().Contains(searchText.ToLower()) &&
+                            .Where(p => (p.Title.ToLower().Contains(searchText.ToLower()) ||
+                                p.Description.ToLower().Contains(searchText.ToLower())) &&
                                 p.Visible && !p.Deleted && !p.Sold)
                             .Include(p => p.Images)
                             .Skip((page - 1) * (int)pageResults)

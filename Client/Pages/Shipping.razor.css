@@ -78,7 +78,7 @@ form {
 
 /******Confirmed Address******/
 .confirmed-address {
-    display: flex;
+    /*display: flex;*/
     padding: 30px;
 }
 

@@ -117,7 +117,16 @@
                     </div>
 
                     <div class="confirmed-address @EditShippingCssClass">
-                        <div class="ship-to">
+
+                        @if (isLocal)
+                        {
+                            <div class="text-center text-info border border-3 p-2">
+                                <h3>Since you're local there is no shipping cost. </h3>
+                                <h3> I will contact you and deliver it myself.</h3>
+                            </div>
+                        }
+                        
+                        <div class="ship-to m-3">
                             Enter Full Shipping info at Checkout:
                         </div>
                         
@@ -126,13 +135,13 @@
                         </div> *@
 
                         @* TODO: Format *@
-                        <div class="address"> 
+                        @* <div class="address">  *@
                             @* <div class="name">@address.FirstName @address.LastName</div>
                             <div class="addressOne">@(address.LineOne), </div>
                             <div class="addressTwo">@address.LineTwo</div>
                             <div class="city-state-zip">@(address.City), @(address.State) @(address.Zip)</div>
                             <div class="phone">@address.PhoneNumber</div> *@
-                        </div>
+                        @* </div> *@
                     </div>
                     <div>
                         <button type="button" class="btn proceed-btn @EditShippingCssClass" @onclick="PlaceOrder">Proceed to Checkout</button>
@@ -156,7 +165,7 @@
                                 <th class="shipping-key">
                                     shipping
                                 </th>
-                                @if (shippingCost == default)
+                                @if (!shippingCalculated)
                                 {
                                     <td class="shipping-value">Calculated by Shipping</td>
                                 }
@@ -255,6 +264,8 @@
     decimal salesTax = default;
     decimal totalPrice = default;
     bool taxCalculated = false;
+    bool shippingCalculated = false;
+    bool isLocal = false;
 
     string message = string.Empty;
 
@@ -303,21 +314,31 @@
         salesTax = await TaxService.CalculateSalesTax(subTotal, shippingInfo.State);
         taxCalculated = true;
 
-        var shippingCostResponse = await ShippingService.GetShippingCost(shippingInfo);
-
-        //Console.WriteLine("!!! Response: " + shippingCostResponse);
-
-        if (decimal.TryParse(shippingCostResponse, out decimal cost))
+        if (ShippingService.LocalZipCodes.Contains(shippingInfo.Zip))
         {
-            shippingCost = Math.Round(cost, 2);
-            //Console.WriteLine("!!! Cost: " + shippingCost);
+            shippingCost = default;
+            isLocal = true;
         }
         else
         {
-            message = "Invalid Zip Code";
-            confirmShipping = !confirmShipping;
-            editShipping = !editShipping;           
+            var shippingCostResponse = await ShippingService.GetShippingCost(shippingInfo);
+
+            //Console.WriteLine("!!! Response: " + shippingCostResponse);
+
+            if (decimal.TryParse(shippingCostResponse, out decimal cost))
+            {
+                shippingCost = Math.Round(cost, 2);
+                //Console.WriteLine("!!! Cost: " + shippingCost);
+            }
+            else
+            {
+                message = "Invalid Zip Code";
+                confirmShipping = !confirmShipping;
+                editShipping = !editShipping;
+            }
         }
+
+        shippingCalculated = true;
 
         isLoading = false;
         OnChange.Invoke();
@@ -344,7 +365,7 @@
         var checkout = new CheckoutDTO
             {
                 SalesTax = await TaxService.CalculateSalesTax(subTotal, shippingInfo.State),
-                ShippingCost = decimal.Parse(await ShippingService.GetShippingCost(shippingInfo))
+                ShippingCost = ShippingService.LocalZipCodes.Contains(shippingInfo.Zip) ? default : decimal.Parse(await ShippingService.GetShippingCost(shippingInfo))
             };
 
         foreach (var product in cartProducts)

@@ -128,6 +128,7 @@ namespace LouiseTieDyeStore.Server.Services.PaymentService
                         _config["StripeKeys:WebHookSecret"]
                         ?? Environment.GetEnvironmentVariable("StripeKeys_WebHookSecret"));
 
+                // TODO: REMOVE THIS
                 Console.WriteLine("!!! WebHook:  " + Environment.GetEnvironmentVariable("StripeKeys_WebHookSecret"));
 
                 if (stripeEvent.Type == Events.CheckoutSessionCompleted)

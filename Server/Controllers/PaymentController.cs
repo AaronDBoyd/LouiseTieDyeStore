@@ -22,11 +22,10 @@ namespace LouiseTieDyeStore.Server.Controllers
             var session = _paymentService.CreateCheckoutSession(checkout);
             return Ok(session.Url);
         }
-
+        
         [HttpPost]
         public async Task<ActionResult<ServiceResponse<bool>>> FullfillOrder()
         {
-            Console.WriteLine("!!! Request: " + JsonConvert.SerializeObject(Request));
             var response = await _paymentService.FullfillOrder(Request);
             if (!response.Success)
             {
