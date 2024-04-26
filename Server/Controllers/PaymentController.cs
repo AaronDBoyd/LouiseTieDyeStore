@@ -1,6 +1,7 @@
 ﻿using LouiseTieDyeStore.Server.Services.PaymentService;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 namespace LouiseTieDyeStore.Server.Controllers
 {
@@ -25,6 +26,7 @@ namespace LouiseTieDyeStore.Server.Controllers
         [HttpPost]
         public async Task<ActionResult<ServiceResponse<bool>>> FullfillOrder()
         {
+            Console.WriteLine("!!! Request: " + JsonConvert.SerializeObject(Request));
             var response = await _paymentService.FullfillOrder(Request);
             if (!response.Success)
             {
