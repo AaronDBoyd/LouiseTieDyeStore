@@ -28,7 +28,7 @@ namespace LouiseTieDyeStore.Client.Services.ProductService
         public int PageCount { get; set; } = 0;
         public string LastSearchText { get; set; } = string.Empty;
 
-        public event Action ProductsChanged;
+        public event Action? ProductsChanged;
 
         public async Task<Product> CreateProduct(Product product)
         {
@@ -100,7 +100,7 @@ namespace LouiseTieDyeStore.Client.Services.ProductService
                 Message = "No products found";
             }
 
-            ProductsChanged.Invoke();
+            ProductsChanged?.Invoke();
         }
 
         public async Task<List<string>> GetProductSearchSuggestions(string searchText)
