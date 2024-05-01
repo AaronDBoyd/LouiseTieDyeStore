@@ -126,16 +126,15 @@ namespace LouiseTieDyeStore.Server.Services.PaymentService
                         json,
                         request.Headers["Stripe-Signature"],
                         _config["StripeKeys:WebHookSecret"]
-                        ?? Environment.GetEnvironmentVariable("StripeKeys_WebHookSecret"));
-
-                // TODO: REMOVE THIS
-                Console.WriteLine("!!! WebHook:  " + Environment.GetEnvironmentVariable("StripeKeys_WebHookSecret"));
+                        ?? Environment.GetEnvironmentVariable("StripeKeys_WebHookSecret"),
+                        300, 
+                        false);
 
                 if (stripeEvent.Type == Events.CheckoutSessionCompleted)
                 {
                     var session = stripeEvent.Data.Object as Session;
 
-                    Console.WriteLine("!!! Session: " + JsonConvert.SerializeObject(session));
+                    //Console.WriteLine("!!! Session: " + JsonConvert.SerializeObject(session));
 
                     var orderId = Guid.NewGuid();
 
