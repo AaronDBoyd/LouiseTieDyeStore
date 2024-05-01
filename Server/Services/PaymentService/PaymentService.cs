@@ -135,6 +135,8 @@ namespace LouiseTieDyeStore.Server.Services.PaymentService
                 {
                     var session = stripeEvent.Data.Object as Session;
 
+                    Console.WriteLine("!!! Session: " + JsonConvert.SerializeObject(session));
+
                     var orderId = Guid.NewGuid();
 
                     var order = new Order
@@ -164,6 +166,8 @@ namespace LouiseTieDyeStore.Server.Services.PaymentService
             }
             catch (StripeException ex)
             {
+
+                Console.WriteLine("!!! StripException: " + ex.Message);
                 return new ServiceResponse<bool>
                 {
                     Data = false,
