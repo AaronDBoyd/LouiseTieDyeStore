@@ -55,7 +55,9 @@
     {
         var authority = (string)Configuration["Auth0:Authority"];
         var clientId = (string)Configuration["Auth0:ClientId"];
-        var callbackUrl = "https://localhost:7065/authentication/logged-out";
+        var callbackUrl = $"{(string)Configuration["ActiveDomain"]}/authentication/logged-out";
+        Console.WriteLine("!!! callbackUrl: " + JsonConvert.SerializeObject(callbackUrl));
+
         var idToken = await LocalStorage.GetItemAsync<string>("id_token");
 
         //Navigation.NavigateTo($"{authority}/v2/logout?client_id={clientId}");
