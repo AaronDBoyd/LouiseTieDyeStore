@@ -4,7 +4,12 @@ namespace LouiseTieDyeStore.Server.Services.PaymentService
 {
     public interface IPaymentService
     {
-        Session CreateCheckoutSession(CheckoutDTO checkout);
         Task<ServiceResponse<bool>> FullfillOrder(HttpRequest request);
+
+        // For Stripe Only
+        Session CreateCheckoutSession(CheckoutDTO checkout);
+
+        // For Square
+        Task<ServiceResponse<string>> CreatePaymentLink(CheckoutDTO ckeckout);
     }
 }

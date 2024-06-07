@@ -459,8 +459,8 @@ namespace LouiseTieDyeStore.Server.Services.OrderService
                 order.SubTotal = order.OrderItems.Sum(o => o.Price);
 
                 // Calculate Sales Tax
-                var rate = (await _taxService.GetTaxRate(order.Address.State)).Data / 100;
-                order.SalesTax = Math.Round(order.SubTotal * rate, 2);
+                //var rate = (await _taxService.GetTaxRate(order.Address.State)).Data / 100;
+                //order.SalesTax = Math.Round(order.SubTotal * rate, 2);
 
                 // add UserId  
                 User user = new User();

@@ -4,21 +4,15 @@ using Stripe.Checkout;
 
 namespace LouiseTieDyeStore.Server.Services.PaymentService
 {
-    public class PaymentService : IPaymentService
+    public class StripeService : IPaymentService
     {
-        private readonly ICartService _cartService;
-        private readonly IAuthService _authService;
         private readonly IOrderService _orderService;
         private readonly IConfiguration _config;
 
-        public PaymentService(ICartService cartService,
-            IAuthService authService,
-            IOrderService orderService,
+        public StripeService(IOrderService orderService,
             IConfiguration config
             )
         {
-            _cartService = cartService;
-            _authService = authService;
             _orderService = orderService;
             _config = config;
 
@@ -174,6 +168,14 @@ namespace LouiseTieDyeStore.Server.Services.PaymentService
                     Message = ex.Message
                 };
             }
+        }
+
+
+
+        // Used only in SquareService
+        public Task<ServiceResponse<string>> CreatePaymentLink(CheckoutDTO ckeckout)
+        {
+            throw new NotImplementedException();
         }
     }
 }

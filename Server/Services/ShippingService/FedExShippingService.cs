@@ -22,7 +22,7 @@ namespace LouiseTieDyeStore.Server.Services.ShippingService
         {
             // TODO: Do I abstract away this client setup?
 
-            string clientId = Environment.GetEnvironmentVariable("FedExKeys_ClientId") 
+            string clientId = Environment.GetEnvironmentVariable("FedExKeys_ClientId")
                 ?? _config["FedExKeys:ClientId"];
             string clientSecret = Environment.GetEnvironmentVariable("FedExKeys_ClientSecret")
                 ?? _config["FedExKeys:ClientSecret"];
@@ -55,10 +55,10 @@ namespace LouiseTieDyeStore.Server.Services.ShippingService
             }
         }
 
-        public async Task<ServiceResponse<string>> GetShippingRateQuote(ShippingInfoDTO shippingInfo, string? authToken = null)
+        public async Task<ServiceResponse<ShippingResponse>> GetShippingRateQuote(ShippingResponse shippingResponse, ShippingInfoDTO shippingInfo, string? authToken = null)
         {
-            
-            authToken = await GetAuthToken(); // Comment out if Validating Address first
+
+            //authToken = await GetAuthToken(); // Comment out if Validating Address first
 
             var shippingInfoRequest = new FedExRateQuoteRequest
             {
@@ -94,7 +94,7 @@ namespace LouiseTieDyeStore.Server.Services.ShippingService
                         new RequestedPackageLineItem
                         {
                             Weight = new Weight
-                            {                               
+                            {
                                 Value = shippingInfo.ItemCount * int.Parse(_config["Shipping:PoundsPerItem"])
                             }
                         }
@@ -113,24 +113,26 @@ namespace LouiseTieDyeStore.Server.Services.ShippingService
             {
                 var result = await client.PostAsJsonAsync("/rate/v1/rates/quotes", shippingInfoRequest);
 
-                //Console.WriteLine("!!!Quote Result: " + await result.Content.ReadAsStringAsync());
+                Console.WriteLine("!!!Quote Result: " + await result.Content.ReadAsStringAsync());
 
                 var quoteResponse = JsonConvert.DeserializeObject<FedExRateQuoteResponse>(await result.Content.ReadAsStringAsync());
 
-                //Console.WriteLine("!!!Quot Object : " + JsonConvert.SerializeObject(quoteResponse));
+                Console.WriteLine("!!!Quot Object : " + JsonConvert.SerializeObject(quoteResponse));
 
                 string shippingCost = quoteResponse.Output.RateReplyDetails[0].RatedShipmentDetails[0].TotalNetCharge.ToString();
 
-                return new ServiceResponse<string>
+                shippingResponse.ShippingCost = Math.Round(decimal.Parse(shippingCost), 2);
+
+                return new ServiceResponse<ShippingResponse>
                 {
-                    Data = shippingCost
+                    Data = shippingResponse
                 };
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
 
-                return new ServiceResponse<string>
+                return new ServiceResponse<ShippingResponse>
                 {
                     Success = false,
                     Message = ex.Message
@@ -138,7 +140,7 @@ namespace LouiseTieDyeStore.Server.Services.ShippingService
             }
         }
 
-        public async Task<ServiceResponse<string>> ValidateShippingAddress(ShippingInfoDTO shippingInfo)
+        public async Task<ServiceResponse<ShippingResponse>> ValidateShippingAddress(ShippingInfoDTO shippingInfo)
         {
             //Console.WriteLine("!!! shipping info:  " + JsonConvert.SerializeObject(shippingInfo));
 
@@ -175,25 +177,55 @@ namespace LouiseTieDyeStore.Server.Services.ShippingService
 
                 //Console.WriteLine("!!!Address Result: " + await result.Content.ReadAsStringAsync());
 
+                var resultString = await result.Content.ReadAsStringAsync();
+
                 var returnObject = JsonConvert.DeserializeObject<FedExValidateAddressResponse>(await result.Content.ReadAsStringAsync());
 
                 var matched = returnObject.Output.ResolvedAddresses[0].Attributes.Matched; // Bool for Valid Address
-                //Console.WriteLine("!!! Matched: " + JsonConvert.SerializeObject(matched));
+                Console.WriteLine("!!! Matched: " + JsonConvert.SerializeObject(matched));
 
                 //Console.WriteLine("!!! Address Object: " + JsonConvert.SerializeObject(returnObject));
 
-                return await GetShippingRateQuote(shippingInfo, authToken);
+                if (matched)
+                {
+                    ShippingResponse shippingResponse = new ShippingResponse
+                    {
+                        VerifiedAddress = new Shared.Address
+                        {
+                            LineOne = returnObject.Output.ResolvedAddresses[0].StreetLinesToken[0],
+                            LineTwo = returnObject.Output.ResolvedAddresses[0].StreetLinesToken.Count > 1
+                                ? returnObject.Output.ResolvedAddresses[0].StreetLinesToken[1]
+                                : string.Empty,
+                            City = returnObject.Output.ResolvedAddresses[0].City,
+                            State = returnObject.Output.ResolvedAddresses[0].StateOrProvinceCode,
+                            Zip = returnObject.Output.ResolvedAddresses[0].ParsedPostalCode.Base
+                        }
+                    };
+
+                    return await GetShippingRateQuote(shippingResponse, shippingInfo, authToken);
+
+                }
+                else
+                {
+                    Console.WriteLine("!!! Matched: False");
+
+                    return new ServiceResponse<ShippingResponse>
+                    {
+                        Success = false,
+                        Message = "Invalid Address"
+                    };
+                }
             }
             catch (Exception ex)
             {
                 Console.WriteLine("!!!Exception: " + ex.Message);
 
-                return new ServiceResponse<string>
+                return new ServiceResponse<ShippingResponse>
                 {
                     Success = false,
                     Message = "Invalid Address"
                 };
-            }          
+            }
         }
     }
 }

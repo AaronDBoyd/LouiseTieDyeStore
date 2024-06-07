@@ -17,19 +17,19 @@ namespace LouiseTieDyeStore.Server.Controllers
 
         // Is Valid Address
         [HttpPost("validate-address")] // Calling this endpoint will Validate address AND Return Shipping Rate Quote
-        public async Task<ActionResult<ServiceResponse<string>>> ValidateAddress(ShippingInfoDTO shippingInfo)
+        public async Task<ActionResult<ServiceResponse<ShippingResponse>>> ValidateAddress(ShippingInfoDTO shippingInfo)
         {
             var result = await _shippingService.ValidateShippingAddress(shippingInfo);
             return Ok(result);
         }
 
-        // Get Shipping Rate Quotes
-        [HttpPost("rate-quote")]
-        public async Task<ActionResult<ServiceResponse<string>>> GetShippingRateQuote(ShippingInfoDTO shippingInfo)
-        {
-            var result = await _shippingService.GetShippingRateQuote(shippingInfo);
-            return Ok(result);
-        }
+        // Get Shipping Rate Quotes without Validating Address
+        //[HttpPost("rate-quote")]
+        //public async Task<ActionResult<ServiceResponse<ShippingResponse>>> GetShippingRateQuote(ShippingInfoDTO shippingInfo)
+        //{
+        //    var result = await _shippingService.GetShippingRateQuote(shippingInfo);
+        //    return Ok(result);
+        //}
 
         // Get Auth Token
         //[HttpPost("authToken")] 

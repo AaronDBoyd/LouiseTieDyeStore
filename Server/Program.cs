@@ -76,7 +76,7 @@ namespace LouiseTieDyeStore
             builder.Services.AddScoped<ICartService, CartService>();
             builder.Services.AddScoped<IShippingService, FedExShippingService>();
             builder.Services.AddScoped<ISalesTaxService, SalesTaxService>();
-            builder.Services.AddScoped<IPaymentService, PaymentService>();
+            builder.Services.AddScoped<IPaymentService, SquareService>();
             builder.Services.AddScoped<IOrderService, OrderService>();
             builder.Services.AddScoped<IMessageService, MessageService>();
 
@@ -117,7 +117,7 @@ namespace LouiseTieDyeStore
             }
 
             app.UseSwagger();
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection(); // TODO: Uncomment
 
             app.UseBlazorFrameworkFiles();
             app.UseStaticFiles();

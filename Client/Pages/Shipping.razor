@@ -36,21 +36,54 @@
                     @**** TODO: Style Form ****@
                     <div class="shipping-form-wrapper @ConfirmShippingCssClass">
 
-                        <h5 class="m-3">Enter Shipping Postal Code and State to determine Shipping Cost and Sales Tax</h5>
+                        <h5 class="m-3">Enter Shipping Info to determine Shipping Cost and Sales Tax</h5>
                         <br />
                         <h6 class="text-danger">@message</h6>
-                        <EditForm Model="shippingInfo" class="shipping-form" OnValidSubmit="ConfirmShipping" OnInvalidSubmit="InvalidSubmit">
+                        <EditForm Model="address" class="shipping-form" OnValidSubmit="ConfirmShipping" OnInvalidSubmit="InvalidSubmit" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
                             <DataAnnotationsValidator />
 
                             <div class="mb-3">
+                                <label for="firstName">First Name<span class="reqAst">*</span></label>
+                                <InputText id="firstName" @bind-Value="address.FirstName" class="form-control input" style="border-radius: 255px;" />
+                            </div>
+                            <div class="mb-3">
+                                <label for="lastName">Last Name<span class="reqAst">*</span></label>
+                                <InputText id="lastName" @bind-Value="address.LastName" class="form-control input" style="border-radius: 255px;" />
+                            </div>
+
+                            <div class="form-phoneNumber">
+                                <div class="mb-3">
+                                    <label for="phoneNumber">Phone Number<span class="reqAst">*</span></label>
+                                    <InputText id="phoneNumber" type="tel" @bind-Value="address.PhoneNumber" class="form-control input" style="border-radius: 255px;" />
+                                </div>
+                            </div>
+                            <div>
+                                @* Empty Space *@
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="addressOne">Address Line 1<span class="reqAst">*</span></label>
+                                <InputText id="addressOne" type="text" @bind-Value="address.LineOne" class="form-control input" style="border-radius: 255px;" />
+                            </div>
+                            <div class="mb-3">
+                                <label for="addressTwo">Address Line 2 (optional)</label>
+                                <InputText id="addressTwo" type="text" @bind-Value="address.LineTwo" class="form-control input" style="border-radius: 255px;" />
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="city">City<span class="reqAst">*</span></label>
+                                <InputText id="city" type="text" @bind-Value="address.City" class="form-control input" style="border-radius: 255px;" />
+                            </div>
+
+                            <div class="mb-3">
                                 <label for="zip">ZIP Code<span class="reqAst">*</span></label>
-                                <InputText id="zip" type="text" @bind-Value="shippingInfo.Zip" class="form-control input" style="border-radius: 255px;" />
+                                <InputText id="zip" type="text" @bind-Value="address.Zip" class="form-control input" style="border-radius: 255px;" />
                             </div>
 
                             <div class="form-state">
                                 <div class="mb-3">
                                     <label for="state">State<span class="reqAst">*</span></label>
-                                    <InputSelect class="form-select select" @bind-Value="shippingInfo.State" name="state" id="state" style="border-radius: 255px;">
+                                    <InputSelect class="form-select select" @bind-Value="address.State" name="state" id="state" style="border-radius: 255px;">
                                         <option>Select State</option>
                                         <option value="AL">Alabama</option>
                                         <option value="AK">Alaska</option>
@@ -125,26 +158,26 @@
                                 <h3> I will contact you and deliver it myself.</h3>
                             </div>
                         }
-                        
-                        <div class="ship-to m-3">
-                            Enter Full Shipping info at Checkout:
-                        </div>
-                        
-                        @* <div class="ship-to">
+
+                        @* <div class="ship-to m-3">
+                Enter Full Shipping info at Checkout:
+                </div> *@
+
+                        <div class="ship-to">
                             Ship to:
-                        </div> *@
+                        </div>
 
                         @* TODO: Format *@
-                        @* <div class="address">  *@
-                            @* <div class="name">@address.FirstName @address.LastName</div>
+                        <div class="address">
+                            <div class="name">@address.FirstName @address.LastName</div>
                             <div class="addressOne">@(address.LineOne), </div>
                             <div class="addressTwo">@address.LineTwo</div>
                             <div class="city-state-zip">@(address.City), @(address.State) @(address.Zip)</div>
-                            <div class="phone">@address.PhoneNumber</div> *@
-                        @* </div> *@
+                            <div class="phone">@address.PhoneNumber</div>
+                        </div>
                     </div>
                     <div>
-                        <button type="button" class="btn proceed-btn @EditShippingCssClass" @onclick="PlaceOrder">Proceed to Checkout</button>
+                        <button type="button" class="btn proceed-btn @EditShippingCssClass" @onclick="PlaceOrder">Confirm Address & Proceed to Checkout</button>
                     </div>
                 }
             </div>
@@ -167,7 +200,7 @@
                                 </th>
                                 @if (!shippingCalculated)
                                 {
-                                    <td class="shipping-value">Calculated by Shipping</td>
+                                    <td class="shipping-value">Calculated by Shipping Info</td>
                                 }
                                 else
                                 {
@@ -181,7 +214,7 @@
                                 </th>
                                 @if (!taxCalculated)
                                 {
-                                    <td class="taxes-value">Calculated by Shipping</td>
+                                    <td class="taxes-value">Calculated by Shipping Info</td>
                                 }
                                 else
                                 {
@@ -257,8 +290,9 @@
 </div>
 
 @code {
-    private ShippingInfoDTO shippingInfo = new();
+    private ShippingInfoDTO shippingInfo;
     List<CartProductResponse> cartProducts = new List<CartProductResponse>();
+    Address address = new();
     decimal subTotal = default;
     decimal shippingCost = default;
     decimal salesTax = default;
@@ -290,7 +324,7 @@
         cartProducts = await CartService.GetCartProducts();
         await CartService.GetCartItemsCount();
         subTotal = cartProducts.Sum(p => p.Price);
-        shippingInfo.ItemCount = cartProducts.Count;
+        //shippingInfo.ItemCount = cartProducts.Count;
 
         if (cartProducts == null || cartProducts.Count == 0)
         {
@@ -311,41 +345,66 @@
 
         await JsRuntime.InvokeVoidAsync("scrollUp");
 
-        salesTax = await TaxService.CalculateSalesTax(subTotal, shippingInfo.State);
+        salesTax = await TaxService.CalculateSalesTax(subTotal, address.State);
         taxCalculated = true;
 
-        if (ShippingService.LocalZipCodes.Contains(shippingInfo.Zip))
+        if (ShippingService.LocalZipCodes.Contains(address.Zip))
         {
             shippingCost = default;
             isLocal = true;
         }
         else
         {
+
+            shippingInfo = new ShippingInfoDTO
+                {
+                    ItemCount = cartProducts.Count,
+                    LineOne = address.LineOne,
+                    LineTwo = address.LineTwo,
+                    City = address.City,
+                    State = address.State,
+                    Zip = address.Zip
+                };
+
             var shippingCostResponse = await ShippingService.GetShippingCost(shippingInfo);
 
             //Console.WriteLine("!!! Response: " + shippingCostResponse);
 
-            if (decimal.TryParse(shippingCostResponse, out decimal cost))
+            if (shippingCostResponse.Success)
             {
-                shippingCost = Math.Round(cost, 2);
-                //Console.WriteLine("!!! Cost: " + shippingCost);
+                shippingCost = shippingCostResponse.Data.ShippingCost;
+
+                address.LineOne = shippingCostResponse.Data.VerifiedAddress.LineOne;
+                address.LineTwo = shippingCostResponse.Data.VerifiedAddress.LineTwo;
+                address.City = shippingCostResponse.Data.VerifiedAddress.City;
+                address.State = shippingCostResponse.Data.VerifiedAddress.State;
+                address.Zip = shippingCostResponse.Data.VerifiedAddress.Zip;
+
+                isLoading = false;
+
             }
             else
             {
-                message = "Invalid Zip Code";
+                //Console.WriteLine("!!! Invalid Address");
+                message = "COULD NOT VALIDATE ADDRESS. PLEASE RE-ENTER.";
+
+                isLoading = false;
+
                 confirmShipping = !confirmShipping;
                 editShipping = !editShipping;
+
+                OnChange.Invoke();
+
+                await Task.Delay(5000);
+                message = string.Empty;
+
+                OnChange.Invoke();
             }
         }
 
         shippingCalculated = true;
 
-        isLoading = false;
-        OnChange.Invoke();
-
-        await Task.Delay(5000);
-        message = string.Empty;
-
+        // isLoading = false;
         OnChange.Invoke();
     }
 
@@ -364,18 +423,19 @@
 
         var checkout = new CheckoutDTO
             {
+                Address = address,
                 SalesTax = await TaxService.CalculateSalesTax(subTotal, shippingInfo.State),
-                ShippingCost = ShippingService.LocalZipCodes.Contains(shippingInfo.Zip) ? default : decimal.Parse(await ShippingService.GetShippingCost(shippingInfo))
+                ShippingCost = ShippingService.LocalZipCodes.Contains(shippingInfo.Zip) ? default : (await ShippingService.GetShippingCost(shippingInfo)).Data.ShippingCost
             };
 
         foreach (var product in cartProducts)
         {
             checkout.Items.Add(new CheckoutItem
-            {
+                {
                     Title = product.Title,
                     Price = product.Price,
                     ImageUrl = product.ImageUrl
-            });
+                });
         }
 
         if (await AuthService.IsUserAuthenticated())

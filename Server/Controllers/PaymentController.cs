@@ -17,11 +17,20 @@ namespace LouiseTieDyeStore.Server.Controllers
         }
 
         [HttpPost("checkout")]
-        public ActionResult<string> CreateCheckoutSession(CheckoutDTO checkout)
+        public async Task<ActionResult<string>> CreateCheckoutSession(CheckoutDTO checkout)
         {
-            var session = _paymentService.CreateCheckoutSession(checkout);
-            return Ok(session.Url);
+            var result = await _paymentService.CreatePaymentLink(checkout);
+            return Ok(result.Data);
         }
+
+
+        // For Stripe
+        //[HttpPost("checkout")]
+        //public ActionResult<string> CreateCheckoutSession(CheckoutDTO checkout)
+        //{
+        //    var session = _paymentService.CreateCheckoutSession(checkout);
+        //    return Ok(session.Url);
+        //}
         
         [HttpPost]
         public async Task<ActionResult<ServiceResponse<bool>>> FullfillOrder()

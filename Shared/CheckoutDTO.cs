@@ -9,6 +9,7 @@ namespace LouiseTieDyeStore.Shared
     public class CheckoutDTO
     {
         public List<CheckoutItem> Items { get; set; } = new List<CheckoutItem>();
+        public Address Address { get; set; }
         public decimal SalesTax { get; set; }
         public decimal ShippingCost { get; set; }
         public string UserEmail { get; set; } = string.Empty;
