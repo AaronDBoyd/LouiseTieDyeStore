@@ -190,6 +190,8 @@ namespace LouiseTieDyeStore.Server.Services.OrderService
                 };
             }
 
+            Console.WriteLine("!!! Orders:" + JsonConvert.SerializeObject(orders));
+
             var orderResponse = new List<OrderOverviewResponse>();
             orders.ForEach(o => orderResponse.Add(new OrderOverviewResponse
             {

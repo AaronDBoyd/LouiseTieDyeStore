@@ -2,6 +2,7 @@
 using Blazored.LocalStorage;
 using Microsoft.AspNetCore.Components.Authorization;
 using Newtonsoft.Json;
+using System.Linq.Expressions;
 using System.Security.Claims;
 using static System.Net.WebRequestMethods;
 
@@ -105,24 +106,31 @@ namespace LouiseTieDyeStore.Client.Services.OrderService
 
         public async Task GetAdminOrders(OrderPageRequest request)
         {
-            var result = await _privateClient.PostAsJsonAsync("api/order/admin", request);
-
-            var response = await result.Content.ReadFromJsonAsync<ServiceResponse<OrderPageResults>>();
-
-            if (result != null && response.Data != null && response.Data.Orders != null)
+            try
             {
-                Orders = response.Data.Orders;
-                CurrentPage = response.Data.CurrentPage;
-                PageCount = response.Data.Pages;
-            }
+                var result = await _privateClient.PostAsJsonAsync("api/order/admin", request);
 
-            if (!response.Success)
+                var response = await result.Content.ReadFromJsonAsync<ServiceResponse<OrderPageResults>>();
+
+                if (result != null && response.Data != null && response.Data.Orders != null)
+                {
+                    Orders = response.Data.Orders;
+                    CurrentPage = response.Data.CurrentPage;
+                    PageCount = response.Data.Pages;
+                }
+
+                if (!response.Success)
+                {
+                    Message = "No Orders Found";
+                    Orders.Clear();
+                }
+
+                OrdersChanged.Invoke();
+            }
+            catch (Exception ex)
             {
-                Message = "No Orders Found";
-                Orders.Clear();
+                Console.WriteLine(JsonConvert.SerializeObject(ex));
             }
-
-            OrdersChanged.Invoke();
         }
 
         public async Task<List<string>> GetOrderSearchSuggestions(string searchText)

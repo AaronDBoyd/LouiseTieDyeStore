@@ -1,5 +1,6 @@
 ﻿
 using Blazored.LocalStorage;
+using Newtonsoft.Json;
 
 namespace LouiseTieDyeStore.Client.Services.MessageService
 {
@@ -57,11 +58,18 @@ namespace LouiseTieDyeStore.Client.Services.MessageService
 
         public async Task GetUnreadMessagesCount()
         {
-            var result = await _privateClient.GetFromJsonAsync<ServiceResponse<int>>("api/message/count");
-            var count = result.Data;
+            try
+            {
+                var result = await _privateClient.GetFromJsonAsync<ServiceResponse<int>>("api/message/count");
+                var count = result.Data;
 
-            UnreadMessages = count;
-            OnChange.Invoke();
+                UnreadMessages = count;
+                OnChange.Invoke();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(JsonConvert.SerializeObject(ex));
+            }
         }
 
         public async Task<bool> SaveMessage(Message message)
