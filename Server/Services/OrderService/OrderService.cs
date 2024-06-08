@@ -436,7 +436,7 @@ namespace LouiseTieDyeStore.Server.Services.OrderService
                 // get products from cartitems
                 var cartProducts = (await _cartService.GetDbCartProducts(order.Email)).Data;
 
-                if (cartProducts == null)
+                if (cartProducts.Count == 0 || cartProducts == null)
                 {
                     return new ServiceResponse<bool> { Data = false, Success = true, Message = "Cart Items already removed. Square Webhook must have fired multiple times" };
                 }
