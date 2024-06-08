@@ -163,14 +163,18 @@ namespace LouiseTieDyeStore.Server.Services.PaymentService
             Console.WriteLine("!!! Request: " + json);
 
             var signature = request.Headers["x-square-hmacsha256-signature"].ToString() ?? "";
+            Console.WriteLine($"!!!Signature {signature}");
 
             // Update URL when testing
             var webhookUrl = System.Environment.GetEnvironmentVariable("SquareKeys_WebhookUrl")
                 ?? _config["SquareKeys:WebhookUrl"];
+            Console.WriteLine($"!!!WebhookURL {webhookUrl}");
 
             var webhookKey = System.Environment.GetEnvironmentVariable("SquareKeys_WebhookSignature") ?? _config["SquareKeys:WebhookSignature"];
+            Console.WriteLine($"!!! WebhookKey {webhookKey}");
 
             var validWebhook = WebhooksHelper.IsValidWebhookEventSignature(json, signature, webhookKey, webhookUrl);
+            Console.WriteLine($"!!! ValidWebhook {validWebhook}");
 
             if (validWebhook)
             {
