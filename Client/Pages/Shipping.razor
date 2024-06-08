@@ -321,14 +321,21 @@
 
     private async Task LoadCart()
     {
-        cartProducts = await CartService.GetCartProducts();
-        await CartService.GetCartItemsCount();
-        subTotal = cartProducts.Sum(p => p.Price);
-        //shippingInfo.ItemCount = cartProducts.Count;
-
-        if (cartProducts == null || cartProducts.Count == 0)
+        try
         {
-            message = "** Your cart is empty. Selected Items may have already been purchased. **";
+            cartProducts = await CartService.GetCartProducts();
+            await CartService.GetCartItemsCount();
+            subTotal = cartProducts.Sum(p => p.Price);
+            //shippingInfo.ItemCount = cartProducts.Count;
+
+            if (cartProducts == null || cartProducts.Count == 0)
+            {
+                message = "** Your cart is empty. Selected Items may have already been purchased. **";
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
         }
     }
 
@@ -353,8 +360,8 @@
             shippingCost = default;
             isLocal = true;
         }
-        else
-        {
+        // else
+        // {
             shippingInfo = new ShippingInfoDTO
                 {
                     ItemCount = cartProducts.Count,
@@ -371,7 +378,7 @@
 
             if (shippingCostResponse.Success)
             {
-                shippingCost = shippingCostResponse.Data.ShippingCost;
+                shippingCost = isLocal ? default : shippingCostResponse.Data.ShippingCost;
 
                 address.LineOne = shippingCostResponse.Data.VerifiedAddress.LineOne;
                 address.LineTwo = shippingCostResponse.Data.VerifiedAddress.LineTwo;
@@ -396,7 +403,7 @@
 
                 OnChange.Invoke();
             }
-        }
+        // }
 
         shippingCalculated = true;
 
@@ -408,8 +415,6 @@
     {
         try
         {
-
-
             await LoadCart();
 
             if (cartProducts == null || cartProducts.Count == 0)
