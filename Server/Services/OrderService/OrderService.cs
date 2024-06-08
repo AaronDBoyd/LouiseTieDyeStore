@@ -433,10 +433,13 @@ namespace LouiseTieDyeStore.Server.Services.OrderService
         {
             try
             {
-
-
                 // get products from cartitems
                 var cartProducts = (await _cartService.GetDbCartProducts(order.Email)).Data;
+
+                if (cartProducts == null)
+                {
+                    return new ServiceResponse<bool> { Data = false, Success = true, Message = "Cart Items already removed. Square Webhook must have fired multiple times" };
+                }
 
                 // set products as Sold
                 var productIdList = cartProducts.Select(cp => cp.ProductId).ToList();
@@ -500,7 +503,7 @@ namespace LouiseTieDyeStore.Server.Services.OrderService
             {
                 Console.WriteLine("!!! Exception: " + ex.Message);
 
-                return new ServiceResponse<bool> { Data = false, Success = false, Message = ex.Message };
+                return new ServiceResponse<bool> { Data = false, Success = true, Message = ex.Message };
             }
         }
 
