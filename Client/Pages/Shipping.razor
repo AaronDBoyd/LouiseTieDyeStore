@@ -406,49 +406,65 @@
 
     private async Task PlaceOrder()
     {
-        await LoadCart();
-
-        if (cartProducts == null || cartProducts.Count == 0)
+        try
         {
-            message = "** Your cart is empty. Selected Items may have already been purchased. **";
 
-            await JsRuntime.InvokeVoidAsync("scrollUp");
 
-            return;
-        }
+            await LoadCart();
 
-        var checkout = new CheckoutDTO
+            if (cartProducts == null || cartProducts.Count == 0)
             {
-                Address = address,
-                SalesTax = await TaxService.CalculateSalesTax(subTotal, shippingInfo.State),
-                ShippingCost = ShippingService.LocalZipCodes.Contains(shippingInfo.Zip) ? default : (await ShippingService.GetShippingCost(shippingInfo)).Data.ShippingCost
-            };
+                message = "** Your cart is empty. Selected Items may have already been purchased. **";
 
-        foreach (var product in cartProducts)
-        {
-            checkout.Items.Add(new CheckoutItem
+                await JsRuntime.InvokeVoidAsync("scrollUp");
+
+                return;
+            }
+
+            var checkout = new CheckoutDTO
                 {
-                    Title = product.Title,
-                    Price = product.Price,
-                    ImageUrl = product.ImageUrl
-                });
-        }
+                    Address = address,
+                    SalesTax = await TaxService.CalculateSalesTax(subTotal, shippingInfo.State),
+                    ShippingCost = ShippingService.LocalZipCodes.Contains(shippingInfo.Zip) ? default : (await ShippingService.GetShippingCost(shippingInfo)).Data.ShippingCost
+                };
 
-        if (await AuthService.IsUserAuthenticated())
+            Console.WriteLine($"!!! Checkout: {JsonConvert.SerializeObject(checkout)}");
+            Console.WriteLine($"!!! CartProducts: {JsonConvert.SerializeObject(cartProducts)}");
+
+            foreach (var product in cartProducts)
+            {
+                checkout.Items.Add(new CheckoutItem
+                    {
+                        Title = product.Title,
+                        Price = product.Price,
+                        ImageUrl = product.ImageUrl
+                    });
+            }
+
+            if (await AuthService.IsUserAuthenticated())
+            {
+                checkout.UserEmail = await AuthService.GetAuthenticatedUsername();
+            }
+            else
+            {
+                checkout.UserEmail = await LocalStorage.GetItemAsync<string>("guestCheckoutEmail");
+            }
+
+            Console.WriteLine($"!!! UserEmail: {JsonConvert.SerializeObject(checkout.UserEmail)}");
+
+            // Get redirect URL from Square
+            string url = await OrderService.PlaceOrder(checkout);
+
+            Console.WriteLine($"!!! Url: {JsonConvert.SerializeObject(url)}");
+
+            await CartService.StoreCartItems();
+
+            NavigationManager.NavigateTo(url);
+        }
+        catch (Exception ex)
         {
-            checkout.UserEmail = await AuthService.GetAuthenticatedUsername();
+            Console.WriteLine(ex.Message);
         }
-        else
-        {
-            checkout.UserEmail = await LocalStorage.GetItemAsync<string>("guestCheckoutEmail");
-        }
-
-        // Get redirect URL from Square
-        string url = await OrderService.PlaceOrder(checkout);
-
-        await CartService.StoreCartItems();
-
-        NavigationManager.NavigateTo(url);
     }
 
     private void EditShipping()
