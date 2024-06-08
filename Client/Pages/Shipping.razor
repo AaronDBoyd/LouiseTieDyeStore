@@ -355,7 +355,6 @@
         }
         else
         {
-
             shippingInfo = new ShippingInfoDTO
                 {
                     ItemCount = cartProducts.Count,
@@ -379,9 +378,6 @@
                 address.City = shippingCostResponse.Data.VerifiedAddress.City;
                 address.State = shippingCostResponse.Data.VerifiedAddress.State;
                 address.Zip = shippingCostResponse.Data.VerifiedAddress.Zip;
-
-                isLoading = false;
-
             }
             else
             {
@@ -404,7 +400,7 @@
 
         shippingCalculated = true;
 
-        // isLoading = false;
+        isLoading = false;
         OnChange.Invoke();
     }
 
@@ -447,7 +443,7 @@
             checkout.UserEmail = await LocalStorage.GetItemAsync<string>("guestCheckoutEmail");
         }
 
-        // Get redirect URL from Stripe
+        // Get redirect URL from Square
         string url = await OrderService.PlaceOrder(checkout);
 
         await CartService.StoreCartItems();
